@@ -40,7 +40,7 @@ function mtwebview.export_nodedefs()
         end
     end
 
-    local size = mtwebview.export_json(mtwebview.basepath .. "/nodedefs.json", nodedefs)
+    local size = mtwebview.export_json(mtwebview.basepath .. "/nodedefs.json", nodedefs, true)
 
     print("[mtwebview] exported " .. count .. " node-definitions (" .. size .. " bytes)")
 end
