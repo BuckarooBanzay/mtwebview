@@ -19,7 +19,7 @@ end
 
 function mtwebview.export_json(fname, data)
 	local f = io.open(fname, "w")
-	local json, err = minetest.write_json(data)
+	local json, err = minetest.write_json(data, true)
 	if err or not f then
 		error("error while opening " .. fname .. " " .. (err or ""))
 	end
