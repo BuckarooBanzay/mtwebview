@@ -1,0 +1,16 @@
+version: "3.6"
+
+services:
+ export_mod:
+  image: registry.gitlab.com/minetest/minetest/server:5.7.0
+  entrypoint: ["minetestserver", "--config", "/minetest.conf"]
+  user: root
+  volumes:
+    - "./export_mod:/root/.minetest/worlds/world/worldmods/mtwebview/"
+    - "./export:/root/.minetest/worlds/world/mtwebview/"
+    - "world_data:/root/.minetest/worlds/world"
+    - "./export_mod/test/world.mt:/root/.minetest/worlds/world/world.mt"
+    - "./export_mod/test/minetest.conf:/minetest.conf"
+
+volumes:
+  world_data: {}
