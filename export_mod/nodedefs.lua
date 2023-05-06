@@ -3,8 +3,6 @@ function mtwebview.export_nodedefs()
     local count = 0
     local nodedefs = {}
 
-    print(dump(minetest.registered_nodes["default:mese"]))
-
     for name, def in pairs(minetest.registered_nodes) do
         if not def.drawtype or def.drawtype == "normal" then
             local entry = {
