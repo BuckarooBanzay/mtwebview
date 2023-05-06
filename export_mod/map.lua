@@ -1,6 +1,6 @@
 local air_cid = minetest.get_content_id("air")
 
-local function export_mapblock(mb_pos, node_mapping)
+local function export_mapblock(mb_pos, node_mapping, manifest)
     local pos1 = vector.multiply(mb_pos, 16)
     local pos2 = vector.add(pos1, 15)
 
@@ -32,8 +32,13 @@ local function export_mapblock(mb_pos, node_mapping)
     if air_only then
         return 0
     else
+        local pos_str = minetest.pos_to_string(mb_pos)
+        table.insert(manifest, {
+            filename = pos_str .. ".json",
+            pos = mb_pos
+        })
         return mtwebview.export_json(
-            mtwebview.basepath .. "/mapblocks/" .. minetest.pos_to_string(mb_pos) .. ".json",
+            mtwebview.basepath .. "/mapblocks/" .. pos_str .. ".json",
             data
         )
     end
@@ -42,6 +47,7 @@ end
 function mtwebview.export_map(mb_pos1, mb_pos2)
     local size, count = 0, 0
     local node_mapping = {}
+    local manifest = {}
 
     minetest.mkdir(mtwebview.basepath .. "/mapblocks")
 
@@ -49,7 +55,7 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
         for y=mb_pos1.y,mb_pos2.y do
             for z=mb_pos1.z,mb_pos2.z do
                 local pos = {x=x, y=y, z=z}
-                size = size + export_mapblock(pos, node_mapping)
+                size = size + export_mapblock(pos, node_mapping, manifest)
                 count = count + 1
             end
         end
@@ -60,6 +66,7 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
         reverse_node_mapping[name] = id
     end
     mtwebview.export_json(mtwebview.basepath .. "/node_mapping.json", reverse_node_mapping, true)
+    mtwebview.export_json(mtwebview.basepath .. "/manifest.json", manifest, true)
 
     print("[mtwebview] exported " .. count .. " mapblocks (" .. size .. " bytes)")
 end
