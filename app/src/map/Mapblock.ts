@@ -4,6 +4,10 @@ import { Pos } from "../util/Pos";
 export class Mapblock {
     constructor(private mb: MapblockData) {}
 
+    getNodeMapping(): Map<string, number> {
+        return this.mb.node_mapping
+    }
+
     getIndex(pos: Pos): number {
         return pos.x + (pos.y * 16) + (pos.z * 256);
     }

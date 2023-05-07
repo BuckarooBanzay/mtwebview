@@ -11,7 +11,7 @@ export class WorldMap {
         return `${pos.x}/${pos.y}/${pos.z}`
     }
 
-    getBlockData(pos: MapblockPos): Mapblock|null {
+    getBlock(pos: MapblockPos): Mapblock|null {
         const key = this.formatPos(pos)
         const b = this.world.get(key)
         return b == undefined ? null : b

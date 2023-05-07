@@ -29,5 +29,7 @@ nodedefmgr.load()
     meshgen = new MeshGenerator(map, nodedefmgr.nodedefmap, matmgr)
     //TODO: iterate over _all_ loaded mapblocks
     const m = meshgen.createMesh(new Pos(0,0,0))
-    scene.addMesh(m)
+    if (m) {
+        scene.addMesh(m)
+    }
 })
