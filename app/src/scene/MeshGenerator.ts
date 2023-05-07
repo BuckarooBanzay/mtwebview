@@ -65,21 +65,33 @@ export class MeshGenerator {
                             }
 
                             gd.vertices.push(
-                                pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                                pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                                pos.x+0.5, pos.y+0.5, pos.z+0.5,
                                 pos.x+0.5, pos.y+0.5, pos.z-0.5,
-                                pos.x-0.5, pos.y+0.5, pos.z+0.5
+                            
+                                pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                                pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                                pos.x-0.5, pos.y+0.5, pos.z-0.5,
                             )
 
                             gd.uvs.push(
-                                0, 0,
-                                1, 0,
-                                1, 1
+                                0.0, 0.0,
+                                1.0, 0.0,
+                                1.0, 1.0,
+                            
+                                0.0, 0.0,
+                                1.0, 1.0,
+                                0.0, 1.0,
                             )
 
                             gd.colors.push(
                                 1, 1, 1,
                                 1, 1, 1,
-                                1, 1, 1
+                                1, 1, 1,
+
+                                1, 1, 1,
+                                1, 1, 1,
+                                1, 1, 1,
                             )
                         }
                     }
