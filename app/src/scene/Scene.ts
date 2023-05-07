@@ -1,4 +1,4 @@
-import { AmbientLight, PerspectiveCamera, Scene as ThreeScene, WebGLRenderer } from "three";
+import { AmbientLight, Mesh, PerspectiveCamera, Scene as ThreeScene, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
 
@@ -33,5 +33,9 @@ export class Scene {
 
         this.controls.update()
         window.requestAnimationFrame(() => this.animate())
+    }
+
+    addMesh(m: Mesh) {
+        this.scene.add(m)
     }
 }

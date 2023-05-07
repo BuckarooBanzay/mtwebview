@@ -3,6 +3,8 @@ import { MediaManager } from "./media/MediaManager"
 import { NodedefManager } from "./nodedefs/NodedefManager"
 import { Scene } from "./scene/Scene"
 import { MaterialManager } from "./scene/MaterialManager"
+import { MeshGenerator } from "./scene/MeshGenerator"
+import { Pos } from "./util/Pos"
 
 const e = document.getElementById("scene") as HTMLCanvasElement
 const scene = new Scene(e)
@@ -11,6 +13,7 @@ scene.animate()
 const mm = new MediaManager("export/textures")
 const map = new WorldMap("export")
 var matmgr: MaterialManager
+var meshgen: MeshGenerator
 
 const nodedefmgr = new NodedefManager("export/nodedefs.json")
 nodedefmgr.load()
@@ -22,3 +25,9 @@ nodedefmgr.load()
 .then(n => console.log(`Created ${n} materials`))
 .then(() => map.load())
 .then(n => console.log(`Loaded ${n} mapblocks`))
+.then(() => {
+    meshgen = new MeshGenerator(map, nodedefmgr.nodedefmap, matmgr)
+    //TODO: iterate over _all_ loaded mapblocks
+    const m = meshgen.createMesh(new Pos(0,0,0))
+    scene.addMesh(m)
+})
