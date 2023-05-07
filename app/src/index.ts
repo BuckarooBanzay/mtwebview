@@ -28,8 +28,12 @@ nodedefmgr.load()
 .then(() => {
     meshgen = new MeshGenerator(map, nodedefmgr.nodedefmap, matmgr)
     map.world.forEach(mb => {
-        const m = meshgen.createMesh(mb.pos)
+        let m = meshgen.createMesh(mb.pos)
         if (m) {
+            m = m.translateX(mb.pos.x * 16)
+                .translateY(mb.pos.y * 16)
+                .translateZ(mb.pos.z * 16)
+
             scene.addMesh(m)
         }    
     })
