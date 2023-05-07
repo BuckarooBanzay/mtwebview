@@ -2,9 +2,9 @@ import { MapblockData } from "../types/MapblockData";
 import { Pos } from "../util/Pos";
 
 export class Mapblock {
-    constructor(private mb: MapblockData) {}
+    constructor(public mb: MapblockData, public pos: Pos) {}
 
-    getNodeMapping(): Map<string, number> {
+    getNodeMapping(): { [key: string]: number } {
         return this.mb.node_mapping
     }
 

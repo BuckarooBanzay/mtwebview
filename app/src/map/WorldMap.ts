@@ -1,5 +1,6 @@
 import { MapblockPos, Manifest } from "../types/Manifest";
 import { MapblockData } from "../types/MapblockData";
+import { Pos } from "../util/Pos";
 import { Mapblock } from "./Mapblock";
 
 export class WorldMap {
@@ -29,7 +30,7 @@ export class WorldMap {
                 .then(b => b as MapblockData)
                 .then(b => {
                     const key = this.formatPos(entry.pos)
-                    this.world.set(key, new Mapblock(b))
+                    this.world.set(key, new Mapblock(b, new Pos(entry.pos.x, entry.pos.y, entry.pos.z)))
                 })
                 promises.push(p)
             })

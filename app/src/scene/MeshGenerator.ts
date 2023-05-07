@@ -1,8 +1,16 @@
-import { Mesh } from "three";
+import { BufferAttribute, BufferGeometry, Material, Mesh } from "three";
 import { WorldMap } from "../map/WorldMap";
 import { Pos } from "../util/Pos";
 import { MaterialManager } from "./MaterialManager";
 import { Mapblock } from "../map/Mapblock";
+import { NodeSide } from "../types/NodeSide";
+
+class GeometryData {
+    constructor(public material: Material){}
+    vertices = new Array<number>
+    uvs = new Array<number>
+    colors = new Array<number>
+}
 
 export class MeshGenerator {
     constructor(
@@ -29,7 +37,10 @@ export class MeshGenerator {
     }
 
     createNodeMesh(nodeid: number, nodename: string, nodedef: NodeDefinition, block: Mapblock): Mesh|null {
-        const m = new Mesh()
+        console.log(`Creating mesh for node ${nodename} and mapblock ${block.pos}`)
+
+        // material-uuid -> GeometryData
+        const datamap = new Map<string, GeometryData>()
 
         for (let x=0; x<16; x++) {
             for (let y=0; y<16; y++) {
@@ -41,11 +52,52 @@ export class MeshGenerator {
                     }
 
                     if (this.isTransparent(block, new Pos(pos.x, pos.y+1, pos.z))) {
-                        // TODO
+                        const m = this.matmgr.getMaterial(nodename, NodeSide.XP)
+                        if (m) {
+                            console.log(`Would render ${nodename}/${NodeSide.XP} on pos ${pos} in mapblock ${block.pos}`)
+
+                            var gd: GeometryData
+                            if (!datamap.has(m.uuid)) {
+                                gd = new GeometryData(m)
+                                datamap.set(m.uuid, gd)
+                            } else {
+                                gd = datamap.get(m.uuid)!
+                            }
+
+                            gd.vertices.push(
+                                pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                                pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                                pos.x-0.5, pos.y+0.5, pos.z+0.5
+                            )
+
+                            gd.uvs.push(
+                                0, 0,
+                                1, 0,
+                                1, 1
+                            )
+
+                            gd.colors.push(
+                                1, 1, 1,
+                                1, 1, 1,
+                                1, 1, 1
+                            )
+                        }
                     }
                 }
             }
         }
+
+        const m = new Mesh() //holds the meshes for each side
+
+        datamap.forEach(gd => {
+            const geometry = new BufferGeometry()
+            geometry.setAttribute('position', new BufferAttribute(new Float32Array(gd.vertices), 3))
+            geometry.setAttribute('uv', new BufferAttribute(new Float32Array(gd.uvs), 2))
+            geometry.setAttribute('color', new BufferAttribute(new Float32Array(gd.colors), 3))
+
+            const mesh = new Mesh(geometry, gd.material)
+            m.add(mesh)
+        })
 
         return m
     }
@@ -58,13 +110,13 @@ export class MeshGenerator {
         }
 
         const mapping = block.getNodeMapping()
-        mapping.forEach((nodeid: number, nodename: string) => {
+        Object.keys(mapping).forEach(nodename => {
             // create mesh for each node-type
             const nodedef = this.nodedefs.get(nodename)
             if (!nodedef) {
-                throw new Error("nodedef not found: " + nodename)
+                return
             }
-            const nm = this.createNodeMesh(nodeid, nodename, nodedef, block)
+            const nm = this.createNodeMesh(mapping[nodename], nodename, nodedef, block)
             if (nm) {
                 m.add(nm)
             }

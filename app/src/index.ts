@@ -27,9 +27,10 @@ nodedefmgr.load()
 .then(n => console.log(`Loaded ${n} mapblocks`))
 .then(() => {
     meshgen = new MeshGenerator(map, nodedefmgr.nodedefmap, matmgr)
-    //TODO: iterate over _all_ loaded mapblocks
-    const m = meshgen.createMesh(new Pos(0,0,0))
-    if (m) {
-        scene.addMesh(m)
-    }
+    map.world.forEach(mb => {
+        const m = meshgen.createMesh(mb.pos)
+        if (m) {
+            scene.addMesh(m)
+        }    
+    })
 })
