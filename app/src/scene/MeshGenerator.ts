@@ -38,6 +38,110 @@ export class MeshGenerator {
         return this.occludingNodeIDs.get(neighborId) == undefined
     }
 
+    createNodeMeshSide(pos: Pos, m: Material, side: NodeSide, gd: GeometryData) {
+        const default_uvs = [
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+        ]
+
+        const default_colors = [
+            1, 1, 1,
+            1, 1, 1,
+            1, 1, 1,
+            1, 1, 1,
+        ]
+
+        const o = gd.max_index
+        gd.max_index += 4
+        const default_indices_pos = [
+            o+0, o+1, o+2,
+            o+0, o+2, o+3
+        ]
+        const default_indices_neg = [
+            o+2, o+1, o+0,
+            o+3, o+2, o+0
+        ]
+
+        gd.uvs.push(...default_uvs)
+        gd.colors.push(...default_colors)
+
+        switch (side) {
+            case NodeSide.YP:
+                gd.vertices.push(
+                    pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y+0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                    pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                )
+        
+                gd.indices.push(...default_indices_pos)
+                break;
+            case NodeSide.YN:
+                gd.vertices.push(
+                    pos.x-0.5, pos.y-0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y-0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y-0.5, pos.z-0.5,
+                    pos.x-0.5, pos.y-0.5, pos.z-0.5,
+                )
+        
+                gd.indices.push(...default_indices_neg)
+                break;
+            case NodeSide.XP:
+                gd.vertices.push(
+                    pos.x+0.5, pos.y-0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y-0.5, pos.z-0.5,
+                    pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                    pos.x+0.5, pos.y+0.5, pos.z+0.5,
+                )
+        
+                gd.indices.push(...default_indices_pos)
+                break;
+            case NodeSide.XN:
+                gd.vertices.push(
+                    pos.x-0.5, pos.y-0.5, pos.z+0.5,
+                    pos.x-0.5, pos.y-0.5, pos.z-0.5,
+                    pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                    pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                )
+        
+                gd.indices.push(...default_indices_neg)
+                break;
+            case NodeSide.ZP:
+                gd.vertices.push(
+                    pos.x-0.5, pos.y-0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y-0.5, pos.z+0.5,
+                    pos.x+0.5, pos.y+0.5, pos.z+0.5,
+                    pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                )
+        
+                gd.indices.push(...default_indices_pos)
+                break;
+            case NodeSide.ZN:
+                gd.vertices.push(
+                    pos.x-0.5, pos.y-0.5, pos.z-0.5,
+                    pos.x+0.5, pos.y-0.5, pos.z-0.5,
+                    pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                    pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                )
+        
+                gd.indices.push(...default_indices_neg)
+                break;
+            }
+    }
+
+    createOrGetGeometryData(datamap: Map<string, GeometryData>, m: Material): GeometryData {
+        var gd: GeometryData
+        if (!datamap.has(m.uuid)) {
+            gd = new GeometryData(m)
+            datamap.set(m.uuid, gd)
+        } else {
+            gd = datamap.get(m.uuid)!
+        }
+        return gd
+    }
+
     createNodeMesh(nodeid: number, nodename: string, nodedef: NodeDefinition, block: Mapblock): Mesh|null {
         console.log(`Creating mesh for node ${nodename} and mapblock ${block.pos}`)
 
@@ -54,45 +158,52 @@ export class MeshGenerator {
                     }
 
                     if (this.isTransparent(block, new Pos(pos.x, pos.y+1, pos.z))) {
+                        const m = this.matmgr.getMaterial(nodename, NodeSide.YP)
+                        if (m) {
+                            const gd = this.createOrGetGeometryData(datamap, m)
+                            this.createNodeMeshSide(pos, m, NodeSide.YP, gd)
+                        }
+
+                    }
+
+                    if (this.isTransparent(block, new Pos(pos.x, pos.y-1, pos.z))) {
+                        const m = this.matmgr.getMaterial(nodename, NodeSide.YN)
+                        if (m) {
+                            const gd = this.createOrGetGeometryData(datamap, m)
+                            this.createNodeMeshSide(pos, m, NodeSide.YN, gd)
+                        }
+
+                    }
+
+                    if (this.isTransparent(block, new Pos(pos.x+1, pos.y, pos.z))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.XP)
                         if (m) {
-                            console.log(`Would render ${nodename}/${NodeSide.XP} on pos ${pos} in mapblock ${block.pos}`)
+                            const gd = this.createOrGetGeometryData(datamap, m)
+                            this.createNodeMeshSide(pos, m, NodeSide.XP, gd)
+                        }
+                    }
 
-                            var gd: GeometryData
-                            if (!datamap.has(m.uuid)) {
-                                gd = new GeometryData(m)
-                                datamap.set(m.uuid, gd)
-                            } else {
-                                gd = datamap.get(m.uuid)!
-                            }
+                    if (this.isTransparent(block, new Pos(pos.x-1, pos.y, pos.z))) {
+                        const m = this.matmgr.getMaterial(nodename, NodeSide.XN)
+                        if (m) {
+                            const gd = this.createOrGetGeometryData(datamap, m)
+                            this.createNodeMeshSide(pos, m, NodeSide.XN, gd)
+                        }
+                    }
 
-                            gd.vertices.push(
-                                pos.x-0.5, pos.y+0.5, pos.z+0.5,
-                                pos.x+0.5, pos.y+0.5, pos.z+0.5,
-                                pos.x+0.5, pos.y+0.5, pos.z-0.5,                            
-                                pos.x-0.5, pos.y+0.5, pos.z-0.5,
-                            )
+                    if (this.isTransparent(block, new Pos(pos.x, pos.y, pos.z+1))) {
+                        const m = this.matmgr.getMaterial(nodename, NodeSide.ZP)
+                        if (m) {
+                            const gd = this.createOrGetGeometryData(datamap, m)
+                            this.createNodeMeshSide(pos, m, NodeSide.ZP, gd)
+                        }
+                    }
 
-                            gd.uvs.push(
-                                0.0, 0.0,
-                                1.0, 0.0,
-                                1.0, 1.0,                            
-                                0.0, 1.0,
-                            )
-
-                            gd.colors.push(
-                                1, 1, 1,
-                                1, 1, 1,
-                                1, 1, 1,
-                                1, 1, 1,
-                            )
-
-                            const o = gd.max_index
-                            gd.max_index += 4
-                            gd.indices.push(
-                                o+0, o+1, o+2,
-                                o+0, o+2, o+3
-                            )
+                    if (this.isTransparent(block, new Pos(pos.x, pos.y, pos.z-1))) {
+                        const m = this.matmgr.getMaterial(nodename, NodeSide.ZN)
+                        if (m) {
+                            const gd = this.createOrGetGeometryData(datamap, m)
+                            this.createNodeMeshSide(pos, m, NodeSide.ZN, gd)
                         }
                     }
                 }
