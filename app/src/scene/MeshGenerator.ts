@@ -32,13 +32,42 @@ export class MeshGenerator {
 
     occludingNodeIDs = new Map<number, boolean>()
 
-    isTransparent(block: Mapblock, pos: Pos): boolean {
-        //TODO: neighboring mapblocks
+    isTransparent(block_pos: Pos, pos: Pos): boolean {
+        // neighboring mapblocks
+        if (pos.x < 0) {
+            const neighbor_pos = new Pos(block_pos.x-1, block_pos.y, block_pos.z)
+            return this.isTransparent(neighbor_pos, new Pos(pos.x+16, pos.y, pos.z))
+        }
+        if (pos.x > 15) {
+            const neighbor_pos = new Pos(block_pos.x+1, block_pos.y, block_pos.z)
+            return this.isTransparent(neighbor_pos, new Pos(pos.x-16, pos.y, pos.z))
+        }
+        if (pos.y < 0) {
+            const neighbor_pos = new Pos(block_pos.x, block_pos.y-1, block_pos.z)
+            return this.isTransparent(neighbor_pos, new Pos(pos.x, pos.y+16, pos.z))
+        }
+        if (pos.y > 15) {
+            const neighbor_pos = new Pos(block_pos.x, block_pos.y+1, block_pos.z)
+            return this.isTransparent(neighbor_pos, new Pos(pos.x, pos.y-16, pos.z))
+        }
+        if (pos.z < 0) {
+            const neighbor_pos = new Pos(block_pos.x, block_pos.y, block_pos.z-1)
+            return this.isTransparent(neighbor_pos, new Pos(pos.x, pos.y, pos.z+16))
+        }
+        if (pos.z > 15) {
+            const neighbor_pos = new Pos(block_pos.x, block_pos.y, block_pos.z+1)
+            return this.isTransparent(neighbor_pos, new Pos(pos.x, pos.y, pos.z-16))
+        }
+
+        const block = this.worldmap.getBlock(block_pos)
+        if (block == null) {
+            return true
+        }
         const neighborId = block.getNodeID(pos)
         return this.occludingNodeIDs.get(neighborId) == undefined
     }
 
-    createNodeMeshSide(pos: Pos, m: Material, side: NodeSide, gd: GeometryData) {
+    createNodeMeshSide(pos: Pos, side: NodeSide, gd: GeometryData) {
         const default_uvs = [
             0.0, 0.0,
             1.0, 0.0,
@@ -157,53 +186,53 @@ export class MeshGenerator {
                         continue
                     }
 
-                    if (this.isTransparent(block, new Pos(pos.x, pos.y+1, pos.z))) {
+                    if (this.isTransparent(block.pos, new Pos(pos.x, pos.y+1, pos.z))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.YP)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, m, NodeSide.YP, gd)
+                            this.createNodeMeshSide(pos, NodeSide.YP, gd)
                         }
 
                     }
 
-                    if (this.isTransparent(block, new Pos(pos.x, pos.y-1, pos.z))) {
+                    if (this.isTransparent(block.pos, new Pos(pos.x, pos.y-1, pos.z))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.YN)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, m, NodeSide.YN, gd)
+                            this.createNodeMeshSide(pos, NodeSide.YN, gd)
                         }
 
                     }
 
-                    if (this.isTransparent(block, new Pos(pos.x+1, pos.y, pos.z))) {
+                    if (this.isTransparent(block.pos, new Pos(pos.x+1, pos.y, pos.z))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.XP)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, m, NodeSide.XP, gd)
+                            this.createNodeMeshSide(pos, NodeSide.XP, gd)
                         }
                     }
 
-                    if (this.isTransparent(block, new Pos(pos.x-1, pos.y, pos.z))) {
+                    if (this.isTransparent(block.pos, new Pos(pos.x-1, pos.y, pos.z))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.XN)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, m, NodeSide.XN, gd)
+                            this.createNodeMeshSide(pos, NodeSide.XN, gd)
                         }
                     }
 
-                    if (this.isTransparent(block, new Pos(pos.x, pos.y, pos.z+1))) {
+                    if (this.isTransparent(block.pos, new Pos(pos.x, pos.y, pos.z+1))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.ZP)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, m, NodeSide.ZP, gd)
+                            this.createNodeMeshSide(pos, NodeSide.ZP, gd)
                         }
                     }
 
-                    if (this.isTransparent(block, new Pos(pos.x, pos.y, pos.z-1))) {
+                    if (this.isTransparent(block.pos, new Pos(pos.x, pos.y, pos.z-1))) {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.ZN)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, m, NodeSide.ZN, gd)
+                            this.createNodeMeshSide(pos, NodeSide.ZN, gd)
                         }
                     }
                 }
