@@ -67,7 +67,7 @@ export class MeshGenerator {
         return this.occludingNodeIDs.get(neighborId) == undefined
     }
 
-    createNodeMeshSide(pos: Pos, side: NodeSide, gd: GeometryData) {
+    createNodeMeshSide(block: Mapblock, pos: Pos, side: NodeSide, gd: GeometryData) {
         const default_uvs = [
             0.0, 0.0,
             1.0, 0.0,
@@ -75,12 +75,13 @@ export class MeshGenerator {
             0.0, 1.0,
         ]
 
-        const default_colors = [
-            1, 1, 1,
-            1, 1, 1,
-            1, 1, 1,
-            1, 1, 1,
-        ]
+        const param1 = block.getParam1(pos)
+        const l = (param1 / 15) + 0.3
+
+        const default_colors = []
+        for (let i=0; i<12; i++) {
+            default_colors.push(l)
+        }
 
         const o = gd.max_index
         gd.max_index += 4
@@ -190,7 +191,7 @@ export class MeshGenerator {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.YP)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, NodeSide.YP, gd)
+                            this.createNodeMeshSide(block, pos, NodeSide.YP, gd)
                         }
 
                     }
@@ -199,7 +200,7 @@ export class MeshGenerator {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.YN)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, NodeSide.YN, gd)
+                            this.createNodeMeshSide(block, pos, NodeSide.YN, gd)
                         }
 
                     }
@@ -208,7 +209,7 @@ export class MeshGenerator {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.XP)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, NodeSide.XP, gd)
+                            this.createNodeMeshSide(block, pos, NodeSide.XP, gd)
                         }
                     }
 
@@ -216,7 +217,7 @@ export class MeshGenerator {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.XN)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, NodeSide.XN, gd)
+                            this.createNodeMeshSide(block, pos, NodeSide.XN, gd)
                         }
                     }
 
@@ -224,7 +225,7 @@ export class MeshGenerator {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.ZP)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, NodeSide.ZP, gd)
+                            this.createNodeMeshSide(block, pos, NodeSide.ZP, gd)
                         }
                     }
 
@@ -232,7 +233,7 @@ export class MeshGenerator {
                         const m = this.matmgr.getMaterial(nodename, NodeSide.ZN)
                         if (m) {
                             const gd = this.createOrGetGeometryData(datamap, m)
-                            this.createNodeMeshSide(pos, NodeSide.ZN, gd)
+                            this.createNodeMeshSide(block, pos, NodeSide.ZN, gd)
                         }
                     }
                 }

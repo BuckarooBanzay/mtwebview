@@ -4,7 +4,6 @@ import { NodedefManager } from "./nodedefs/NodedefManager"
 import { Scene } from "./scene/Scene"
 import { MaterialManager } from "./scene/MaterialManager"
 import { MeshGenerator } from "./scene/MeshGenerator"
-import { Pos } from "./util/Pos"
 
 const e = document.getElementById("scene") as HTMLCanvasElement
 const scene = new Scene(e)
