@@ -21,9 +21,13 @@ export class MaterialManager {
         return `${nodename}/${side}`
     }
 
-    createTexture(nodename: string, tiledef: string, side: NodeSide): Promise<void> {
+    createTexture(nodename: string, tiledef: TileDefinition, side: NodeSide): Promise<void> {
         //TODO: proper tiledef parser
-        const parts = tiledef.split("^")
+        if (!tiledef.name) {
+            return Promise.resolve()
+        }
+
+        const parts = tiledef.name.split("^")
         const key = this.getCacheString(nodename, side)
 
         return this.mm.getMedia(parts[0])
@@ -50,12 +54,12 @@ export class MaterialManager {
     load(): Promise<number> {
         const promises = new Array<Promise<void>>()
         this.ndefs.forEach(ndef => {
-            promises.push(this.createTexture(ndef.name, ndef.tiles[0].name, NodeSide.YP))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[1].name, NodeSide.YN))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[2].name, NodeSide.XP))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[3].name, NodeSide.XN))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[4].name, NodeSide.ZP))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[5].name, NodeSide.ZN))
+            promises.push(this.createTexture(ndef.name, ndef.tiles[0], NodeSide.YP))
+            promises.push(this.createTexture(ndef.name, ndef.tiles[1], NodeSide.YN))
+            promises.push(this.createTexture(ndef.name, ndef.tiles[2], NodeSide.XP))
+            promises.push(this.createTexture(ndef.name, ndef.tiles[3], NodeSide.XN))
+            promises.push(this.createTexture(ndef.name, ndef.tiles[4], NodeSide.ZP))
+            promises.push(this.createTexture(ndef.name, ndef.tiles[5], NodeSide.ZN))
         })
 
         return Promise.all(promises)

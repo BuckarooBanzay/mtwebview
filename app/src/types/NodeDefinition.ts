@@ -1,6 +1,7 @@
 
 type TileDefinition = {
     name: string
+    image: string
     tileable_vertical: boolean
 }
 

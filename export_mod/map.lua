@@ -36,7 +36,7 @@ local function export_mapblock(mb_pos, manifest)
     else
         local pos_str = minetest.pos_to_string(mb_pos)
         table.insert(manifest, {
-            filename = pos_str .. ".json",
+            filename = "mapblocks/" .. pos_str .. ".json",
             pos = mb_pos
         })
         return mtwebview.export_json(
@@ -57,7 +57,9 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
             for z=mb_pos1.z,mb_pos2.z do
                 local pos = {x=x, y=y, z=z}
                 size = size + export_mapblock(pos, manifest)
-                count = count + 1
+                if size > 0 then
+                    count = count + 1
+                end
             end
         end
     end
