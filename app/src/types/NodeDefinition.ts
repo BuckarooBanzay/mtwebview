@@ -11,5 +11,6 @@ type NodeDefinition = {
     light_source: number
     paramtype: string
     paramtype2: string
+    // +Y, -Y, +X, -X, +Z, -Z
     tiles: TileDefinition[]
 }
