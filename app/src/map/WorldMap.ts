@@ -1,16 +1,17 @@
 import { MapblockPos, Manifest } from "../types/Manifest";
 import { MapblockData } from "../types/MapblockData";
+import { Mapblock } from "./Mapblock";
 
 export class WorldMap {
     constructor(private baseurl: string){}
 
-    world = new Map<string, MapblockData>()
+    world = new Map<string, Mapblock>()
 
     formatPos(pos: MapblockPos): string {
         return `${pos.x}/${pos.y}/${pos.z}`
     }
 
-    getBlockData(pos: MapblockPos): MapblockData|null {
+    getBlockData(pos: MapblockPos): Mapblock|null {
         const key = this.formatPos(pos)
         const b = this.world.get(key)
         return b == undefined ? null : b
@@ -28,7 +29,7 @@ export class WorldMap {
                 .then(b => b as MapblockData)
                 .then(b => {
                     const key = this.formatPos(entry.pos)
-                    this.world.set(key, b)
+                    this.world.set(key, new Mapblock(b))
                 })
                 promises.push(p)
             })
