@@ -10,6 +10,8 @@ class GeometryData {
     vertices = new Array<number>
     uvs = new Array<number>
     colors = new Array<number>
+    indices = new Array<number>
+    max_index = 0
 }
 
 export class MeshGenerator {
@@ -67,20 +69,14 @@ export class MeshGenerator {
                             gd.vertices.push(
                                 pos.x-0.5, pos.y+0.5, pos.z+0.5,
                                 pos.x+0.5, pos.y+0.5, pos.z+0.5,
-                                pos.x+0.5, pos.y+0.5, pos.z-0.5,
-                            
-                                pos.x-0.5, pos.y+0.5, pos.z+0.5,
-                                pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                                pos.x+0.5, pos.y+0.5, pos.z-0.5,                            
                                 pos.x-0.5, pos.y+0.5, pos.z-0.5,
                             )
 
                             gd.uvs.push(
                                 0.0, 0.0,
                                 1.0, 0.0,
-                                1.0, 1.0,
-                            
-                                0.0, 0.0,
-                                1.0, 1.0,
+                                1.0, 1.0,                            
                                 0.0, 1.0,
                             )
 
@@ -88,10 +84,14 @@ export class MeshGenerator {
                                 1, 1, 1,
                                 1, 1, 1,
                                 1, 1, 1,
+                                1, 1, 1,
+                            )
 
-                                1, 1, 1,
-                                1, 1, 1,
-                                1, 1, 1,
+                            const o = gd.max_index
+                            gd.max_index += 4
+                            gd.indices.push(
+                                o+0, o+1, o+2,
+                                o+0, o+2, o+3
                             )
                         }
                     }
@@ -103,6 +103,7 @@ export class MeshGenerator {
 
         datamap.forEach(gd => {
             const geometry = new BufferGeometry()
+            geometry.setIndex(gd.indices)
             geometry.setAttribute('position', new BufferAttribute(new Float32Array(gd.vertices), 3))
             geometry.setAttribute('uv', new BufferAttribute(new Float32Array(gd.uvs), 2))
             geometry.setAttribute('color', new BufferAttribute(new Float32Array(gd.colors), 3))
