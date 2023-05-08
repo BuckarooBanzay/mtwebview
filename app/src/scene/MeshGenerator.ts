@@ -75,14 +75,6 @@ export class MeshGenerator {
             0.0, 1.0,
         ]
 
-        const param1 = block.getParam1(pos)
-        const l = (param1 / 15) + 0.3
-
-        const default_colors = []
-        for (let i=0; i<12; i++) {
-            default_colors.push(l)
-        }
-
         const o = gd.max_index
         gd.max_index += 4
         const default_indices_pos = [
@@ -95,7 +87,7 @@ export class MeshGenerator {
         ]
 
         gd.uvs.push(...default_uvs)
-        gd.colors.push(...default_colors)
+        let lightnode_pos: Pos
 
         switch (side) {
             case NodeSide.YP:
@@ -107,6 +99,7 @@ export class MeshGenerator {
                 )
         
                 gd.indices.push(...default_indices_pos)
+                lightnode_pos = new Pos(pos.x, pos.y+1, pos.z)
                 break;
             case NodeSide.YN:
                 gd.vertices.push(
@@ -117,6 +110,7 @@ export class MeshGenerator {
                 )
         
                 gd.indices.push(...default_indices_neg)
+                lightnode_pos = new Pos(pos.x, pos.y-1, pos.z)
                 break;
             case NodeSide.XP:
                 gd.vertices.push(
@@ -127,6 +121,7 @@ export class MeshGenerator {
                 )
         
                 gd.indices.push(...default_indices_pos)
+                lightnode_pos = new Pos(pos.x+1, pos.y, pos.z)
                 break;
             case NodeSide.XN:
                 gd.vertices.push(
@@ -137,6 +132,7 @@ export class MeshGenerator {
                 )
         
                 gd.indices.push(...default_indices_neg)
+                lightnode_pos = new Pos(pos.x-1, pos.y, pos.z)
                 break;
             case NodeSide.ZP:
                 gd.vertices.push(
@@ -147,6 +143,7 @@ export class MeshGenerator {
                 )
         
                 gd.indices.push(...default_indices_pos)
+                lightnode_pos = new Pos(pos.x, pos.y, pos.z+1)
                 break;
             case NodeSide.ZN:
                 gd.vertices.push(
@@ -157,8 +154,19 @@ export class MeshGenerator {
                 )
         
                 gd.indices.push(...default_indices_neg)
+                lightnode_pos = new Pos(pos.x, pos.y, pos.z-1)
                 break;
-            }
+        }
+
+        const param1 = block.getParam1(lightnode_pos)
+        const l = (param1 / 15) + 0.1
+
+        const default_colors = []
+        for (let i=0; i<12; i++) {
+            default_colors.push(l)
+        }
+        gd.colors.push(...default_colors)
+
     }
 
     createOrGetGeometryData(datamap: Map<string, GeometryData>, m: Material): GeometryData {
