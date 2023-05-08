@@ -92,10 +92,10 @@ export class MeshGenerator {
         switch (side) {
             case NodeSide.YP:
                 gd.vertices.push(
-                    pos.x-0.5, pos.y+0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y+0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y+0.5, pos.z-0.5,
-                    pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y+0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y+0.5, pos.z-0.5,
                 )
         
                 gd.indices.push(...default_indices_pos)
@@ -103,43 +103,43 @@ export class MeshGenerator {
                 break;
             case NodeSide.YN:
                 gd.vertices.push(
-                    pos.x-0.5, pos.y-0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y-0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y-0.5, pos.z-0.5,
-                    pos.x-0.5, pos.y-0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y-0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y-0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y-0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y-0.5, pos.z-0.5,
                 )
         
                 gd.indices.push(...default_indices_neg)
                 lightnode_pos = new Pos(pos.x, pos.y-1, pos.z)
                 break;
-            case NodeSide.XP:
+            case NodeSide.XN: //inverted x-axis
                 gd.vertices.push(
-                    pos.x+0.5, pos.y-0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y-0.5, pos.z-0.5,
-                    pos.x+0.5, pos.y+0.5, pos.z-0.5,
-                    pos.x+0.5, pos.y+0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y-0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y-0.5, pos.z-0.5,
+                    16-pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                    16-pos.x+0.5, pos.y+0.5, pos.z+0.5,
                 )
         
                 gd.indices.push(...default_indices_pos)
-                lightnode_pos = new Pos(pos.x+1, pos.y, pos.z)
+                lightnode_pos = new Pos(pos.x-1, pos.y, pos.z)
                 break;
-            case NodeSide.XN:
+            case NodeSide.XP: //inverted x-axis
                 gd.vertices.push(
-                    pos.x-0.5, pos.y-0.5, pos.z+0.5,
-                    pos.x-0.5, pos.y-0.5, pos.z-0.5,
-                    pos.x-0.5, pos.y+0.5, pos.z-0.5,
-                    pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                    16-pos.x-0.5, pos.y-0.5, pos.z+0.5,
+                    16-pos.x-0.5, pos.y-0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y+0.5, pos.z+0.5,
                 )
         
                 gd.indices.push(...default_indices_neg)
-                lightnode_pos = new Pos(pos.x-1, pos.y, pos.z)
+                lightnode_pos = new Pos(pos.x+1, pos.y, pos.z)
                 break;
             case NodeSide.ZP:
                 gd.vertices.push(
-                    pos.x-0.5, pos.y-0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y-0.5, pos.z+0.5,
-                    pos.x+0.5, pos.y+0.5, pos.z+0.5,
-                    pos.x-0.5, pos.y+0.5, pos.z+0.5,
+                    16-pos.x-0.5, pos.y-0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y-0.5, pos.z+0.5,
+                    16-pos.x+0.5, pos.y+0.5, pos.z+0.5,
+                    16-pos.x-0.5, pos.y+0.5, pos.z+0.5,
                 )
         
                 gd.indices.push(...default_indices_pos)
@@ -147,10 +147,10 @@ export class MeshGenerator {
                 break;
             case NodeSide.ZN:
                 gd.vertices.push(
-                    pos.x-0.5, pos.y-0.5, pos.z-0.5,
-                    pos.x+0.5, pos.y-0.5, pos.z-0.5,
-                    pos.x+0.5, pos.y+0.5, pos.z-0.5,
-                    pos.x-0.5, pos.y+0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y-0.5, pos.z-0.5,
+                    16-pos.x+0.5, pos.y-0.5, pos.z-0.5,
+                    16-pos.x+0.5, pos.y+0.5, pos.z-0.5,
+                    16-pos.x-0.5, pos.y+0.5, pos.z-0.5,
                 )
         
                 gd.indices.push(...default_indices_neg)

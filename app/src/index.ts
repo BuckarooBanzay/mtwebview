@@ -29,9 +29,11 @@ nodedefmgr.load()
     map.world.forEach(mb => {
         let m = meshgen.createMesh(mb.pos)
         if (m) {
-            m = m.translateX(mb.pos.x * 16)
+            m = m.translateX(mb.pos.x * -16) // inverted x-axis
                 .translateY(mb.pos.y * 16)
                 .translateZ(mb.pos.z * 16)
+            
+            
 
             scene.addMesh(m)
         }    
