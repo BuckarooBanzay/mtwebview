@@ -9,6 +9,9 @@ export class WorldMap {
 
     world = new Map<string, Mapblock>()
 
+    min_block_pos = new Pos(0,0,0)
+    max_block_pos = new Pos(0,0,0)
+
     formatPos(pos: MapblockPos): string {
         return `${pos.x}/${pos.y}/${pos.z}`
     }
@@ -46,6 +49,13 @@ export class WorldMap {
                 .then(r => r.json())
                 .then(b => b as MapblockData)
                 .then(b => {
+                    this.max_block_pos.x = Math.max(entry.pos.x, this.max_block_pos.x)
+                    this.min_block_pos.x = Math.min(entry.pos.x, this.min_block_pos.x)
+                    this.max_block_pos.y = Math.max(entry.pos.y, this.max_block_pos.y)
+                    this.min_block_pos.y = Math.min(entry.pos.y, this.min_block_pos.y)
+                    this.max_block_pos.z = Math.max(entry.pos.z, this.max_block_pos.z)
+                    this.min_block_pos.z = Math.min(entry.pos.z, this.min_block_pos.z)
+
                     const key = this.formatPos(entry.pos)
                     this.world.set(key, new Mapblock(b, new Pos(entry.pos.x, entry.pos.y, entry.pos.z)))
                 })
