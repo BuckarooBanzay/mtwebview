@@ -1,9 +1,9 @@
 import { BufferAttribute, BufferGeometry, Material, Mesh } from "three";
-import { WorldMap } from "../map/WorldMap";
-import { Pos } from "../util/Pos";
-import { MaterialManager } from "./MaterialManager";
-import { Mapblock } from "../map/Mapblock";
-import { NodeSide } from "../types/NodeSide";
+import { WorldMap } from "../../map/WorldMap";
+import { Pos } from "../../util/Pos";
+import { MaterialManager } from "../MaterialManager";
+import { Mapblock } from "../../map/Mapblock";
+import { NodeSide } from "../../types/NodeSide";
 
 class GeometryData {
     constructor(public material: Material){}
@@ -201,7 +201,6 @@ export class MeshGenerator {
                             const gd = this.createOrGetGeometryData(datamap, m)
                             this.createNodeMeshSide(block, pos, NodeSide.YP, gd)
                         }
-
                     }
 
                     if (this.isTransparent(block.pos, new Pos(pos.x, pos.y-1, pos.z))) {
@@ -210,7 +209,6 @@ export class MeshGenerator {
                             const gd = this.createOrGetGeometryData(datamap, m)
                             this.createNodeMeshSide(block, pos, NodeSide.YN, gd)
                         }
-
                     }
 
                     if (this.isTransparent(block.pos, new Pos(pos.x+1, pos.y, pos.z))) {

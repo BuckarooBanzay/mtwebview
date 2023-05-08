@@ -11,12 +11,23 @@ local function normalize_tiledef(def)
     end
 end
 
+local exported_drawtypes = {
+    ["normal"] = true,
+    ["liquid"] = true,
+    ["flowingliquid"] = true,
+    ["glasslike"] = true,
+    ["glasslike_framed"] = true,
+    ["glasslike_framed_optional"] = true,
+    ["allfaces"] = true,
+    ["allfaces_optional"] = true
+}
+
 function mtwebview.export_nodedefs()
     local count = 0
     local nodedefs = {}
 
     for name, def in pairs(minetest.registered_nodes) do
-        if not def.drawtype or def.drawtype == "normal" then
+        if exported_drawtypes[def.drawtype] then
             local entry = {
                 name = name,
                 id = minetest.get_content_id(name),

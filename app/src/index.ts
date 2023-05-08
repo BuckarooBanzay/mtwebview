@@ -3,7 +3,7 @@ import { MediaManager } from "./media/MediaManager"
 import { NodedefManager } from "./nodedefs/NodedefManager"
 import { Scene } from "./scene/Scene"
 import { MaterialManager } from "./scene/MaterialManager"
-import { MeshGenerator } from "./scene/MeshGenerator"
+import { MeshGenerator } from "./scene/meshgenerator/MeshGenerator"
 
 const e = document.getElementById("scene") as HTMLCanvasElement
 const scene = new Scene(e)

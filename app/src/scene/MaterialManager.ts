@@ -1,4 +1,4 @@
-import { FrontSide, Material, MeshBasicMaterial, NearestFilter, RepeatWrapping, Texture, TextureLoader } from "three";
+import { DoubleSide, FrontSide, Material, MeshBasicMaterial, NearestFilter, RepeatWrapping, Texture, TextureLoader } from "three";
 import { MediaManager } from "../media/MediaManager";
 import { NodeSide } from "../types/NodeSide";
 import { UnknownNodePNG } from "./builtin";
@@ -21,14 +21,14 @@ export class MaterialManager {
         return `${nodename}/${side}`
     }
 
-    createTexture(nodename: string, tiledef: TileDefinition, side: NodeSide): Promise<void> {
+    createTexture(ndef: NodeDefinition, tiledef: TileDefinition, side: NodeSide): Promise<void> {
         //TODO: proper tiledef parser
         if (!tiledef.name) {
             return Promise.resolve()
         }
 
         const parts = tiledef.name.split("^")
-        const key = this.getCacheString(nodename, side)
+        const key = this.getCacheString(ndef.name, side)
 
         return this.mm.getMedia(parts[0])
         .then(blob => blob ? blob : new Blob([Uint8Array.from(UnknownNodePNG)], {type: "octet/stream"}))
@@ -46,6 +46,11 @@ export class MaterialManager {
                 wireframe: false,
                 side: FrontSide
             })
+
+            if (ndef.drawtype == "allfaces" || ndef.drawtype == "allfaces_optional") {
+                material.transparent = true
+                material.side = DoubleSide
+            }
             
             this.cache.set(key, material)
         })
@@ -54,12 +59,12 @@ export class MaterialManager {
     load(): Promise<number> {
         const promises = new Array<Promise<void>>()
         this.ndefs.forEach(ndef => {
-            promises.push(this.createTexture(ndef.name, ndef.tiles[0], NodeSide.YP))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[1], NodeSide.YN))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[2], NodeSide.XP))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[3], NodeSide.XN))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[4], NodeSide.ZP))
-            promises.push(this.createTexture(ndef.name, ndef.tiles[5], NodeSide.ZN))
+            promises.push(this.createTexture(ndef, ndef.tiles[0], NodeSide.YP))
+            promises.push(this.createTexture(ndef, ndef.tiles[1], NodeSide.YN))
+            promises.push(this.createTexture(ndef, ndef.tiles[2], NodeSide.XP))
+            promises.push(this.createTexture(ndef, ndef.tiles[3], NodeSide.XN))
+            promises.push(this.createTexture(ndef, ndef.tiles[4], NodeSide.ZP))
+            promises.push(this.createTexture(ndef, ndef.tiles[5], NodeSide.ZN))
         })
 
         return Promise.all(promises)
