@@ -38,8 +38,11 @@ nodedefmgr.load()
     min_pos.multiply(BS)
 
     console.log(`Creating mesh from: ${min_pos} to ${max_pos}`)
+    const start = Date.now()
     let m = meshgen.createMesh(min_pos, max_pos)
     if (m) {
         scene.addMesh(m)
     }
+    const diff = Date.now() - start
+    console.log(`Mesh generated in ${diff} ms`)
 })
