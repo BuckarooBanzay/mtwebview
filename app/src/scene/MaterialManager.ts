@@ -13,7 +13,7 @@ function blobToDataURL(blob: Blob): Promise<string> {
 }
 
 export class MaterialManager {
-    constructor(public ndefs: Map<string, NodeDefinition>, public mm: MediaManager) {}
+    constructor(public ndefs: Map<string, NodeDefinition>, public mm: MediaManager, private wireframe: boolean) {}
 
     cache = new Map<string, Material>()
 
@@ -44,13 +44,16 @@ export class MaterialManager {
                 map: texture,
                 vertexColors: true,
                 wireframe: false,
-                side: FrontSide
+                side: FrontSide,
             })
 
             if (ndef.drawtype == "allfaces" || ndef.drawtype == "allfaces_optional") {
                 material.transparent = true
                 material.side = DoubleSide
             }
+
+            material.wireframe = this.wireframe;
+            
             
             this.cache.set(key, material)
         })

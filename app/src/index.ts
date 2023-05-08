@@ -21,7 +21,7 @@ const nodedefmgr = new NodedefManager("export/nodedefs.json")
 nodedefmgr.load()
 .then(count => console.log(`Loaded ${count} nodedefs`))
 .then(() => {
-    matmgr = new MaterialManager(nodedefmgr.nodedefmap, mm)
+    matmgr = new MaterialManager(nodedefmgr.nodedefmap, mm, false)
     return matmgr.load()
 })
 .then(n => console.log(`Created ${n} materials`))

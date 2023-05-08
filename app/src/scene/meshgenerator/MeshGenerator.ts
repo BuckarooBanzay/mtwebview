@@ -5,6 +5,7 @@ import { MaterialManager } from "../MaterialManager";
 import { NodeSide } from "../../types/NodeSide";
 import { DrawType } from "./drawtype/DrawType";
 import { BufferGeometryHelper } from "./BufferGeometryHelper";
+import { MapNode } from "../../types/MapNode";
 
 export class MeshGenerator {
     constructor(
@@ -54,34 +55,48 @@ export class MeshGenerator {
         // material-uuid -> BufferGeometryHelper
         const datamap = new Map<string, BufferGeometryHelper>()
 
+        const sidedirs = {
+            [NodeSide.XP]: new Pos(1,0,0),
+            [NodeSide.XN]: new Pos(-1,0,0),
+            [NodeSide.YP]: new Pos(0,1,0),
+            [NodeSide.YN]: new Pos(0,-1,0),
+            [NodeSide.ZP]: new Pos(0,0,1),
+            [NodeSide.ZN]: new Pos(0,0,-1),
+        }
+
         for (let z=from.z; z<to.z; z++) {
             for (let y=from.y; y<to.y; y++) {
-                for (let x=from.x; x<to.x; x++) {
-                    const pos = new Pos(x,y,z)
-                    const node = this.worldmap.getNode(pos)
+                for (let n=0; n<6; n++){
+                    const side = n as NodeSide
+                    const neighbor_dir = sidedirs[side]
 
-                    if (node == null) {
-                        // skip node
-                        continue
-                    }
+                    let last_node: MapNode
 
-                    const nodedef = this.nodedefs.get(node.name)
-                    if (nodedef == null) {
-                        continue
-                    }
-                    if (nodedef.drawtype != "normal" && nodedef.drawtype != "allfaces_optional") {
-                        continue
-                    }
+                    for (let x=from.x; x<to.x; x++) {
+                        const pos = new Pos(x,y,z)
+                        const node = this.worldmap.getNode(pos)
 
-                    const checkside = (dir: Pos, side: NodeSide) => {
+                        if (node == null) {
+                            // skip node
+                            continue
+                        }
+
+                        const nodedef = this.nodedefs.get(node.name)
+                        if (nodedef == null) {
+                            continue
+                        }
+                        if (nodedef.drawtype != "normal" && nodedef.drawtype != "allfaces_optional") {
+                            continue
+                        }
+
                         const neighbor_pos = pos.copy()
-                        neighbor_pos.add(dir)
+                        neighbor_pos.add(neighbor_dir)
                         if (!this.isTransparent(neighbor_pos)){
-                            return
+                            continue
                         }
                         const m = this.matmgr.getMaterial(node.name, side)
                         if (!m){
-                            return
+                            continue
                         }
                         const neighbor_node = this.worldmap.getNode(neighbor_pos)
                         let light = 1
@@ -92,13 +107,6 @@ export class MeshGenerator {
                         const gd = this.createOrGetBufferGeometryHelper(datamap, m)
                         gd.createNodeMeshSide(pos, side, light)
                     }
-
-                    checkside(new Pos(0, 1, 0), NodeSide.YP)
-                    checkside(new Pos(0, -1, 0), NodeSide.YN)
-                    checkside(new Pos(1, 0, 0), NodeSide.XP)
-                    checkside(new Pos(-1, 0, 0), NodeSide.XN)
-                    checkside(new Pos(0, 0, 1), NodeSide.ZP)
-                    checkside(new Pos(0, 0, -1), NodeSide.ZN)
                 }
             }
         }
