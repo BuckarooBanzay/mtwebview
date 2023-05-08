@@ -70,7 +70,9 @@ export class MeshGenerator {
                     const side = n as NodeSide
                     const neighbor_dir = sidedirs[side]
 
-                    let last_node: MapNode
+                    let last_node: MapNode|null = null
+                    let last_light: number|null = null
+                    let last_material: Material|null = null
 
                     for (let x=from.x; x<to.x; x++) {
                         const pos = new Pos(x,y,z)
@@ -78,24 +80,29 @@ export class MeshGenerator {
 
                         if (node == null) {
                             // skip node
+                            last_node = null
                             continue
                         }
 
                         const nodedef = this.nodedefs.get(node.name)
                         if (nodedef == null) {
+                            last_node = null
                             continue
                         }
                         if (nodedef.drawtype != "normal" && nodedef.drawtype != "allfaces_optional") {
+                            last_node = null
                             continue
                         }
 
                         const neighbor_pos = pos.copy()
                         neighbor_pos.add(neighbor_dir)
                         if (!this.isTransparent(neighbor_pos)){
+                            last_node = null
                             continue
                         }
                         const m = this.matmgr.getMaterial(node.name, side)
                         if (!m){
+                            last_node = null
                             continue
                         }
                         const neighbor_node = this.worldmap.getNode(neighbor_pos)
@@ -105,7 +112,24 @@ export class MeshGenerator {
                         }
 
                         const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                        gd.createNodeMeshSide(pos, side, light)
+
+                        if (last_node != null &&
+                            last_material == m &&
+                            last_light == light &&
+                            last_node.id == node.id &&
+                            last_node.param1 == node.param1 &&
+                            last_node.param2 == node.param2 &&
+                            (side == NodeSide.YP || side == NodeSide.YN || side == NodeSide.ZN || side == NodeSide.ZP)) {
+                                // expand previous vertices to x+ direction
+                                gd.expandLastNodeMeshSideXP(side)
+                            } else {
+                                // create new vertices
+                                gd.createNodeMeshSide(pos, side, light)
+                            }
+
+                        last_node = node
+                        last_light = light
+                        last_material = m
                     }
                 }
             }
