@@ -54,9 +54,9 @@ export class MeshGenerator {
         // material-uuid -> BufferGeometryHelper
         const datamap = new Map<string, BufferGeometryHelper>()
 
-        for (let x=from.x; x<to.x; x++) {
+        for (let z=from.z; z<to.z; z++) {
             for (let y=from.y; y<to.y; y++) {
-                for (let z=from.z; z<to.z; z++) {
+                for (let x=from.x; x<to.x; x++) {
                     const pos = new Pos(x,y,z)
                     const node = this.worldmap.getNode(pos)
 
