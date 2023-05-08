@@ -5,6 +5,8 @@ services:
   image: registry.gitlab.com/minetest/minetest/server:5.7.0
   entrypoint: ["minetestserver", "--config", "/minetest.conf"]
   user: root
+  ports:
+    - 30000:30000/udp
   volumes:
     - "./export_mod:/root/.minetest/worlds/world/worldmods/mtwebview/"
     - "./export:/root/.minetest/worlds/world/mtwebview/"
