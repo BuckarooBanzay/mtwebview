@@ -73,53 +73,32 @@ export class MeshGenerator {
                         continue
                     }
 
-                    if (this.isTransparent(new Pos(pos.x, pos.y+1, pos.z))) {
-                        const m = this.matmgr.getMaterial(node.name, NodeSide.YP)
-                        if (m) {
-                            const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                            gd.createNodeMeshSide(pos, NodeSide.YP)
+                    const checkside = (dir: Pos, side: NodeSide) => {
+                        const neighbor_pos = pos.copy()
+                        neighbor_pos.add(dir)
+                        if (!this.isTransparent(neighbor_pos)){
+                            return
                         }
+                        const m = this.matmgr.getMaterial(node.name, side)
+                        if (!m){
+                            return
+                        }
+                        const neighbor_node = this.worldmap.getNode(neighbor_pos)
+                        let light = 1
+                        if (neighbor_node){
+                            light = (neighbor_node.param1) / 15
+                        }
+
+                        const gd = this.createOrGetBufferGeometryHelper(datamap, m)
+                        gd.createNodeMeshSide(pos, side, light)
                     }
 
-                    if (this.isTransparent(new Pos(pos.x, pos.y-1, pos.z))) {
-                        const m = this.matmgr.getMaterial(node.name, NodeSide.YN)
-                        if (m) {
-                            const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                            gd.createNodeMeshSide(pos, NodeSide.YN)
-                        }
-                    }
-
-                    if (this.isTransparent(new Pos(pos.x+1, pos.y, pos.z))) {
-                        const m = this.matmgr.getMaterial(node.name, NodeSide.XP)
-                        if (m) {
-                            const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                            gd.createNodeMeshSide(pos, NodeSide.XP)
-                        }
-                    }
-
-                    if (this.isTransparent(new Pos(pos.x-1, pos.y, pos.z))) {
-                        const m = this.matmgr.getMaterial(node.name, NodeSide.XN)
-                        if (m) {
-                            const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                            gd.createNodeMeshSide(pos, NodeSide.XN)
-                        }
-                    }
-
-                    if (this.isTransparent(new Pos(pos.x, pos.y, pos.z+1))) {
-                        const m = this.matmgr.getMaterial(node.name, NodeSide.ZP)
-                        if (m) {
-                            const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                            gd.createNodeMeshSide(pos, NodeSide.ZP)
-                        }
-                    }
-
-                    if (this.isTransparent(new Pos(pos.x, pos.y, pos.z-1))) {
-                        const m = this.matmgr.getMaterial(node.name, NodeSide.ZN)
-                        if (m) {
-                            const gd = this.createOrGetBufferGeometryHelper(datamap, m)
-                            gd.createNodeMeshSide(pos, NodeSide.ZN)
-                        }
-                    }
+                    checkside(new Pos(0, 1, 0), NodeSide.YP)
+                    checkside(new Pos(0, -1, 0), NodeSide.YN)
+                    checkside(new Pos(1, 0, 0), NodeSide.XP)
+                    checkside(new Pos(-1, 0, 0), NodeSide.XN)
+                    checkside(new Pos(0, 0, 1), NodeSide.ZP)
+                    checkside(new Pos(0, 0, -1), NodeSide.ZN)
                 }
             }
         }

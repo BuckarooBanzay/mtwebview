@@ -8,8 +8,8 @@ dofile(MP .. "/nodedefs.lua")
 dofile(MP .. "/textures.lua")
 dofile(MP .. "/map.lua")
 
-local mb_pos1 = vector.new(-3, -2, -3)
-local mb_pos2 = vector.new(3, 5, 3)
+local mb_pos1 = vector.new(-4, -2, -4)
+local mb_pos2 = vector.new(4, 5, 4)
 
 if minetest.settings:get_bool("export_mod_autoexport") then
     minetest.register_on_mods_loaded(function()

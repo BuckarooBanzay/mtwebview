@@ -12,7 +12,7 @@ export class BufferGeometryHelper {
     max_index = 0
     indices = new Array<number>()
 
-    createNodeMeshSide(pos: Pos, side: NodeSide) {
+    createNodeMeshSide(pos: Pos, side: NodeSide, light: number) {
         // inverted gl/canvas position
         const gl_pos = new Pos(pos.x*-1, pos.y, pos.z)
 
@@ -99,11 +99,9 @@ export class BufferGeometryHelper {
                 break;
         }
 
-        const l = 1
-
         const default_colors = []
         for (let i=0; i<12; i++) {
-            default_colors.push(l)
+            default_colors.push(light)
         }
         this.colors.push(...default_colors)
     }
