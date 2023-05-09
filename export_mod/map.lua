@@ -52,6 +52,10 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
 
     minetest.mkdir(mtwebview.basepath .. "/mapblocks")
 
+    -- place a light at origin
+    minetest.set_node({x=0, y=0, z=0}, { name="default:meselamp" })
+    minetest.set_node({x=0, y=16, z=0}, { name="default:meselamp" })
+
     for x=mb_pos1.x,mb_pos2.x do
         for y=mb_pos1.y,mb_pos2.y do
             for z=mb_pos1.z,mb_pos2.z do
