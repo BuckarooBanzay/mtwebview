@@ -76,8 +76,7 @@ export class NormalDrawType implements DrawType {
                         }
 
                         // side-dependent checks
-                        const neighbor_pos = pos.copy()
-                        neighbor_pos.add(neighbor_dir)
+                        const neighbor_pos = pos.add(neighbor_dir)
                         if (!this.isTransparent(neighbor_pos)){
                             last_node = null
                             continue

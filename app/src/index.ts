@@ -29,13 +29,8 @@ nodedefmgr.load()
 .then(n => console.log(`Loaded ${n} mapblocks`))
 .then(() => {
     meshgen = new MeshGenerator(nodedefmgr.nodedefmap, map, matmgr)
-
-    const max_pos = map.max_block_pos.copy()
-    max_pos.multiply(BS)
-    max_pos.add(BS)
-
-    const min_pos = map.min_block_pos.copy()
-    min_pos.multiply(BS)
+    const max_pos = map.max_block_pos.multiply(BS).add(BS)
+    const min_pos = map.min_block_pos.multiply(BS)
 
     console.log(`Creating mesh from: ${min_pos} to ${max_pos}`)
     const start = Date.now()
