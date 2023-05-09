@@ -6,6 +6,7 @@ import { Pos } from "../../../util/Pos";
 import { MaterialManager } from "../../MaterialManager";
 import { BufferGeometryHelper } from "../BufferGeometryHelper";
 import { DrawType } from "./DrawType";
+import { SideDirs } from "../../../util/SideDirs";
 
 export class NormalDrawType implements DrawType {
     getDrawType(): string {
@@ -43,20 +44,11 @@ export class NormalDrawType implements DrawType {
         // material-uuid -> BufferGeometryHelper
         const datamap = new Map<string, BufferGeometryHelper>()
 
-        const sidedirs = {
-            [NodeSide.XP]: new Pos(1,0,0),
-            [NodeSide.XN]: new Pos(-1,0,0),
-            [NodeSide.YP]: new Pos(0,1,0),
-            [NodeSide.YN]: new Pos(0,-1,0),
-            [NodeSide.ZP]: new Pos(0,0,1),
-            [NodeSide.ZN]: new Pos(0,0,-1),
-        }
-
         for (let z=from.z; z<to.z; z++) {
             for (let y=from.y; y<to.y; y++) {
                 for (let n=0; n<6; n++){
                     const side = n as NodeSide
-                    const neighbor_dir = sidedirs[side]
+                    const neighbor_dir = SideDirs[side]
 
                     let last_node: MapNode|null = null
                     let last_light: number|null = null
@@ -72,6 +64,7 @@ export class NormalDrawType implements DrawType {
                             continue
                         }
 
+                        // side-independent checks
                         const nodedef = this.nodedefs.get(node.name)
                         if (nodedef == null) {
                             last_node = null
@@ -82,6 +75,7 @@ export class NormalDrawType implements DrawType {
                             continue
                         }
 
+                        // side-dependent checks
                         const neighbor_pos = pos.copy()
                         neighbor_pos.add(neighbor_dir)
                         if (!this.isTransparent(neighbor_pos)){
