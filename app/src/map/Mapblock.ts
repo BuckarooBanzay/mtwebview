@@ -1,4 +1,4 @@
-import { MapNode } from "../types/MapNode";
+import { MapNode } from "../util/MapNode";
 import { MapblockData } from "../types/MapblockData";
 import { Pos } from "../util/Pos";
 
@@ -14,12 +14,8 @@ export class Mapblock {
     getNode(pos: Pos): MapNode {
         const index = this.getIndex(pos)
         const id = this.mb.node_ids[index]
-        return {
-            id: id,
-            name: this.id_name_mapping.get(id),
-            param1: this.mb.param1[index],
-            param2: this.mb.param2[index]
-        } as MapNode
+        const name = this.id_name_mapping.get(id)!
+        return new MapNode(id, name, this.mb.param1[index], this.mb.param2[index])
     }
 
     getNodeMapping(): { [key: string]: number } {

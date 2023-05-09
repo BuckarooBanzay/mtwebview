@@ -28,7 +28,7 @@ nodedefmgr.load()
 .then(() => map.load())
 .then(n => console.log(`Loaded ${n} mapblocks`))
 .then(() => {
-    meshgen = new MeshGenerator(map, nodedefmgr.nodedefmap, matmgr)
+    meshgen = new MeshGenerator(nodedefmgr.nodedefmap, map, matmgr)
 
     const max_pos = map.max_block_pos.copy()
     max_pos.multiply(BS)

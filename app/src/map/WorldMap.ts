@@ -1,5 +1,5 @@
 import { MapblockPos, Manifest } from "../types/Manifest";
-import { MapNode } from "../types/MapNode";
+import { MapNode } from "../util/MapNode";
 import { MapblockData } from "../types/MapblockData";
 import { Pos } from "../util/Pos";
 import { Mapblock } from "./Mapblock";
