@@ -3,15 +3,6 @@ import { MediaManager } from "../media/MediaManager";
 import { NodeSide } from "../types/NodeSide";
 import { UnknownNodePNG } from "./builtin";
 
-
-function blobToDataURL(blob: Blob): Promise<string> {
-    return new Promise<string>(resolve => {
-        const reader = new FileReader()
-        reader.readAsDataURL(blob)
-        reader.onloadend = () => resolve(reader.result as string)
-    })
-}
-
 export class MaterialManager {
     constructor(public ndefs: Map<string, NodeDefinition>, public mm: MediaManager, private wireframe: boolean) {}
 
@@ -32,7 +23,7 @@ export class MaterialManager {
 
         return this.mm.getMedia(parts[0])
         .then(blob => blob ? blob : new Blob([Uint8Array.from(UnknownNodePNG)], {type: "octet/stream"}))
-        .then(blob => blobToDataURL(blob!))
+        .then(blob => URL.createObjectURL(blob))
         .then(url => {
             const loader = new TextureLoader()
             const texture = loader.load(url)
