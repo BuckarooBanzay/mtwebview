@@ -4,9 +4,10 @@ import { MapNode } from "../../../util/MapNode";
 import { NodeSide } from "../../../types/NodeSide";
 import { Pos } from "../../../util/Pos";
 import { MaterialManager } from "../../MaterialManager";
-import { BufferGeometryHelper } from "../BufferGeometryHelper";
-import { DrawType } from "./DrawType";
+import { DrawType, RenderContext } from "./DrawType";
 import { SideDirs } from "../../../util/SideDirs";
+
+const x_neg_pos = new Pos(-1, 0, 0)
 
 export class NormalDrawType implements DrawType {
     getDrawType(): string {
@@ -40,88 +41,57 @@ export class NormalDrawType implements DrawType {
         return this.occludingNodeIDs.get(node.id) == undefined
     }
 
-    createMesh(from: Pos, to: Pos): Mesh|null {
-        // material-uuid -> BufferGeometryHelper
-        const datamap = new Map<string, BufferGeometryHelper>()
+    last_node: MapNode|undefined
+    last_material: Material|undefined
+    last_light: number|undefined
 
-        for (let z=from.z; z<to.z; z++) {
-            for (let y=from.y; y<to.y; y++) {
-                for (let n=0; n<6; n++){
-                    const side = n as NodeSide
-                    const neighbor_dir = SideDirs[side]
+    resetContext(): void {
+        this.last_node = undefined
+        this.last_material = undefined
+        this.last_light = undefined
+    }
 
-                    let last_node: MapNode|null = null
-                    let last_light: number|null = null
-                    let last_material: Material|null = null
+    onNewXStride(): void {
+        this.resetContext()
+    }
 
-                    for (let x=from.x; x<to.x; x++) {
-                        const pos = new Pos(x,y,z)
-                        const node = this.worldmap.getNode(pos)
+    render(ctx: RenderContext, pos: Pos, node: MapNode, side: NodeSide): void {
+        const neighbor_dir = SideDirs[side]
+        const neighbor_pos = pos.add(neighbor_dir)
 
-                        if (node == null) {
-                            // skip node
-                            last_node = null
-                            continue
-                        }
-
-                        // side-independent checks
-                        const nodedef = this.nodedefs.get(node.name)
-                        if (nodedef == null) {
-                            last_node = null
-                            continue
-                        }
-                        if (nodedef.drawtype != "normal" && nodedef.drawtype != "allfaces_optional") {
-                            last_node = null
-                            continue
-                        }
-
-                        // side-dependent checks
-                        const neighbor_pos = pos.add(neighbor_dir)
-                        if (!this.isTransparent(neighbor_pos)){
-                            last_node = null
-                            continue
-                        }
-                        const m = this.matmgr.getMaterial(node.name, side)
-                        if (!m){
-                            last_node = null
-                            continue
-                        }
-                        const neighbor_node = this.worldmap.getNode(neighbor_pos)
-                        let light = 1
-                        if (neighbor_node){
-                            light = (neighbor_node.param1) / 15
-                        }
-
-                        var gd: BufferGeometryHelper
-                        if (!datamap.has(m.uuid)) {
-                            gd = new BufferGeometryHelper(m)
-                            datamap.set(m.uuid, gd)
-                        } else {
-                            gd = datamap.get(m.uuid)!
-                        }
-
-                        if (last_node != null &&
-                            last_material == m &&
-                            last_light == light &&
-                            last_node.equals(node) &&
-                            (side == NodeSide.YP || side == NodeSide.YN || side == NodeSide.ZN || side == NodeSide.ZP)) {
-                                // expand previous vertices to x+ direction
-                                gd.expandLastNodeMeshSideXP(side)
-                            } else {
-                                // create new vertices
-                                gd.createNodeMeshSide(pos, side, light)
-                            }
-
-                        last_node = node
-                        last_light = light
-                        last_material = m
-                    }
-                }
-            }
+        if (!this.isTransparent(neighbor_pos)){
+            this.resetContext()
+            return
+        }
+        const m = this.matmgr.getMaterial(node.name, side)
+        if (!m){
+            this.resetContext()
+            return
         }
 
-        const m = new Mesh() //holds the meshes for each side
-        datamap.forEach(gd => m.add(gd.toMesh()))
-        return m
+        const neighbor_node = this.worldmap.getNode(neighbor_pos)
+        let light = 1
+        if (neighbor_node){
+            light = (neighbor_node.param1) / 15
+        }
+
+        const x_neg_node = this.worldmap.getNode(pos.add(x_neg_pos))
+        const bg = ctx.getGeometryHelper(m)
+
+        if (this.last_material == m &&
+            this.last_light == light &&
+            this.last_node && node.equals(this.last_node) &&
+            x_neg_node && this.last_node.equals(x_neg_node) &&
+            (side == NodeSide.YP || side == NodeSide.YN || side == NodeSide.ZN || side == NodeSide.ZP)) {
+                // expand previous vertices to x+ direction
+                bg.expandLastNodeMeshSideXP(side)
+            } else {
+                // create new vertices
+                bg.createNodeMeshSide(pos, side, light)
+            }
+        
+        this.last_node = node
+        this.last_material = m
+        this.last_light = light
     }
 }
