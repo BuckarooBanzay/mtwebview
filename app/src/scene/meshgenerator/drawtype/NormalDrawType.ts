@@ -35,7 +35,7 @@ export class NormalDrawType implements DrawType {
     isTransparent(pos: Pos): boolean {
         const node = this.worldmap.getNode(pos)
         if (node == null) {
-            return true
+            return false
         }
 
         return this.occludingNodeIDs.get(node.id) == undefined
@@ -72,7 +72,8 @@ export class NormalDrawType implements DrawType {
         const neighbor_node = this.worldmap.getNode(neighbor_pos)
         let light = 1
         if (neighbor_node){
-            light = (neighbor_node.param1) / 15
+            //TODO: proper light calc
+            light = (neighbor_node.param1 & 0xF) / 15
         }
 
         const x_neg_node = this.worldmap.getNode(pos.add(x_neg_pos))

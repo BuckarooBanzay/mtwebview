@@ -33,6 +33,7 @@ export class MeshGenerator {
                     const side = n as NodeSide
 
                     for (let x=from.x; x<to.x; x++) {
+                        //TODO: check and skip blocks here
                         const pos = new Pos(x,y,z)
                         const node = this.worldmap.getNode(pos)
                         if (!node) {
