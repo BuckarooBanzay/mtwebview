@@ -14,9 +14,9 @@ export class Scene {
     constructor(e: HTMLCanvasElement) {
         e.parentElement?.appendChild(this.stats.dom)
 
-        const light = new AmbientLight( 0xffffff )
+        const light = new AmbientLight(new Color(1,1,1))
         this.scene.add( light )
-        this.scene.background = new Color("0xffffff")
+        this.scene.background = new Color(1,1,1)
 
         this.renderer = new WebGLRenderer({ canvas: e })
         this.renderer.setSize(window.innerWidth, window.innerHeight)

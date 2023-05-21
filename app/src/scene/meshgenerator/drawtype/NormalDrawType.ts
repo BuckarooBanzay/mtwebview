@@ -61,6 +61,6 @@ export class NormalDrawType implements DrawType {
         const bg = ctx.getGeometryHelper(m)
 
         // create new vertices
-        bg.createNodeMeshSide(pos, side, light)
+        bg.createNodeMeshSide(pos, side, light+0.2)
     }
 }

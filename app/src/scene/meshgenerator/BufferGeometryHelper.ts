@@ -1,4 +1,4 @@
-import { InstancedMesh, Material, Matrix, Matrix4, Mesh, PlaneGeometry } from "three";
+import { Color, InstancedMesh, Material, Matrix, Matrix4, Mesh, PlaneGeometry } from "three";
 import { Pos } from "../../util/Pos";
 import { NodeSide } from "../../types/NodeSide";
 
@@ -25,6 +25,7 @@ export class BufferGeometryHelper {
     constructor(public material: Material) {}
 
     matrices = new Array<Matrix4>()
+    colors = new Array<Color>()
 
     createNodeMeshSide(pos: Pos, side: NodeSide, light: number) {
         // inverted gl/canvas position
@@ -35,12 +36,14 @@ export class BufferGeometryHelper {
         const m = new Matrix4().makeTranslation(offset.x*-1, offset.y, offset.z)
         m.multiply(rotation)
         this.matrices.push(m)
+        this.colors.push(new Color(light, light, light))
     }
 
     toMesh(): Mesh {
         const im = new InstancedMesh(side_geometry, this.material, this.matrices.length)
         for (let i=0; i<this.matrices.length; i++) {
             im.setMatrixAt(i, this.matrices[i])
+            im.setColorAt(i, this.colors[i])
         }
         return im
     }
