@@ -3,6 +3,8 @@ import { MediaManager } from "../media/MediaManager";
 import { NodeSide } from "../types/NodeSide";
 import { UnknownNodePNG } from "./builtin";
 
+const unknownNodeBlob = new Blob([Uint8Array.from(UnknownNodePNG)], {type: "octet/stream"})
+
 export class MaterialManager {
     constructor(public ndefs: Map<string, NodeDefinition>, public mm: MediaManager, private wireframe: boolean) {}
 
@@ -20,9 +22,12 @@ export class MaterialManager {
 
         const parts = tiledef.name.split("^")
         const key = this.getCacheString(ndef.name, side)
+        if (this.cache.has(key)) {
+            return Promise.resolve()
+        }
 
         return this.mm.getMedia(parts[0])
-        .then(blob => blob ? blob : new Blob([Uint8Array.from(UnknownNodePNG)], {type: "octet/stream"}))
+        .then(blob => blob ? blob : unknownNodeBlob)
         .then(blob => URL.createObjectURL(blob))
         .then(url => {
             const loader = new TextureLoader()
