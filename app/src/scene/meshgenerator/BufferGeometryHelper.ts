@@ -1,4 +1,4 @@
-import { Color, InstancedMesh, Material, Matrix, Matrix4, Mesh, PlaneGeometry } from "three";
+import { BufferGeometry, Color, Float32BufferAttribute, InstancedMesh, Material, Matrix, Matrix4, Mesh, PlaneGeometry, Vector3 } from "three";
 import { Pos } from "../../util/Pos";
 import { NodeSide } from "../../types/NodeSide";
 
@@ -19,32 +19,108 @@ face_offsets.set(NodeSide.YP, new Pos(0, +0.5, 0))
 face_offsets.set(NodeSide.ZN, new Pos(0, 0, -0.5))
 face_offsets.set(NodeSide.ZP, new Pos(0, 0, +0.5))
 
-const side_geometry = new PlaneGeometry(1, 1);
+enum Axis {
+    X = 0,
+    Y = 1,
+    Z = 2
+}
 
 export class BufferGeometryHelper {
     constructor(public material: Material) {}
 
-    matrices = new Array<Matrix4>()
-    colors = new Array<Color>()
+    indices = new Array<number>()
+    vertices = new Array<number>()
+    normals = new Array<number>()
+    uvs = new Array<number>()
+    numberOfVertices = 0
+
+    // taken from https://raw.githubusercontent.com/mrdoob/three.js/dev/src/geometries/BoxGeometry.js
+    buildPlane(offset: Pos, u: Axis, v: Axis, w: Axis, udir: number, vdir: number, depth: number, light: number) {
+        let vertexCounter = 0;
+        const vector = new Vector3();
+
+        //TODO: light
+        // generate vertices, normals and uvs
+        for ( let iy = 0; iy < 2; iy ++ ) {
+            const y = iy * 0.5
+            for ( let ix = 0; ix < 2; ix ++ ) {
+                const x = ix * 0.5
+
+                vector.setComponent(u, offset.x + (x * udir))
+                vector.setComponent(v, offset.y + (y * vdir))
+                vector.setComponent(w, offset.z + (depth / 2))
+
+                // now apply vector to vertex buffer
+                this.vertices.push(vector.x, vector.y, vector.z);
+
+                // set values to correct vector component
+                vector.setComponent(u, 0)
+                vector.setComponent(v, 0)
+                vector.setComponent(w, depth > 0 ? 1 : - 1)
+
+                // now apply vector to normal buffer
+                this.normals.push(vector.x, vector.y, vector.z);
+
+                // uvs
+                this.uvs.push(ix);
+                this.uvs.push(1 - iy);
+
+                // counters
+                vertexCounter += 1;
+
+            }
+
+        }
+
+        for ( let iy = 0; iy < 2; iy ++ ) {
+            for ( let ix = 0; ix < 2; ix ++ ) {
+                const a = this.numberOfVertices + ix + 2 * iy;
+                const b = this.numberOfVertices + ix + 2 * ( iy + 1 );
+                const c = this.numberOfVertices + ( ix + 1 ) + 2 * ( iy + 1 );
+                const d = this.numberOfVertices + ( ix + 1 ) + 2 * iy;
+
+                // faces
+                this.indices.push( a, b, d );
+                this.indices.push( b, c, d );
+            }
+
+        }
+
+        this.numberOfVertices += vertexCounter;
+    }
 
     createNodeMeshSide(pos: Pos, side: NodeSide, light: number) {
-        // inverted gl/canvas position
-        const rotation = rotations.get(side)!
-        const face_offset = face_offsets.get(side)!
-        const offset = pos.add(face_offset)
+        //TODO: inverted gl/canvas position
 
-        const m = new Matrix4().makeTranslation(offset.x*-1, offset.y, offset.z)
-        m.multiply(rotation)
-        this.matrices.push(m)
-        this.colors.push(new Color(light, light, light))
+        switch (side) {
+            case NodeSide.XP:
+                this.buildPlane(pos, Axis.Z, Axis.Y, Axis.X, -1, -1, 1, light)
+                break
+            case NodeSide.XN:
+                this.buildPlane(pos, Axis.Z, Axis.Y, Axis.X, 1, -1, -1, light)
+                break
+            case NodeSide.YP:
+                this.buildPlane(pos, Axis.X, Axis.Z, Axis.Y, 1, 1, 1, light)
+                break
+            case NodeSide.YN:
+                this.buildPlane(pos, Axis.X, Axis.Z, Axis.Y, 1, -1, -1, light)
+                break
+            case NodeSide.ZP:
+                this.buildPlane(pos, Axis.X, Axis.Y, Axis.Z, 1, -1, 1, light)
+                break
+            case NodeSide.ZN:
+                this.buildPlane(pos, Axis.X, Axis.Y, Axis.Z, -1, -1, -1, light)
+                break
+        }
     }
 
     toMesh(): Mesh {
-        const im = new InstancedMesh(side_geometry, this.material, this.matrices.length)
-        for (let i=0; i<this.matrices.length; i++) {
-            im.setMatrixAt(i, this.matrices[i])
-            im.setColorAt(i, this.colors[i])
-        }
-        return im
+        const bg = new BufferGeometry()
+        bg.setIndex(this.indices)
+		bg.setAttribute( 'position', new Float32BufferAttribute( this.vertices, 3 ) );
+		bg.setAttribute( 'normal', new Float32BufferAttribute( this.normals, 3 ) );
+		bg.setAttribute( 'uv', new Float32BufferAttribute( this.uvs, 2 ) );
+
+        return new Mesh(bg, this.material)
     }
 }
