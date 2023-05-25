@@ -6,15 +6,17 @@ import { DrawType, RenderContext } from "./drawtype/DrawType";
 import { NormalDrawType } from "./drawtype/NormalDrawType";
 import { NodeSide } from "../../types/NodeSide";
 import { AllFacesOptionalDrawType } from "./drawtype/AllFacesOptionalDrawType";
+import { GlasslikeDrawType } from "./drawtype/GlasslikeDrawType";
 
 export class MeshGenerator {
     constructor(private nodedefs: Map<string, NodeDefinition>, private worldmap: WorldMap, private matmgr: MaterialManager) {
         this.drawtypes.set("normal", new NormalDrawType())
         this.drawtypes.set("allfaces_optional", new AllFacesOptionalDrawType())
+        this.drawtypes.set("glasslike", new GlasslikeDrawType())
+        this.drawtypes.set("glasslike_framed_optional", new GlasslikeDrawType())
 
-        this.drawtypes.forEach(dt => {
-            dt.init(nodedefs, worldmap, matmgr)
-        })
+        // initialize all
+        this.drawtypes.forEach(dt => dt.init(nodedefs, worldmap, matmgr))
     }
     
     drawtypes = new Map<string, DrawType>()

@@ -6,20 +6,15 @@ import { MaterialManager } from "../../MaterialManager";
 import { DrawType, RenderContext } from "./DrawType";
 import { SideDirs } from "../../../util/SideDirs";
 
-const x_neg_pos = new Pos(-1, 0, 0)
-
 export class NormalDrawType implements DrawType {
-    getDrawType(): string {
-        return "normal"
-    }
-
     init(nodedefs: Map<string, NodeDefinition>, worldmap: WorldMap, matmgr: MaterialManager) {
         this.nodedefs = nodedefs
         this.worldmap = worldmap
         this.matmgr = matmgr
 
-        nodedefs.forEach(ndef => {
-            if (ndef.drawtype == "normal") {
+        nodedefs
+        .forEach(ndef => {
+            if (this.isNodedefOccluding(ndef)) {
                 this.occludingNodeIDs.set(ndef.id, true)
             }
         })
@@ -30,6 +25,10 @@ export class NormalDrawType implements DrawType {
     matmgr!: MaterialManager
 
     occludingNodeIDs = new Map<number, boolean>()
+
+    isNodedefOccluding(ndef: NodeDefinition): boolean {
+        return ndef.drawtype == "normal"
+    }
 
     isTransparent(pos: Pos): boolean {
         const node = this.worldmap.getNode(pos)

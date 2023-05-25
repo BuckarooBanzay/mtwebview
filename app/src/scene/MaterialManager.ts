@@ -105,10 +105,10 @@ export class MaterialManager {
                 vertexColors: true,
                 wireframe: this.wireframe,
                 side: FrontSide,
+                transparent: true
             })
 
             if (ndef.drawtype == "allfaces" || ndef.drawtype == "allfaces_optional") {
-                material.transparent = true
                 material.side = DoubleSide
             }
             
