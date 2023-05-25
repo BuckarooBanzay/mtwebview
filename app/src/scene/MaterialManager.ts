@@ -102,9 +102,9 @@ export class MaterialManager {
             
             const material = new MeshBasicMaterial({
                 map: texture,
-                color: 0xffffff,
+                vertexColors: true,
                 wireframe: this.wireframe,
-                side: FrontSide
+                side: FrontSide,
             })
 
             if (ndef.drawtype == "allfaces" || ndef.drawtype == "allfaces_optional") {

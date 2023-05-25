@@ -6,12 +6,8 @@ export class Pos {
         return new Pos(this.x * pos.x, this.y * pos.y, this.z * pos.z)
     }
 
-    add(pos: Pos): Pos {
+    add(pos: Pos) {
         return new Pos(this.x + pos.x, this.y + pos.y, this.z + pos.z)
-    }
-
-    clone(): Pos {
-        return new Pos(this.x, this.y, this.z)
     }
 
     public toString(): string {

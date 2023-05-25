@@ -29,6 +29,7 @@ export class MeshGenerator {
         for (let z=from.z; z<to.z; z++) {
             for (let y=from.y; y<to.y; y++) {
                 for (let n=0; n<6; n++){
+                    this.drawtypes.forEach(dt => dt.onNewXStride())
                     const side = n as NodeSide
 
                     for (let x=from.x; x<to.x; x++) {

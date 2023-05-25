@@ -1,4 +1,4 @@
-import { AmbientLight, Color, Mesh, PerspectiveCamera, Scene as ThreeScene, WebGLRenderer } from "three";
+import { Mesh, PerspectiveCamera, Scene as ThreeScene, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
 
@@ -13,10 +13,6 @@ export class Scene {
 
     constructor(e: HTMLCanvasElement) {
         e.parentElement?.appendChild(this.stats.dom)
-
-        const light = new AmbientLight( 0xffffff )
-        this.scene.add( light )
-        this.scene.background = new Color("0xffffff")
 
         this.renderer = new WebGLRenderer({ canvas: e })
         this.renderer.setSize(window.innerWidth, window.innerHeight)
