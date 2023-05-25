@@ -10,11 +10,13 @@ function mtwebview.export_textures()
         local modpath = minetest.get_modpath(modname)
 
         if modpath then
-            local texturepath = modpath .. "/textures"
-            local dir_list = minetest.get_dir_list(texturepath)
-            for _, filename in pairs(dir_list) do
-                count = count + 1
-                size = size + mtwebview.copyfile(texturepath .. "/" .. filename, destination_path .. "/" .. filename)
+            for _, foldername in ipairs({"textures", "models"}) do
+                local texturepath = modpath .. "/" .. foldername
+                local dir_list = minetest.get_dir_list(texturepath)
+                for _, filename in pairs(dir_list) do
+                    count = count + 1
+                    size = size + mtwebview.copyfile(texturepath .. "/" .. filename, destination_path .. "/" .. filename)
+                end
             end
         end
     end
