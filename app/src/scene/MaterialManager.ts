@@ -105,11 +105,15 @@ export class MaterialManager {
                 vertexColors: true,
                 wireframe: this.wireframe,
                 side: FrontSide,
-                transparent: true
+                transparent: false
             })
 
-            if (ndef.drawtype == "allfaces" || ndef.drawtype == "allfaces_optional") {
+            if (ndef.drawtype == "allfaces" ||
+                ndef.drawtype == "allfaces_optional" ||
+                ndef.drawtype == "glasslike" ||
+                ndef.drawtype == "glasslike_framed_optional") {
                 material.side = DoubleSide
+                material.transparent = true
             }
             
             this.cache.set(key, material)
