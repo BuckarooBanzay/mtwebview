@@ -65,8 +65,11 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
     minetest.set_node({x=3, y=1, z=0}, { name="default:tree" })
     minetest.set_node({x=4, y=1, z=0}, { name="default:leaves" })
     minetest.set_node({x=5, y=1, z=0}, { name="default:glass" })
-    minetest.set_node({x=6, y=1, z=0}, { name="default:meselamp" })
-    minetest.set_node({x=7, y=1, z=0}, { name="default:meselamp" })
+    minetest.set_node({x=6, y=1, z=0}, { name="default:dirt" })
+    minetest.set_node({x=7, y=1, z=0}, { name="default:gravel" })
+    minetest.set_node({x=8, y=1, z=0}, { name="default:dirt_with_grass" })
+    minetest.set_node({x=9, y=1, z=0}, { name="default:meselamp" })
+    minetest.set_node({x=10, y=1, z=0}, { name="default:meselamp" })
 
     for x=mb_pos1.x,mb_pos2.x do
         for y=mb_pos1.y,mb_pos2.y do

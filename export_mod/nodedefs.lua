@@ -19,7 +19,8 @@ local exported_drawtypes = {
     ["glasslike_framed"] = true,
     ["glasslike_framed_optional"] = true,
     ["allfaces"] = true,
-    ["allfaces_optional"] = true
+    ["allfaces_optional"] = true,
+    ["mesh"] = true
 }
 
 function mtwebview.export_nodedefs()
@@ -35,6 +36,7 @@ function mtwebview.export_nodedefs()
                 paramtype = def.paramtype,
                 paramtype2 = def.paramtype2,
                 light_source = def.light_source,
+                mesh = def.mesh,
                 tiles = {}
             }
 
