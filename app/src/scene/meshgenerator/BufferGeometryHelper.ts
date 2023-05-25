@@ -12,29 +12,6 @@ export class BufferGeometryHelper {
     max_index = 0
     indices = new Array<number>()
 
-    expandLastNodeMeshSideXP(side: NodeSide) {
-        const vert_max = this.vertices.length-1
-        const uv_max = this.uvs.length-1
-
-        switch (side) {
-            case NodeSide.YN:
-            case NodeSide.YP:
-                this.vertices[vert_max-2] -= 1
-                this.vertices[vert_max-11] -= 1
-                this.uvs[uv_max-3] += 1
-                this.uvs[uv_max-5] += 1
-                break;
-            case NodeSide.ZN:
-            case NodeSide.ZP:
-                this.vertices[vert_max-2] -= 1
-                this.vertices[vert_max-11] -= 1
-                this.uvs[uv_max-3] += 1
-                this.uvs[uv_max-5] += 1
-                break;
-                }
-
-    }
-
     createNodeMeshSide(pos: Pos, side: NodeSide, light: number) {
         // inverted gl/canvas position
         const gl_pos = new Pos(pos.x*-1, pos.y, pos.z)
