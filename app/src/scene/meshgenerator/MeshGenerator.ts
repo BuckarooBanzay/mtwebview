@@ -9,8 +9,8 @@ import { AllFacesOptionalDrawType } from "./drawtype/AllFacesOptionalDrawType";
 
 export class MeshGenerator {
     constructor(private nodedefs: Map<string, NodeDefinition>, private worldmap: WorldMap, private matmgr: MaterialManager) {
-        this.registerDrawType(new NormalDrawType())
-        this.registerDrawType(new AllFacesOptionalDrawType())
+        this.drawtypes.set("normal", new NormalDrawType())
+        this.drawtypes.set("allfaces_optional", new AllFacesOptionalDrawType())
 
         this.drawtypes.forEach(dt => {
             dt.init(nodedefs, worldmap, matmgr)
@@ -18,10 +18,6 @@ export class MeshGenerator {
     }
     
     drawtypes = new Map<string, DrawType>()
-
-    registerDrawType(dt: DrawType) {
-        this.drawtypes.set(dt.getDrawType(), dt)
-    }
 
     createMesh(from: Pos, to: Pos): Mesh|null {
         const ctx = new RenderContext()
@@ -32,7 +28,6 @@ export class MeshGenerator {
                     const side = n as NodeSide
 
                     for (let x=from.x; x<to.x; x++) {
-                        //TODO: check and skip blocks here
                         const pos = new Pos(x,y,z)
                         const node = this.worldmap.getNode(pos)
                         if (!node) {

@@ -33,7 +33,6 @@ export class RenderContext {
 }
 
 export interface DrawType {
-    getDrawType(): string
     init(nodedefs: Map<string, NodeDefinition>, worldmap: WorldMap, matmgr: MaterialManager): void
     render(ctx: RenderContext, pos: Pos, node: MapNode, side: NodeSide): void
 }

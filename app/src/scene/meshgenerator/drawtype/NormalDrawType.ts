@@ -59,7 +59,6 @@ export class NormalDrawType implements DrawType {
             light = (neighbor_node.param1 & 0xF) / 15
         }
 
-        const x_neg_node = this.worldmap.getNode(pos.add(x_neg_pos))
         const bg = ctx.getGeometryHelper(m)
         bg.createNodeMeshSide(pos, side, light)
     }
