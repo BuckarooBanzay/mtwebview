@@ -22,6 +22,11 @@ export class Scene {
         this.controls.listenToKeyEvents(document.body)
         this.controls.minDistance = 5
         this.controls.maxDistance = 500
+
+
+        setInterval(() => {
+            console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
+        }, 1000)
     }
 
     animate() {

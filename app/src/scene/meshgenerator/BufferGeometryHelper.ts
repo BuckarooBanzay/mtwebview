@@ -112,6 +112,7 @@ export class BufferGeometryHelper {
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), 3))
         geometry.setAttribute('uv', new BufferAttribute(new Float32Array(this.uvs), 2))
         geometry.setAttribute('color', new BufferAttribute(new Float32Array(this.colors), 3))
+        geometry.computeBoundingBox()
 
         return new Mesh(geometry, this.material)
     }
