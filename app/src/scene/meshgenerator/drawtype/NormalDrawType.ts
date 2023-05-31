@@ -55,7 +55,7 @@ export class NormalDrawType implements DrawType {
         let light = 1
         if (neighbor_node){
             //TODO: proper light calc
-            light = (neighbor_node.param1 & 0xF) / 15
+            light = (neighbor_node.param1 & 0x0F) / 15
         }
 
         const bg = ctx.getGeometryHelper(m)
