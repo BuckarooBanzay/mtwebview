@@ -1,0 +1,3 @@
+[submodule "worldedit"]
+	path = worldedit
+	url = https://github.com/Uberi/Minetest-WorldEdit/

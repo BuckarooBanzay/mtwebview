@@ -9,6 +9,7 @@ services:
     - 30000:30000/udp
   volumes:
     - "./export_mod:/root/.minetest/worlds/world/worldmods/mtwebview/"
+    - "./worldedit:/root/.minetest/worlds/world/worldmods/worldedit/"
     - "./export:/root/.minetest/worlds/world/mtwebview/"
     - "world_data:/root/.minetest/worlds/world"
     - "./export_mod/test/world.mt:/root/.minetest/worlds/world/world.mt"
