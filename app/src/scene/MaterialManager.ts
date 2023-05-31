@@ -38,6 +38,8 @@ function combineImages(base: Image, overlay: Image): Image {
     return buf
 }
 
+const loader = new TextureLoader()
+
 export class MaterialManager {
     constructor(public ndefs: Map<string, NodeDefinition>, public mm: MediaManager, private wireframe: boolean) {}
 
@@ -94,7 +96,6 @@ export class MaterialManager {
 
         return this.createImage(tiledef.name)
         .then(img => {
-            const loader = new TextureLoader()
             const texture = loader.load(img.toDataURL())
             texture.magFilter = NearestFilter
             texture.wrapS = RepeatWrapping
