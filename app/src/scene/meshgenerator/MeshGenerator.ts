@@ -2,7 +2,8 @@ import { Mesh } from "three";
 import { WorldMap } from "../../map/WorldMap";
 import { Pos } from "../../util/Pos";
 import { MaterialManager } from "../MaterialManager";
-import { DrawType, RenderContext } from "./drawtype/DrawType";
+import { DrawType } from "./drawtype/DrawType";
+import { RenderContext } from "./RenderContext";
 import { NormalDrawType } from "./drawtype/NormalDrawType";
 import { NodeSide } from "../../types/NodeSide";
 import { AllFacesOptionalDrawType } from "./drawtype/AllFacesOptionalDrawType";
@@ -14,9 +15,16 @@ export class MeshGenerator {
         this.drawtypes.set("allfaces_optional", new AllFacesOptionalDrawType())
         this.drawtypes.set("glasslike", new GlasslikeDrawType())
         this.drawtypes.set("glasslike_framed_optional", new GlasslikeDrawType())
+    }
 
+    init(): Promise<any> {
+        const promises = new Array<Promise<void>>()
         // initialize all
-        this.drawtypes.forEach(dt => dt.init(nodedefs, worldmap, matmgr))
+        this.drawtypes.forEach(dt => {
+            promises.push(dt.init(this.nodedefs, this.worldmap, this.matmgr))
+        })
+
+        return Promise.all(promises)
     }
     
     drawtypes = new Map<string, DrawType>()

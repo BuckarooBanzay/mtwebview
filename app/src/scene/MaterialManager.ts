@@ -1,6 +1,5 @@
-import { DoubleSide, FrontSide, Material, MeshBasicMaterial, NearestFilter, RepeatWrapping, TextureLoader } from "three";
+import { Material, MeshBasicMaterial, NearestFilter, RepeatWrapping, Side, TextureLoader } from "three";
 import { MediaManager } from "../media/MediaManager";
-import { NodeSide } from "../types/NodeSide";
 import { UnknownNodePNG } from "./builtin";
 import { Image } from 'image-js'
 
@@ -43,12 +42,6 @@ const loader = new TextureLoader()
 export class MaterialManager {
     constructor(public ndefs: Map<string, NodeDefinition>, public mm: MediaManager, private wireframe: boolean) {}
 
-    cache = new Map<string, Material>()
-
-    getCacheString(nodename: string, side: NodeSide): string {
-        return `${nodename}/${side}`
-    }
-
     createImage(tiledef: string): Promise<Image> {
         // TODO: support (groups)
         let tidx = tiledef.indexOf("^")
@@ -84,61 +77,22 @@ export class MaterialManager {
         })
     }
 
-    createTexture(ndef: NodeDefinition, tiledef: TileDefinition, side: NodeSide): Promise<void> {
-        if (!tiledef.name) {
-            return Promise.resolve()
-        }
-
-        const key = this.getCacheString(ndef.name, side)
-        if (this.cache.has(key)) {
-            return Promise.resolve()
-        }
-
-        return this.createImage(tiledef.name)
+    createMaterial(tiledef: string, transparent: boolean, drawside: Side): Promise<Material> {
+        return this.createImage(tiledef)
         .then(img => {
             const texture = loader.load(img.toDataURL())
             texture.magFilter = NearestFilter
             texture.wrapS = RepeatWrapping
             texture.wrapT = RepeatWrapping
             
-            const material = new MeshBasicMaterial({
+            return new MeshBasicMaterial({
                 map: texture,
                 vertexColors: true,
                 wireframe: this.wireframe,
-                side: FrontSide,
-                transparent: false
+                side: drawside,
+                transparent: transparent,
             })
-
-            if (ndef.drawtype == "allfaces" ||
-                ndef.drawtype == "allfaces_optional" ||
-                ndef.drawtype == "glasslike" ||
-                ndef.drawtype == "glasslike_framed_optional") {
-                material.side = DoubleSide
-                material.transparent = true
-            }
-            
-            this.cache.set(key, material)
         })
     }
 
-    load(): Promise<number> {
-        const promises = new Array<Promise<void>>()
-        this.ndefs.forEach(ndef => {
-            promises.push(this.createTexture(ndef, ndef.tiles[0], NodeSide.YP))
-            promises.push(this.createTexture(ndef, ndef.tiles[1], NodeSide.YN))
-            promises.push(this.createTexture(ndef, ndef.tiles[2], NodeSide.XP))
-            promises.push(this.createTexture(ndef, ndef.tiles[3], NodeSide.XN))
-            promises.push(this.createTexture(ndef, ndef.tiles[4], NodeSide.ZP))
-            promises.push(this.createTexture(ndef, ndef.tiles[5], NodeSide.ZN))
-        })
-
-        return Promise.all(promises)
-        .then(() => this.cache.size)
-    }
-
-    getMaterial(nodename: string, side: NodeSide) : Material|null {
-        const key = this.getCacheString(nodename, side)
-        const t = this.cache.get(key)
-        return t == undefined ? null : t
-    }
 }

@@ -22,13 +22,14 @@ nodedefmgr.load()
 .then(count => console.log(`Loaded ${count} nodedefs`))
 .then(() => {
     matmgr = new MaterialManager(nodedefmgr.nodedefmap, mm, false)
-    return matmgr.load()
 })
-.then(n => console.log(`Created ${n} materials`))
 .then(() => map.load())
 .then(n => console.log(`Loaded ${n} mapblocks`))
 .then(() => {
     meshgen = new MeshGenerator(nodedefmgr.nodedefmap, map, matmgr)
+    return meshgen.init()
+})
+.then(() => {
     const max_pos = map.max_block_pos.multiply(BS).add(BS)
     const min_pos = map.min_block_pos.multiply(BS)
 

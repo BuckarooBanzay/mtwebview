@@ -3,11 +3,13 @@ import { MapNode } from "../../../util/MapNode";
 import { NodeSide } from "../../../types/NodeSide";
 import { Pos } from "../../../util/Pos";
 import { MaterialManager } from "../../MaterialManager";
-import { DrawType, RenderContext } from "./DrawType";
+import { DrawType } from "./DrawType";
 import { SideDirs } from "../../../util/SideDirs";
+import { RenderContext } from "../RenderContext";
+import { FrontSide, Material, Side } from "three";
 
 export class NormalDrawType implements DrawType {
-    init(nodedefs: Map<string, NodeDefinition>, worldmap: WorldMap, matmgr: MaterialManager) {
+    init(nodedefs: Map<string, NodeDefinition>, worldmap: WorldMap, matmgr: MaterialManager): Promise<any> {
         this.nodedefs = nodedefs
         this.worldmap = worldmap
         this.matmgr = matmgr
@@ -18,11 +20,45 @@ export class NormalDrawType implements DrawType {
                 this.occludingNodeIDs.set(ndef.id, true)
             }
         })
+
+        return this.createMaterials()
     }
 
     nodedefs!: Map<string, NodeDefinition>
     worldmap!: WorldMap
     matmgr!: MaterialManager
+    materials = new Map<string, Material>()
+
+    createMaterial(ndef: NodeDefinition, tiledef: string, side: NodeSide, transparent: boolean, drawside: Side): Promise<any> {
+        if (!tiledef) {
+            return Promise.resolve()
+        }
+        return this.matmgr.createMaterial(tiledef, transparent, drawside)
+        .then(m => {
+            const key = this.getMaterialKey(ndef.name, side)
+            this.materials.set(key, m)
+        })
+    }
+
+    createMaterials(): Promise<any> {
+        const promises = new Array<Promise<any>>()
+        this.nodedefs.forEach(ndef => {
+            if (ndef.drawtype == "normal") {
+                promises.push(this.createMaterial(ndef, ndef.tiles[0].name, NodeSide.YP, false, FrontSide))
+                promises.push(this.createMaterial(ndef, ndef.tiles[1].name, NodeSide.YN, false, FrontSide))
+                promises.push(this.createMaterial(ndef, ndef.tiles[2].name, NodeSide.XP, false, FrontSide))
+                promises.push(this.createMaterial(ndef, ndef.tiles[3].name, NodeSide.XN, false, FrontSide))
+                promises.push(this.createMaterial(ndef, ndef.tiles[4].name, NodeSide.ZP, false, FrontSide))
+                promises.push(this.createMaterial(ndef, ndef.tiles[5].name, NodeSide.ZN, false, FrontSide))
+            }
+        })
+
+        return Promise.all(promises)
+    }
+
+    getMaterialKey(nodename: string, side: NodeSide): string {
+        return `${nodename}/${side}`
+    }
 
     occludingNodeIDs = new Map<number, boolean>()
 
@@ -46,7 +82,9 @@ export class NormalDrawType implements DrawType {
         if (!this.isTransparent(neighbor_pos)){
             return
         }
-        const m = this.matmgr.getMaterial(node.name, side)
+
+        const key = this.getMaterialKey(node.name, side)
+        const m = this.materials.get(key)
         if (!m){
             return
         }
