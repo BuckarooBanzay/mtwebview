@@ -7,12 +7,13 @@ import { DrawType } from "./DrawType";
 import { SideDirs } from "../../../util/SideDirs";
 import { RenderContext } from "../RenderContext";
 import { FrontSide, Material, Side } from "three";
+import { MaterialCache, MaterialKey } from "../../MaterialCache";
 
 export class NormalDrawType implements DrawType {
-    init(nodedefs: Map<string, NodeDefinition>, worldmap: WorldMap, matmgr: MaterialManager): Promise<any> {
+    init(nodedefs: Map<string, NodeDefinition>, worldmap: WorldMap, matcache: MaterialCache): Promise<any> {
         this.nodedefs = nodedefs
         this.worldmap = worldmap
-        this.matmgr = matmgr
+        this.matcache = matcache
 
         nodedefs
         .forEach(ndef => {
@@ -26,38 +27,47 @@ export class NormalDrawType implements DrawType {
 
     nodedefs!: Map<string, NodeDefinition>
     worldmap!: WorldMap
-    matmgr!: MaterialManager
-    materials = new Map<string, Material>()
+    matcache!: MaterialCache
 
-    createMaterial(ndef: NodeDefinition, tiledef: string, side: NodeSide, transparent: boolean, drawside: Side): Promise<any> {
+    getTextureDef(tiles: TileDefinition[], side: NodeSide) {
+        switch (side) {
+            case NodeSide.YP:
+                return tiles[0]
+            case NodeSide.YN:
+                return tiles[1]
+            case NodeSide.XP:
+                return tiles[2]
+            case NodeSide.XN:
+                return tiles[3]
+            case NodeSide.ZP:
+                return tiles[4]
+            case NodeSide.ZN:
+                return tiles[5]
+                                                    
+        }
+    }
+
+    createMaterial(tiledef: string, transparent: boolean, drawside: Side): Promise<any> {
         if (!tiledef) {
             return Promise.resolve()
         }
-        return this.matmgr.createMaterial(tiledef, transparent, drawside)
-        .then(m => {
-            const key = this.getMaterialKey(ndef.name, side)
-            this.materials.set(key, m)
-        })
+        return this.matcache.generate({DrawSide: drawside, TextureDef: tiledef, Transparent: transparent})
     }
 
     createMaterials(): Promise<any> {
         const promises = new Array<Promise<any>>()
         this.nodedefs.forEach(ndef => {
             if (ndef.drawtype == "normal") {
-                promises.push(this.createMaterial(ndef, ndef.tiles[0].name, NodeSide.YP, false, FrontSide))
-                promises.push(this.createMaterial(ndef, ndef.tiles[1].name, NodeSide.YN, false, FrontSide))
-                promises.push(this.createMaterial(ndef, ndef.tiles[2].name, NodeSide.XP, false, FrontSide))
-                promises.push(this.createMaterial(ndef, ndef.tiles[3].name, NodeSide.XN, false, FrontSide))
-                promises.push(this.createMaterial(ndef, ndef.tiles[4].name, NodeSide.ZP, false, FrontSide))
-                promises.push(this.createMaterial(ndef, ndef.tiles[5].name, NodeSide.ZN, false, FrontSide))
+                promises.push(this.createMaterial(ndef.tiles[0].name, false, FrontSide))
+                promises.push(this.createMaterial(ndef.tiles[1].name, false, FrontSide))
+                promises.push(this.createMaterial(ndef.tiles[2].name, false, FrontSide))
+                promises.push(this.createMaterial(ndef.tiles[3].name, false, FrontSide))
+                promises.push(this.createMaterial(ndef.tiles[4].name, false, FrontSide))
+                promises.push(this.createMaterial(ndef.tiles[5].name, false, FrontSide))
             }
         })
 
         return Promise.all(promises)
-    }
-
-    getMaterialKey(nodename: string, side: NodeSide): string {
-        return `${nodename}/${side}`
     }
 
     occludingNodeIDs = new Map<number, boolean>()
@@ -75,6 +85,11 @@ export class NormalDrawType implements DrawType {
         return this.occludingNodeIDs.get(node.id) == undefined
     }
 
+    getMaterial(nodedef: NodeDefinition, side: NodeSide): Material|undefined {
+        const textureDef = this.getTextureDef(nodedef.tiles, side)
+        return this.matcache.getMaterial({ DrawSide: FrontSide, TextureDef: textureDef.name, Transparent: false})
+    }
+
     render(ctx: RenderContext, pos: Pos, node: MapNode, side: NodeSide): void {
         const neighbor_dir = SideDirs[side]
         const neighbor_pos = pos.add(neighbor_dir)
@@ -83,8 +98,12 @@ export class NormalDrawType implements DrawType {
             return
         }
 
-        const key = this.getMaterialKey(node.name, side)
-        const m = this.materials.get(key)
+        const nodedef = this.nodedefs.get(node.name)
+        if (!nodedef) {
+            return
+        }
+        
+        const m = this.getMaterial(nodedef, side)
         if (!m){
             return
         }

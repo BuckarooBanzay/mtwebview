@@ -8,6 +8,7 @@ import { NormalDrawType } from "./drawtype/NormalDrawType";
 import { NodeSide } from "../../types/NodeSide";
 import { AllFacesOptionalDrawType } from "./drawtype/AllFacesOptionalDrawType";
 import { GlasslikeDrawType } from "./drawtype/GlasslikeDrawType";
+import { MaterialCache } from "../MaterialCache";
 
 export class MeshGenerator {
     constructor(private nodedefs: Map<string, NodeDefinition>, private worldmap: WorldMap, private matmgr: MaterialManager) {
@@ -19,9 +20,10 @@ export class MeshGenerator {
 
     init(): Promise<any> {
         const promises = new Array<Promise<void>>()
+        const matcache = new MaterialCache(this.matmgr)
         // initialize all
         this.drawtypes.forEach(dt => {
-            promises.push(dt.init(this.nodedefs, this.worldmap, this.matmgr))
+            promises.push(dt.init(this.nodedefs, this.worldmap, matcache))
         })
 
         return Promise.all(promises)
