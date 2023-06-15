@@ -13,7 +13,7 @@ See: https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-drawty
 * [x] airlike
 * [ ] liquid
 * [ ] flowingliquid
-* [ ] glasslike
+* [x] glasslike
 * [ ] glasslike_framed
 * [ ] glasslike_framed_optional
 * [x] allfaces
@@ -27,6 +27,23 @@ See: https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-drawty
 * [ ] nodebox
 * [ ] mesh
 * [ ] plantlike_rooted
+
+# Supported paramtype2
+
+* [x] none
+* [ ] facedir
+* [ ] flowingliquid
+* [ ] 4dir
+* [ ] color
+* [ ] colorfacedir
+* [ ] color4dir
+* [ ] colorwallmounted
+* [ ] wallmounted
+* [ ] leveled
+* [ ] degrotate
+* [ ] meshoptions
+* [ ] glasslikeliquidlevel
+* [ ] colordegrotate
 
 ## Debug
 
