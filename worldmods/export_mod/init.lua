@@ -23,7 +23,7 @@ if minetest.settings:get_bool("export_mod_autoexport") then
             local pos2 = vector.multiply(mb_pos2, 16)
             minetest.emerge_area(pos1, pos2, function(_, _, calls_remaining)
                 if calls_remaining == 0 then
-                    mtwebview.load_schematic({x=0, y=0, z=0})
+                    mtwebview.load_schematic({x=-30, y=-30, z=-30})
                     mtwebview.export_map(mb_pos1, mb_pos2)
                     minetest.request_shutdown("done")
                 end

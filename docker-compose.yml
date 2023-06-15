@@ -8,12 +8,12 @@ services:
   ports:
     - 30000:30000/udp
   volumes:
-    - "./export_mod:/root/.minetest/worlds/world/worldmods/mtwebview/"
-    - "./worldedit:/root/.minetest/worlds/world/worldmods/worldedit/"
+    - "./worldmods:/root/.minetest/worlds/world/worldmods/"
     - "./export:/root/.minetest/worlds/world/mtwebview/"
     - "world_data:/root/.minetest/worlds/world"
-    - "./export_mod/test/world.mt:/root/.minetest/worlds/world/world.mt"
-    - "./export_mod/test/minetest.conf:/minetest.conf"
+    - "./worldmods/export_mod/test/world.mt:/root/.minetest/worlds/world/world.mt"
+    - "./worldmods/export_mod/test/minetest.conf:/minetest.conf"
+    - "./worldmods/export_mod/testschematic.we:/root/.minetest/worlds/world/schems/testschematic.we"
 
  nginx:
   image: nginx:1.24.0

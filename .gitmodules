@@ -1,3 +1,6 @@
 [submodule "worldedit"]
-	path = worldedit
+	path = worldmods/worldedit
 	url = https://github.com/Uberi/Minetest-WorldEdit/
+[submodule "mods/moreblocks"]
+	path = worldmods/moreblocks
+	url = https://github.com/minetest-mods/moreblocks
