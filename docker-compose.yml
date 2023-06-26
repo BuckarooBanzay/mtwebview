@@ -15,6 +15,13 @@ services:
     - "./worldmods/export_mod/test/minetest.conf:/minetest.conf"
     - "./worldmods/export_mod/testschematic.we:/root/.minetest/worlds/world/schems/testschematic.we"
 
+ npm:
+  image: node:18.12.1-alpine3.15
+  volumes:
+   - "./app:/app"
+  working_dir: /app
+  command: ["sh", "-c", "npm ci && npm run watch"]
+
  nginx:
   image: nginx:1.24.0
   restart: always
@@ -24,7 +31,6 @@ services:
    - "./nginx.conf:/etc/nginx/nginx.conf:ro"
    - "./app:/html"
    - "./export:/html/export"
-
 
 volumes:
   world_data: {}
