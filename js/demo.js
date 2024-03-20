@@ -8,7 +8,7 @@ new WebView({
     pos: { x:0, y:0, z:0 },
     source: {
         mapblock: pos => new Promise(resolve => {
-            const pos_str = `(${pos.x},${pos.y}.${pos.z})`;
+            const pos_str = `(${pos.x},${pos.y},${pos.z})`;
             if (manifest[pos_str]) {
                 fetch(`export/mapblocks/${pos_str}.json`)
                 .then(mb => resolve(mb));

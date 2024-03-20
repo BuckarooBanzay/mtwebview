@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+    <body>
+        <canvas id="scene" style="height: 100%;"></canvas>
+        <script type="module">
+            import TextureGenerator from '../js/texture/TextureGenerator.js';
+            const tg = new TextureGenerator(n => fetch(`/export/media/${n}`).then(r => r.arrayBuffer()));
+            //const tiledef = "default_blueberry_bush_leaves.png^default_blueberry_overlay.png"
+            const tiledef = "default_blueberry_bush_leaves.png"
+            tg.createTexture(tiledef)
+            .then(b => console.log(b))
+        </script>
+    </body>
+</html>
