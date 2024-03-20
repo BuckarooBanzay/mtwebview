@@ -4,11 +4,20 @@
         <canvas id="scene" style="height: 100%;"></canvas>
         <script type="module">
             import TextureGenerator from '../js/texture/TextureGenerator.js';
-            const tg = new TextureGenerator(n => fetch(`/export/media/${n}`).then(r => r.arrayBuffer()));
+            // Promise<Url>
+            const mediasource = n => Promise.resolve(`/export/media/${n}`)
+            const tg = new TextureGenerator(mediasource);
             //const tiledef = "default_blueberry_bush_leaves.png^default_blueberry_overlay.png"
-            const tiledef = "default_blueberry_bush_leaves.png"
+            const tiledef = "default_blueberry_bush_leaves.png^default_blueberry_overlay.png"
             tg.createTexture(tiledef)
-            .then(b => console.log(b))
+            .then(dataurl => {
+                const el = document.createElement("img")
+                el.src = dataurl
+                el.height = 300;
+                el.width = 300;
+                el.style = "image-rendering: crisp-edges;"
+                document.body.appendChild(el)
+            })
         </script>
     </body>
 </html>
