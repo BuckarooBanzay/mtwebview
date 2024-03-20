@@ -1,10 +1,10 @@
-import { Color, PerspectiveCamera, Scene as ThreeScene, WebGLRenderer } from "three";
+import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 export default class {
 
-    scene = new ThreeScene()
+    scene = new Scene()
     camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
     stats = new Stats()
