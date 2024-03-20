@@ -3,35 +3,6 @@
     <body>
         <canvas id="scene" style="height: 100%;"></canvas>
         <script type="module" src="js/index.js"></script>
-        <script>
-            window.onload = function(){
-                const ww = mtww.create({
-                    target: document.getElementById("scene"),
-                    pos: { x:0, y:0, z:0 },
-                    source: {
-                        mapblock: pos => Promise.resolve({
-                            node_mapping: {
-                                "air": 126,
-                                "moreblocks:slope_all_faces_acacia_tree_inner": 4560
-                            },
-                            node_ids: new Int16Array(16 * 16 * 16),
-                            param1: new Uint8Array(16 * 16 * 16),
-                            param2: new Uint8Array(16 * 16 * 16)
-                        }),
-                        nodedef: nodename => Promise.resolve({
-                            "drawtype" : "mesh",
-                            "id" : 4560.0,
-                            "light_source" : 0.0,
-                            "mesh" : "moreblocks_slope_inner.obj",
-                            "name" : "moreblocks:slope_all_faces_acacia_tree_inner",
-                            "paramtype" : "light",
-                            "paramtype2" : "facedir",
-                            "tiles" : [{"default_acacia_tree_top.png"}]
-                        }),
-                        media: filename => fetch(`export/media/${filename}`).then(r => r.arrayBuffer())
-                    }
-                });
-            }
-        </script>
+        <script type="module" src="js/demo.js"></script>
     </body>
 </html>

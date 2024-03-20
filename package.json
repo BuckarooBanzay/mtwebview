@@ -1,11 +1,11 @@
 {
   "name": "mtwebview",
   "version": "1.0.0",
-  "description": "State: **WIP**",
+  "description": "minetest web view",
   "main": "js/index.js",
   "type": "module",
   "scripts": {
-    "jshint": "jshint js/",
+    "eslint": "eslint js/",
     "bundle": "rollup -c rollup.config.js"
   },
   "repository": {
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/BuckarooBanzay/mtwebview#readme",
   "devDependencies": {
-    "jshint": "^2.13.6",
+    "eslint": "^8.57.0",
     "rollup": "^4.13.0",
     "three": "^0.162.0"
   }

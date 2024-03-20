@@ -1,5 +1,4 @@
 function mtwebview.load_schematic(pos)
-
     local f = io.open(minetest.get_modpath("mtwebview") .. "/testschematic.we")
     assert(f)
     local value = f:read("*all")
