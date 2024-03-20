@@ -1,4 +1,4 @@
-import { Mesh } from '../node_modules/three/build/three.module.js';
+import { Mesh } from 'three';
 import WebView from './WebView.js';
 
 // debug / test
