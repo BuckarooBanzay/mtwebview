@@ -14,7 +14,8 @@ export default class {
         return (drawtype == "normal")
     }
 
-    getTextureDef(tiles, side) {
+    getTextureDef(nodedef, side) {
+        const tiles = nodedef.tiles
         if (side == NodeSide.YP || tiles.length == 1) {
             return tiles[0]
         }
@@ -39,8 +40,13 @@ export default class {
         return false
     }
 
+    getRenderSide() {
+        return FrontSide
+    }
+
     async render(ctx, pos, node, nodedef) {
         const transparent = this.isTransparent()
+        const renderside = this.getRenderSide()
     
         for (let i=0; i<sidelist.length; i++) {
             const sidename = sidelist[i]
@@ -55,9 +61,9 @@ export default class {
                 continue
             }
 
-            const texture_def = this.getTextureDef(nodedef.tiles, dir)
+            const texture_def = this.getTextureDef(nodedef, dir)
 
-            const material = await this.matmgr.createMaterial(texture_def, transparent, FrontSide)
+            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside)
 
             let light = neighbor_node.getNightLight() / 15
 
