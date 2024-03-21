@@ -14,6 +14,10 @@ export default class {
         this.param2 = new Uint8Array(mapblock_def.param2)
     }
 
+    getNodeNames() {
+        return Object.keys(this.name_id_mapping)
+    }
+
     getNode(pos) {
         const index = this.getIndex(pos)
         const id = this.node_ids[index]

@@ -1,8 +1,8 @@
 import { BufferAttribute, BufferGeometry } from "three";
-import { Pos } from "../../util/Pos.js";
-import { NodeSide } from "../../types/NodeSide.js";
+import Pos from "../util/Pos.js";
+import NodeSide from "../util/NodeSide.js";
 
-export class BufferGeometryHelper {
+export default class {
 
     vertices = []
     uvs = []

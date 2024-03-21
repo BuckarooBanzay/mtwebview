@@ -7,29 +7,47 @@ export default class {
     // pos_string -> block
     map = {}
 
-    constructor(mapblockloader) {
+    // name -> node-def
+    nodedefs = {}
+
+    constructor(mapblockloader, nodedefloader) {
         this.mapblockloader = mapblockloader
+        this.nodedefloader = nodedefloader
     }
 
-    loadMapblock(mbpos) {
+    async loadMapblock(mbpos) {
         const key = this.formatPos(mbpos)
         if (this.map[key]) {
             // already loaded
-            return Promise.resolve()
+            return this.map[key]
         }
         // load from provider
-        return this.mapblockloader(mbpos)
-            .then(mapblock_def => {
-                if (!mapblock_def) {
-                    return
-                }
-                const mb = new Mapblock(mapblock_def)
-                this.map[key] = mb
-                console.log(mb)
-            })
+        const mapblock_def = await this.mapblockloader(mbpos)
+        if (!mapblock_def) {
+            return
+        }
+
+        const mb = new Mapblock(mapblock_def)
+        this.map[key] = mb
+        console.log(mb)
+
+        const promises = []
+        mb.getNodeNames().forEach(nodename => {
+            if (this.nodedefs[nodename]) {
+                // already have it
+                return
+            }
+
+            const promise = this.nodedefloader(nodename)
+                .then(node_def => this.nodedefs[nodename] = node_def)
+            promises.push(promise)
+        })
+
+        await Promise.all(promises)
+        return mb
     }
 
-    loadArea(pos1, pos2) {
+    async loadArea(pos1, pos2) {
         const promises = []
         const mb_pos1 = pos1.toMapblockPos()
         const mb_pos2 = pos2.toMapblockPos()
@@ -43,7 +61,7 @@ export default class {
             }
         }
 
-        return Promise.all(promises)
+        await Promise.all(promises)
     }
 
     formatPos(pos) {
@@ -53,6 +71,10 @@ export default class {
     getBlock(mbpos) {
         const key = this.formatPos(mbpos)
         return this.map[key]
+    }
+
+    getNodeDef(nodename) {
+        return this.nodedefs[nodename]
     }
 
     getNode(pos) {

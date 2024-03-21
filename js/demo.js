@@ -18,11 +18,15 @@ const wv = new WebView({
                 resolve(null);
             }
         }),
-        nodedef: nodename => nodedefs[nodename],
+        nodedef: nodename => Promise.resolve(nodedefs[nodename]),
         media: filename => fetch(`export/media/${filename}`).then(r => r.arrayBuffer())
     }
 });
 
 const pos1 = new Pos(-30, -30, -30)
 const pos2 = new Pos(30, 30, 30)
-wv.render(pos1, pos2)
+
+const t1 = Date.now()
+await wv.render(pos1, pos2)
+const diff = Date.now() - t1
+console.log("Render time: " + diff + " ms")
