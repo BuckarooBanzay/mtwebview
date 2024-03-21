@@ -1,4 +1,4 @@
-import { Color, PerspectiveCamera, Scene, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh } from "three";
+import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 
@@ -21,11 +21,9 @@ export default class {
         this.controls.minDistance = 5
         this.controls.maxDistance = 500
 
-        // "debug" box
-        const geometry = new BoxGeometry( 1, 1, 1 );
-        const material = new MeshBasicMaterial( { color: 0x00ff00 } );
-        const cube = new Mesh( geometry, material );
-        this.scene.add( cube );
+        this.controls.target.x = 30
+        this.controls.target.y = -30
+        this.controls.target.z = -30
 
         setInterval(() => {
             console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)

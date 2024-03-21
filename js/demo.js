@@ -6,7 +6,6 @@ const manifest = await fetch("export/mapblocks/manifest.json").then(r => r.json(
 
 const wv = new WebView({
     target: document.getElementById("scene"),
-    pos: { x:0, y:0, z:0 },
     source: {
         mapblock: pos => new Promise(resolve => {
             const pos_str = `(${pos.x},${pos.y},${pos.z})`;
