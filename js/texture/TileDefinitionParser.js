@@ -1,6 +1,10 @@
 
 
 export default function(tiledef) {
+    if (typeof(tiledef) != "string") {
+        // non-string tiledef, ignore
+        return []
+    }
     const parts = tiledef.split("^")
 
     return parts

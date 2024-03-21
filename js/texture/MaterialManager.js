@@ -4,8 +4,9 @@ export default class {
     loader = new TextureLoader()
     cache = {}
 
-    constructor(textureGen) {
+    constructor(textureGen, wireframe) {
         this.textureGen = textureGen
+        this.wireframe = wireframe || false
     }
 
     async createMaterial(tiledef, transparent, drawside) {
@@ -23,7 +24,7 @@ export default class {
         const material = new MeshBasicMaterial({
             map: texture,
             vertexColors: true,
-            wireframe: false,
+            wireframe: this.wireframe,
             side: drawside,
             transparent: transparent,
         })

@@ -12,7 +12,7 @@ export default class WebView {
         this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
 
         const textureGen = new TextureGenerator(cfg.source.media)
-        const materialmgr = new MaterialManager(textureGen)
+        const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
         this.meshgen = new MeshGenerator(this.worldmap, materialmgr)
     }
 

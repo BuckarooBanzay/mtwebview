@@ -46,7 +46,7 @@ export default class {
 
             if (this.isDrawtypeOccluding(neighbor_nodedef.drawtype)) {
                 // side not visible
-                return
+                continue
             }
 
             const texture_def = this.getTextureDef(nodedef.tiles, dir)
