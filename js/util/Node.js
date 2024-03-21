@@ -1,5 +1,5 @@
 
-export default class {
+class Node {
     constructor(id, name, param1, param2) {
         this.id = id
         this.name = name
@@ -15,3 +15,7 @@ export default class {
         return this.param1 & 0x0f
     }
 }
+
+export default Node
+
+export const IgnoreNode = new Node(-1, "ignore", 0, 0)

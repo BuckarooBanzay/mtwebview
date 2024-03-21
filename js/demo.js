@@ -1,4 +1,5 @@
 import WebView from './WebView.js';
+import Pos from './util/Pos.js';
 
 const nodedefs = await fetch("export/nodedefs.json").then(r => r.json());
 const manifest = await fetch("export/mapblocks/manifest.json").then(r => r.json());
@@ -22,4 +23,6 @@ const wv = new WebView({
     }
 });
 
-wv.worldmap.load({x:-1, y:-2, z:-1})
+const pos1 = new Pos(-30, -30, -30)
+const pos2 = new Pos(30, 30, 30)
+wv.render(pos1, pos2)
