@@ -35,7 +35,13 @@ export default class {
         }
     }
 
+    isTransparent() {
+        return false
+    }
+
     async render(ctx, pos, node, nodedef) {
+        const transparent = this.isTransparent()
+    
         for (let i=0; i<sidelist.length; i++) {
             const sidename = sidelist[i]
             const dir = NodeSide[sidename]
@@ -51,7 +57,7 @@ export default class {
 
             const texture_def = this.getTextureDef(nodedef.tiles, dir)
 
-            const material = await this.matmgr.createMaterial(texture_def, false, FrontSide)
+            const material = await this.matmgr.createMaterial(texture_def, transparent, FrontSide)
 
             let light = neighbor_node.getNightLight() / 15
 
@@ -59,5 +65,6 @@ export default class {
             bg.createNodeMeshSide(pos, dir, light)
         }
     }
+
 
 }
