@@ -8,6 +8,7 @@ export default class WebView {
 
     constructor(cfg) {
         this.scene = new Scene(cfg.target);
+        this.scene.animate()
         this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
 
         const textureGen = new TextureGenerator(cfg.source.media)

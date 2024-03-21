@@ -19,7 +19,7 @@ const wv = new WebView({
             }
         }),
         nodedef: nodename => Promise.resolve(nodedefs[nodename]),
-        media: filename => fetch(`export/media/${filename}`).then(r => r.arrayBuffer())
+        media: filename => Promise.resolve(`export/media/${filename}`)
     }
 });
 

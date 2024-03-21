@@ -19,33 +19,31 @@ export default class {
     }
 
     // returns: Promise<Data-URL>
-    createTexture(tiledef) {
-        return new Promise(resolve => {
-            const parts = TileDefinitionParser(tiledef)
-                .filter(p => p.image) // filter out image-only parts, ignore the rest for now
-            if (parts.length == 0) {
-                // nothing to show
-                resolve(UnknownNodePNG)
-            }
+    async createTexture(tiledef) {
+        const parts = TileDefinitionParser(tiledef)
+            .filter(p => p.image) // filter out image-only parts, ignore the rest for now
+        if (parts.length == 0) {
+            // nothing to show
+            return UnknownNodePNG
+        }
 
-            const promises = parts.map(p => this.getImageObject(p.image))
-            Promise.all(promises).then(images => {
-                const canvas = document.createElement("canvas")
-                canvas.height = images[0].height;
-                canvas.width = images[0].width;
-                const ctx = canvas.getContext("2d")
+        const promises = parts.map(p => this.getImageObject(p.image))
+        return await Promise.all(promises).then(images => {
+            const canvas = document.createElement("canvas")
+            canvas.height = images[0].height;
+            canvas.width = images[0].width;
+            const ctx = canvas.getContext("2d")
 
-                images.forEach(img => {
-                    ctx.drawImage(img, 0, 0)
-                })
-
-                resolve(canvas.toDataURL())
+            images.forEach(img => {
+                ctx.drawImage(img, 0, 0)
             })
-            .catch(e => {
-                // fallback
-                console.warn("createTexture: ", e)
-                resolve(UnknownNodePNG)
-            })
+
+            return canvas.toDataURL()
+        })
+        .catch(e => {
+            // fallback
+            console.warn("createTexture: ", e)
+            return UnknownNodePNG
         })
     }
 }

@@ -1,9 +1,10 @@
+import Pos from "./Pos.js"
 
 export default {
-    XP: 0,
-    XN: 1,
-    YP: 2,
-    YN: 3,
-    ZP: 4,
-    ZN: 5
+    XP: new Pos(1,0,0),
+    XN: new Pos(-1,0,0),
+    YP: new Pos(0,1,0),
+    YN: new Pos(0,-1,0),
+    ZP: new Pos(0,0,1),
+    ZN: new Pos(0,0,-1)
 }

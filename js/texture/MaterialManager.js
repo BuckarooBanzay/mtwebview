@@ -23,7 +23,7 @@ export default class {
         const material = new MeshBasicMaterial({
             map: texture,
             vertexColors: true,
-            wireframe: this.wireframe,
+            wireframe: false,
             side: drawside,
             transparent: transparent,
         })

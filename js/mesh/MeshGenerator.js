@@ -40,7 +40,7 @@ export default class MeshGenerator {
                         continue
                     }
 
-                    dt.render(ctx, pos, node)
+                    await dt.render(ctx, pos, node, ndef)
                 }
             }
         }
