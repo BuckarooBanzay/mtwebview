@@ -1,4 +1,4 @@
-import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import { Color, PerspectiveCamera, Scene, WebGLRenderer, AxesHelper } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 
@@ -24,6 +24,9 @@ export default class {
         this.controls.target.x = 30
         this.controls.target.y = -30
         this.controls.target.z = -30
+
+        const axesHelper = new AxesHelper( 5 );
+        this.scene.add( axesHelper );
 
         setInterval(() => {
             console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
