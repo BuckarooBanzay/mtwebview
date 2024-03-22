@@ -11,7 +11,7 @@ export default class {
     max_index = 0
     indices = []
 
-    createNodeMeshSide(pos, side, light) {
+    createNodeMeshSide(pos, side, lighting) {
         // inverted gl/canvas position
         const gl_pos = new Pos(pos.x*-1, pos.y, pos.z)
 
@@ -99,8 +99,10 @@ export default class {
         }
 
         const default_colors = []
-        for (let i=0; i<12; i++) {
-            default_colors.push(light)
+        for (let i=0; i<4; i++) {
+            default_colors.push(lighting[i])
+            default_colors.push(lighting[i])
+            default_colors.push(lighting[i])
         }
         this.colors.push(...default_colors)
     }

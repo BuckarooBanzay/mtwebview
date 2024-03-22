@@ -12,7 +12,7 @@ class Node {
     }
 
     getNightLight() {
-        return this.param1 & 0x0f
+        return this.param1 & 0x0F
     }
 }
 

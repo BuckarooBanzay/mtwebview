@@ -25,6 +25,11 @@ export default class {
         return new Node(id, name, this.param1[index], this.param2[index])
     }
 
+    getParam1(pos) {
+        const index = this.getIndex(pos)
+        return this.param1[index]
+    }
+
     getIndex(pos) {
         return pos.x + (pos.y * 16) + (pos.z * 256);
     }

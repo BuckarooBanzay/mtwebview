@@ -76,15 +76,27 @@ export default class {
         return this.nodedefs[nodename]
     }
 
+    getParam1(pos) {
+        const mb_pos = pos.toMapblockPos()
+
+        const b = this.getBlock(mb_pos)
+        if (!b) {
+            return 15
+        }
+
+        const inblock_pos = new Pos(pos.x - (mb_pos.x*16), pos.y - (mb_pos.y*16), pos.z - (mb_pos.z*16))
+        return b.getParam1(inblock_pos)
+    }
+
     getNode(pos) {
         const mb_pos = pos.toMapblockPos()
-        const inblock_pos = new Pos(pos.x - (mb_pos.x*16), pos.y - (mb_pos.y*16), pos.z - (mb_pos.z*16))
 
         const b = this.getBlock(mb_pos)
         if (!b) {
             return IgnoreNode
         }
 
+        const inblock_pos = new Pos(pos.x - (mb_pos.x*16), pos.y - (mb_pos.y*16), pos.z - (mb_pos.z*16))
         return b.getNode(inblock_pos)
     }
 }

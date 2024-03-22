@@ -1,5 +1,6 @@
 import NodeSide from "../../util/NodeSide.js"
 import { FrontSide } from "three"
+import Pos from "../../util/Pos.js"
 
 const sidelist = Object.keys(NodeSide)
 
@@ -44,6 +45,19 @@ export default class {
         return FrontSide
     }
 
+    getLighting(pos, dir) {
+        if (dir == NodeSide.YN) {
+            return [
+                (this.worldmap.getParam1(pos.add(new Pos(1,-1,1))) & 0x0F) / 15,
+                (this.worldmap.getParam1(pos.add(new Pos(-1,-1,1))) & 0x0F) / 15,
+                (this.worldmap.getParam1(pos.add(new Pos(-1,-1,-1))) & 0x0F) / 15,
+                (this.worldmap.getParam1(pos.add(new Pos(1,-1,-1))) & 0x0F) / 15,
+            ]
+        }
+
+        return [1,1,1,1]
+    }
+
     async render(ctx, pos, node, nodedef) {
         const transparent = this.isTransparent()
         const renderside = this.getRenderSide()
@@ -62,13 +76,11 @@ export default class {
             }
 
             const texture_def = this.getTextureDef(nodedef, dir)
-
             const material = await this.matmgr.createMaterial(texture_def, transparent, renderside)
-
-            let light = neighbor_node.getNightLight() / 15
+            const lighting = this.getLighting(pos, dir)
 
             const bg = ctx.getGeometryHelper(material)
-            bg.createNodeMeshSide(pos, dir, light)
+            bg.createNodeMeshSide(pos, dir, lighting)
         }
     }
 
