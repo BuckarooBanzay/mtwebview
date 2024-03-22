@@ -1,11 +1,16 @@
 
 
 export default function(tiledef) {
-    if (typeof(tiledef) != "string") {
-        // non-string tiledef, ignore
-        return []
+    let str = tiledef
+    if (typeof(tiledef) == "object") {
+        if (tiledef.name) {
+            str = tiledef.name
+        } else {
+            // not sure what to do here
+            return []
+        }
     }
-    const parts = tiledef.split("^")
+    const parts = str.split("^")
 
     return parts
     .filter(p => p.length > 0)
