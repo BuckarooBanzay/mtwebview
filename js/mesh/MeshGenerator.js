@@ -2,6 +2,7 @@ import Normal from "./drawtype/Normal.js"
 import Glasslike from "./drawtype/Glasslike.js"
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
+import Allfaces from "./drawtype/Allfaces.js"
 
 export default class MeshGenerator {
 
@@ -14,8 +15,10 @@ export default class MeshGenerator {
 
         this.drawTypes["normal"] = new Normal()
         this.drawTypes["glasslike"] = new Glasslike();
+        this.drawTypes["glasslike_framed"] = new Glasslike();
         this.drawTypes["glasslike_framed_optional"] = new Glasslike();
-        //allfaces_optional
+        this.drawTypes["allfaces"] = new Allfaces();
+        this.drawTypes["allfaces_optional"] = new Allfaces();
 
         Object.keys(this.drawTypes).forEach(dt => {
             this.drawTypes[dt].init(worldmap, materialmgr)

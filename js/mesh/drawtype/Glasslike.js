@@ -1,5 +1,4 @@
 import Base from "./Base.js";
-import { DoubleSide } from "three"
 
 export default class extends Base {
     isTransparent() {
@@ -7,11 +6,11 @@ export default class extends Base {
     }
 
     getTextureDef(nodedef) {
-        return nodedef.tiles[0] + "^" + nodedef.tiles[1]
-    }
-
-    getRenderSide() {
-        return DoubleSide
+        if (nodedef.tiles.length == 2) {
+            return nodedef.tiles[0] + "^" + nodedef.tiles[1]
+        } else {
+            return super.getTextureDef(nodedef)
+        }
     }
 
     isDrawtypeOccluding(drawtype) {

@@ -29,7 +29,6 @@ export default class {
 
         const mb = new Mapblock(mapblock_def)
         this.map[key] = mb
-        console.log(mb)
 
         const promises = []
         mb.getNodeNames().forEach(nodename => {
