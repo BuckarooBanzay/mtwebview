@@ -12,15 +12,10 @@ local function export_mapblock(mb_pos, manifest)
         node_mapping = {} -- name -> id
     }
 
-    assert(#data.node_ids == 4096)
-    assert(#data.param1 == 4096)
-    assert(#data.param2 == 4096)
-
     local air_only = true
     local processed_nodeids = {} -- id -> bool
 
-    for i=1,4096 do
-        local nodeid = data.node_ids[i]
+    for _, nodeid in ipairs(data.node_ids) do
         if not processed_nodeids[nodeid] then
             local name = minetest.get_name_from_content_id(nodeid)
             data.node_mapping[name] = nodeid
@@ -35,10 +30,7 @@ local function export_mapblock(mb_pos, manifest)
         return 0
     else
         local pos_str = minetest.pos_to_string(mb_pos)
-        table.insert(manifest, {
-            filename = "mapblocks/" .. pos_str .. ".json",
-            pos = mb_pos
-        })
+        manifest[pos_str] = true
         return mtwebview.export_json(
             mtwebview.basepath .. "/mapblocks/" .. pos_str .. ".json",
             data
@@ -56,15 +48,15 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
         for y=mb_pos1.y,mb_pos2.y do
             for z=mb_pos1.z,mb_pos2.z do
                 local pos = {x=x, y=y, z=z}
-                size = size + export_mapblock(pos, manifest)
-                if size > 0 then
+                local mbsize = export_mapblock(pos, manifest)
+                size = size + mbsize
+                if mbsize > 0 then
                     count = count + 1
                 end
             end
         end
     end
 
-    mtwebview.export_json(mtwebview.basepath .. "/manifest.json", manifest, true)
-
+    mtwebview.export_json(mtwebview.basepath .. "/mapblocks/manifest.json", manifest, true)
     print("[mtwebview] exported " .. count .. " mapblocks (" .. size .. " bytes)")
 end
