@@ -8,7 +8,7 @@
             const mediasource = n => Promise.resolve(`/export/media/${n}`)
             const tg = new TextureGenerator(mediasource);
             //const tiledef = "default_blueberry_bush_leaves.png^default_blueberry_overlay.png"
-            const tiledef = "default_blueberry_bush_leaves.png^default_blueberry_overlay.png"
+            const tiledef = "default_dirt.png^default_snow_side.png"
             tg.createTexture(tiledef)
             .then(dataurl => {
                 const el = document.createElement("img")

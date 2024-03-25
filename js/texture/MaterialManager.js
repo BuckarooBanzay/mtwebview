@@ -10,7 +10,7 @@ export default class {
     }
 
     async createMaterial(tiledef, transparent, drawside, vertexColors) {
-        const key = `${tiledef}/${transparent}/${drawside}/${vertexColors}`
+        const key = `${JSON.stringify(tiledef)}/${transparent}/${drawside}/${vertexColors}`
         if (this.cache[key]) {
             return this.cache[key]
         }
