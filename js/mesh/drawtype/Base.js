@@ -45,34 +45,10 @@ export default class {
         return FrontSide
     }
 
-    getAverageLight(pos1, pos2) {
-        const l1 = (this.worldmap.getParam1(pos1) & 0x0F) / 15
-        const l2 = (this.worldmap.getParam1(pos2) & 0x0F) / 15
-        return (l1 + l2) / 2
-    }
-
     getLighting(pos, dir) {
-        if (dir == NodeSide.YN) {
-            // x+ / z+
-            // x- / z+
-            // x- / z-
-            // x+ / z-
-            return [
-                this.getAverageLight(pos, pos.add(new Pos(1,-1,1))),
-                this.getAverageLight(pos, pos.add(new Pos(-1,-1,1))),
-                this.getAverageLight(pos, pos.add(new Pos(-1,-1,-1))),
-                this.getAverageLight(pos, pos.add(new Pos(1,-1,-1))),
-            ]
-        } else if (dir == NodeSide.YP) {
-            return [
-                this.getAverageLight(pos, pos.add(new Pos(1,1,1))),
-                this.getAverageLight(pos, pos.add(new Pos(-1,1,1))),
-                this.getAverageLight(pos, pos.add(new Pos(-1,1,-1))),
-                this.getAverageLight(pos, pos.add(new Pos(1,1,-1))),
-            ]
-        }
-
-        return [1,1,1,1]
+        // TODO: smooth light
+        const light = (this.worldmap.getParam1(pos.add(dir)) & 0x0F) / 15
+        return [light,light,light,light]
     }
 
     async render(ctx, pos, node, nodedef) {
