@@ -6,6 +6,7 @@ export default class {
     // material.uuid -> BufferGeometryHelper
     helperMap = {}
     materialMap = {}
+    meshes = []
 
     getGeometryHelper(material) {
         if (!this.helperMap[material.uuid]) {
@@ -13,6 +14,10 @@ export default class {
             this.materialMap[material.uuid] = material
         }
         return this.helperMap[material.uuid]
+    }
+
+    addMesh(m) {
+        this.meshes.push(m)
     }
 
     toMesh() {
@@ -24,6 +29,7 @@ export default class {
                 m.add(new Mesh(geometry, this.materialMap[uuid]))
             }
         })
+        this.meshes.forEach(mesh => m.add(mesh))
         return m
     }
 }

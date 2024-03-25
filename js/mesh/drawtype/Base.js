@@ -1,14 +1,14 @@
 import NodeSide from "../../util/NodeSide.js"
 import { FrontSide } from "three"
-import Pos from "../../util/Pos.js"
 
 const sidelist = Object.keys(NodeSide)
 
 export default class {
 
-    init(worldmap, matmgr) {
+    init(worldmap, matmgr, mediasource) {
         this.worldmap = worldmap
         this.matmgr = matmgr
+        this.mediasource = mediasource
     }
 
     isDrawtypeOccluding(drawtype) {

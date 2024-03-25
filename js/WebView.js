@@ -13,7 +13,7 @@ export default class WebView {
 
         const textureGen = new TextureGenerator(cfg.source.media)
         const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
-        this.meshgen = new MeshGenerator(this.worldmap, materialmgr)
+        this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
     }
 
     async render(pos1, pos2) {
