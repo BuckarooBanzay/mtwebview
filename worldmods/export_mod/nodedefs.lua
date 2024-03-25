@@ -12,7 +12,10 @@ function mtwebview.export_nodedefs()
             paramtype2 = def.paramtype2,
             light_source = def.light_source,
             mesh = def.mesh,
-            tiles = def.tiles
+            tiles = def.tiles,
+            node_box = def.node_box,
+            connects_to = def.connects_to,
+            groups = def.groups
         }
     end
 
