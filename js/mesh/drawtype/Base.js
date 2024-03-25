@@ -69,7 +69,7 @@ export default class {
             }
 
             const texture_def = this.getTextureDef(nodedef, dir)
-            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside)
+            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, true)
             const lighting = this.getLighting(pos, dir)
 
             const bg = ctx.getGeometryHelper(material)

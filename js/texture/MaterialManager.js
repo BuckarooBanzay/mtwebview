@@ -9,8 +9,8 @@ export default class {
         this.wireframe = wireframe || false
     }
 
-    async createMaterial(tiledef, transparent, drawside) {
-        const key = `${tiledef}/${transparent}/${drawside}`
+    async createMaterial(tiledef, transparent, drawside, vertexColors) {
+        const key = `${tiledef}/${transparent}/${drawside}/${vertexColors}`
         if (this.cache[key]) {
             return this.cache[key]
         }
@@ -23,7 +23,7 @@ export default class {
         
         const material = new MeshBasicMaterial({
             map: texture,
-            vertexColors: true,
+            vertexColors: vertexColors,
             wireframe: this.wireframe,
             side: drawside,
             transparent: transparent,
