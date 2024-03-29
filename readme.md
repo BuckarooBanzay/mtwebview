@@ -7,7 +7,7 @@ Exports nodedefs, textures and the map to be viewed in a webbrowser
 
 # Supported drawtypes
 
-See: https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-drawtypes
+https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-drawtypes
 
 * [x] normal
 * [x] airlike
@@ -25,10 +25,12 @@ See: https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-drawty
 * [ ] fencelike
 * [ ] raillike
 * [ ] nodebox
-* [ ] mesh
+* [x] mesh
 * [ ] plantlike_rooted
 
 # Supported paramtype2
+
+https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-paramtypes
 
 * [x] none
 * [ ] facedir
@@ -44,6 +46,18 @@ See: https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-drawty
 * [ ] meshoptions
 * [ ] glasslikeliquidlevel
 * [ ] colordegrotate
+
+# Supported nodeboxes
+
+https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-boxes
+
+* [ ] regular
+* [ ] fixed
+* [ ] leveled
+* [ ] wallmounted
+* [ ] connected
+* [ ] fixed
+
 
 ## Debug
 

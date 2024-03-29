@@ -1,4 +1,4 @@
-import { FrontSide, BufferGeometry, Mesh, MeshBasicMaterial } from "three";
+import { FrontSide } from "three";
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
 import Base from "./Base.js";
@@ -30,7 +30,6 @@ export default class extends Base {
 
         return await new Promise(resolve => {
             loader.load(url, obj => {
-                console.log(nodename, obj, materials)
                 obj.children.forEach((child, i) => {
                     child.material = materials[i]
                 })
@@ -47,7 +46,6 @@ export default class extends Base {
         }
 
         const mesh = await this.getMesh(nodedef)
-        console.log(pos, mesh)
         mesh.translateX(pos.x * -1)
         mesh.translateY(pos.y)
         mesh.translateZ(pos.z)

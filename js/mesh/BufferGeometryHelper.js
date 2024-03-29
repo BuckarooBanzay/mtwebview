@@ -2,6 +2,13 @@ import { BufferAttribute, BufferGeometry } from "three";
 import Pos from "../util/Pos.js";
 import NodeSide from "../util/NodeSide.js";
 
+const default_uvs = [
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0,
+]
+
 export default class {
 
     vertices = []
@@ -11,16 +18,10 @@ export default class {
     max_index = 0
     indices = []
 
-    createNodeMeshSide(pos, side, lighting) {
+    createNodeMeshSide(pos, side, lighting, uvs) {
         // inverted gl/canvas position
         const gl_pos = new Pos(pos.x*-1, pos.y, pos.z)
-
-        const default_uvs = [
-            0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-        ]
+        uvs = uvs || default_uvs
 
         const o = this.max_index
         this.max_index += 4
@@ -33,7 +34,7 @@ export default class {
             o+3, o+2, o+0
         ]
 
-        this.uvs.push(...default_uvs)
+        this.uvs.push(...uvs)
 
         switch (side) {
             case NodeSide.YP:
