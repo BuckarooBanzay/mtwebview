@@ -1,8 +1,13 @@
-import { FrontSide } from "three";
+import { FrontSide, Matrix4 } from "three";
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
 import Base from "./Base.js";
 import NodeSide from "../../util/NodeSide.js"
+
+const loader = new OBJLoader()
+
+const rotation_y_180 = new Matrix4().makeRotationY(Math.PI)
+const rotation_z_180 = new Matrix4().makeRotationZ(Math.PI)
 
 export default class extends Base {
 
@@ -26,10 +31,9 @@ export default class extends Base {
         ]
         const url = await this.mediasource(nodedef.mesh)
 
-        const loader = new OBJLoader()
-
         return await new Promise(resolve => {
             loader.load(url, obj => {
+                // TODO: instancedMesh for every child buffer-geometry
                 obj.children.forEach((child, i) => {
                     child.material = materials[i]
                 })
@@ -46,9 +50,13 @@ export default class extends Base {
         }
 
         const mesh = await this.getMesh(nodedef)
-        mesh.translateX(pos.x * -1)
-        mesh.translateY(pos.y)
-        mesh.translateZ(pos.z)
+
+        const m = new Matrix4(); 
+        m.makeTranslation(pos.x*-1, pos.y, pos.z)
+        m.multiply(rotation_y_180)
+        m.multiply(rotation_z_180)
+
+        mesh.applyMatrix4(m)
 
         ctx.addMesh(mesh)
     }
