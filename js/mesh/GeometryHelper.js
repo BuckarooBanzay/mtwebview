@@ -12,14 +12,11 @@ export default class {
     colorlist = []
 
     addPlane(pos, side, color) {
+
         const m = new Matrix4()
-            .makeTranslation(
-                (pos.x*-1) + (side.dir.x*-0.5),
-                pos.y + side.dir.y*0.5,
-                pos.z + side.dir.z*0.5
-            )
-            .multiply(side.rotationmatrix)
-            
+        m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
+        m.multiply(side.rotationmatrix)
+        m.multiply(new Matrix4().makeTranslation(0, 0, 0.5))
 
         this.matrixlist.push(m)
         this.colorlist.push(color)
