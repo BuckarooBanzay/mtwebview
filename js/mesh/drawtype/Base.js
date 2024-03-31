@@ -70,7 +70,7 @@ export default class {
 
             const c = new Color(light, light, light)
 
-            gh.addPlane(pos, side, c)
+            gh.addCubeSide(pos, side, c)
         }
     }
 

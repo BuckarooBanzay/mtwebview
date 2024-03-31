@@ -11,15 +11,18 @@ export default class {
     matrixlist = []
     colorlist = []
 
-    addPlane(pos, side, color) {
+    addPlane(matrix, color) {
+        this.matrixlist.push(matrix)
+        this.colorlist.push(color)
+    }
 
+    addCubeSide(pos, side, color) {
         const m = new Matrix4()
         m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
         m.multiply(side.rotationmatrix)
         m.multiply(new Matrix4().makeTranslation(0, 0, 0.5))
 
-        this.matrixlist.push(m)
-        this.colorlist.push(color)
+        return this.addPlane(m, color)
     }
 
     createMesh() {
