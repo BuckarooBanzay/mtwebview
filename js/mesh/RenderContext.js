@@ -1,19 +1,29 @@
 import { Mesh } from 'three';
-import GeometryHelper from './GeometryHelper.js'
+import PlaneGeometryHelper from './PlaneGeometryHelper.js'
+import BufferGeometryHelper from './BufferGeometryHelper.js';
 
 export default class {
 
-    // material.uuid -> GeometryHelper
-    helperMap = {}
-    materialMap = {}
+    // material.uuid -> Helper
+    planeHelperMap = {}
+    bufferHelperMap = {}
+
     meshes = []
 
-    getGeometryHelper(material) {
-        if (!this.helperMap[material.uuid]) {
-            this.helperMap[material.uuid] = new GeometryHelper(material);
-            this.materialMap[material.uuid] = material
+    getPlaneGeometryHelper(material) {
+        const key = material.uuid
+        if (!this.planeHelperMap[key]) {
+            this.planeHelperMap[key] = new PlaneGeometryHelper(material);
         }
-        return this.helperMap[material.uuid]
+        return this.planeHelperMap[key]
+    }
+
+    getBufferGeometryHelper(material) {
+        const key = material.uuid
+        if (!this.bufferHelperMap[key]) {
+            this.bufferHelperMap[key] = new BufferGeometryHelper(material)
+        }
+        return this.bufferHelperMap[key]
     }
 
     addMesh(m) {
@@ -22,13 +32,21 @@ export default class {
 
     toMesh() {
         const meshgroup = new Mesh()
-        Object.keys(this.helperMap).forEach(uuid => {
-            const gh = this.helperMap[uuid]
-            const mesh = gh.createMesh()
+        // planes
+        Object.values(this.planeHelperMap).forEach(h => {
+            const mesh = h.createMesh()
             if (mesh) {
                 meshgroup.add(mesh)
             }
         })
+        // raw buffer
+        Object.values(this.bufferHelperMap).forEach(h => {
+            const mesh = h.createMesh()
+            if (mesh) {
+                meshgroup.add(mesh)
+            }
+        })
+        // custom meshes
         this.meshes.forEach(mesh => meshgroup.add(mesh))
         return meshgroup
     }

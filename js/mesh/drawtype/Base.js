@@ -66,7 +66,7 @@ export default class {
             const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, false)
             const light = (this.worldmap.getParam1(pos.add(side.dir)) & 0x0F) / 15
 
-            const gh = ctx.getGeometryHelper(material)
+            const gh = ctx.getPlaneGeometryHelper(material)
 
             const c = new Color(light, light, light)
 
