@@ -1,5 +1,5 @@
 import NodeSide from "../../util/NodeSide.js"
-import { FrontSide } from "three"
+import { Color, FrontSide } from "three"
 
 const sidelist = Object.keys(NodeSide)
 
@@ -45,20 +45,14 @@ export default class {
         return FrontSide
     }
 
-    getLighting(pos, dir) {
-        // TODO: smooth light
-        const light = (this.worldmap.getParam1(pos.add(dir)) & 0x0F) / 15
-        return [light,light,light,light]
-    }
-
     async render(ctx, pos, node, nodedef) {
         const transparent = this.isTransparent()
         const renderside = this.getRenderSide()
     
         for (let i=0; i<sidelist.length; i++) {
             const sidename = sidelist[i]
-            const dir = NodeSide[sidename]
-            const neighbor_pos = pos.add(dir)
+            const side = NodeSide[sidename]
+            const neighbor_pos = pos.add(side.dir)
 
             const neighbor_node = this.worldmap.getNode(neighbor_pos)
             const neighbor_nodedef = this.worldmap.getNodeDef(neighbor_node.name)
@@ -68,12 +62,15 @@ export default class {
                 continue
             }
 
-            const texture_def = this.getTextureDef(nodedef, dir)
-            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, true)
-            const lighting = this.getLighting(pos, dir)
+            const texture_def = this.getTextureDef(nodedef, side)
+            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, false)
+            const light = (this.worldmap.getParam1(pos.add(side.dir)) & 0x0F) / 15
 
-            const bg = ctx.getGeometryHelper(material)
-            bg.createNodeMeshSide(pos, dir, lighting)
+            const gh = ctx.getGeometryHelper(material)
+
+            const c = new Color(light, light, light)
+
+            gh.addPlane(pos, side, c)
         }
     }
 
