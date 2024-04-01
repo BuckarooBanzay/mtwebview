@@ -30,22 +30,26 @@ export default class {
 
         this.scene.add(new AmbientLight(0xffffff));
 
-        setInterval(() => {
-            console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
-        }, 1000)
+        this.controls.addEventListener( 'change', () => this.render() );
+
+        this.animate()
     }
 
     animate() {
-        this.stats.begin()
-        this.renderer.render(this.scene, this.camera)
-        this.stats.end()
-
         this.controls.update()
         window.requestAnimationFrame(() => this.animate())
     }
 
+    render() {
+        this.stats.begin()
+        this.renderer.render(this.scene, this.camera)
+        this.stats.end()
+        console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
+    }
+
     addMesh(m) {
         this.scene.add(m)
+        this.render()
     }
 
 }

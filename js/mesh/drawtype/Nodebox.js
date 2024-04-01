@@ -5,10 +5,15 @@ import NodeSide from "../../util/NodeSide.js";
 const sidelist = Object.keys(NodeSide)
 
 export default class extends Base {
+
+    
+
     async render(ctx, pos, node, nodedef) {
         if (nodedef.node_box.type != "fixed") {
             return
         }
+
+        console.log(nodedef)
 
         for (let i=0; i<sidelist.length; i++) {
             const sidename = sidelist[i]

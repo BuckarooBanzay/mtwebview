@@ -29,4 +29,4 @@ const pos2 = new Pos(30, 30, 30)
 const t1 = Date.now()
 await wv.render(pos1, pos2)
 const diff = Date.now() - t1
-console.log("Render time: " + diff + " ms")
+console.log("Initial render/generate time: " + diff + " ms")
