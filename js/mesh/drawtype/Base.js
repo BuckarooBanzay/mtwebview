@@ -63,11 +63,10 @@ export default class {
             }
 
             const texture_def = this.getTextureDef(nodedef, side)
-            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, false)
+            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, true)
             const light = (this.worldmap.getParam1(pos.add(side.dir)) & 0x0F) / 15
 
-            const gh = ctx.getPlaneGeometryHelper(material)
-
+            const gh = ctx.getBufferGeometryHelper(material)
             const c = new Color(light, light, light)
 
             gh.addCubeSide(pos, side, c)
