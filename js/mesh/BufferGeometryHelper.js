@@ -58,7 +58,7 @@ export default class {
 
     createMesh() {
         const geo = new BufferGeometry()
-        geo.setIndex(this.indices)        
+        geo.setIndex(this.indices)
         geo.setAttribute('position', new BufferAttribute(new Float32Array(this.positions), 3));
         geo.setAttribute('uv', new BufferAttribute(new Float32Array(this.uvs), 2));
         geo.setAttribute('color', new BufferAttribute(new Float32Array(this.colors), 3));
