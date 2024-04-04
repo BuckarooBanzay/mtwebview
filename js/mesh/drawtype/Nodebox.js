@@ -29,13 +29,14 @@ export default class extends Base {
 
             if (side == NodeSide.YP) {
                 nodedef.node_box.fixed.forEach(box => {
+                    const size_x = box[3] - box[0]
+                    const size_y = box[5] - box[2]
+
                     const m = new Matrix4()
                     m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
                     m.multiply(side.rotationmatrix)
-                    m.multiply(new Matrix4().makeTranslation(0, 0, box[4]))
+                    m.multiply(new Matrix4().makeTranslation(box[0] + (size_x / 2), box[3] - (size_y / 2), box[4]))
 
-                    const size_x = box[3] - box[0]
-                    const size_y = box[5] - box[2]
                     gh.addPlane(m, c, size_x, size_y)
                 })
             }
