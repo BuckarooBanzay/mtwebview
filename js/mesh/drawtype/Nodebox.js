@@ -1,19 +1,46 @@
 import { Color, FrontSide, Matrix4 } from "three";
 import Base from "./Base.js";
 import NodeSide from "../../util/NodeSide.js";
+import { facedir_to_matrix } from "../../util/Facedir.js";
 
 const sidelist = Object.keys(NodeSide)
 
 export default class extends Base {
 
-    
-
-    async render(ctx, pos, node, nodedef) {
-        if (nodedef.node_box.type != "fixed" || !nodedef.node_box.fixed) {
+    processNodebox(gh, box, pos, c, side, nodedef, node) {
+        let size_x, size_y, center_x, center_y, offset_y
+        if (side == NodeSide.YP) {
+            size_x = box[3] - box[0]
+            size_y = box[5] - box[2]
+            center_x = (box[0] + box[3]) / 2
+            center_y = (box[2] + box[5]) / 2
+            offset_y = box[4]
+        } else if (side == NodeSide.YN) {
+            size_x = box[3] - box[0]
+            size_y = box[5] - box[2]
+            center_x = (box[0] + box[3]) / 2
+            center_y = (box[2] + box[5]) / 2
+            offset_y = box[1]
+        } else {
             return
         }
 
-        console.log(nodedef)
+        const m = new Matrix4()
+        m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
+        if (nodedef.paramtype2 == "facedir") {
+            m.multiply(facedir_to_matrix(node.param2))
+        }
+
+        m.multiply(new Matrix4().makeTranslation(center_x, box[4], center_y))
+        m.multiply(side.rotationmatrix)
+
+        gh.addPlane(m, c, size_x, size_y)
+    }
+
+    async render(ctx, pos, node, nodedef) {
+        if (nodedef.node_box.type != "fixed" || !nodedef.node_box.fixed || nodedef.node_box.fixed.length == 0) {
+            return
+        }
 
         for (let i=0; i<sidelist.length; i++) {
             const sidename = sidelist[i]
@@ -27,20 +54,15 @@ export default class extends Base {
             const gh = ctx.getBufferGeometryHelper(material)
             const c = new Color(light, light, light)
 
-            if (side == NodeSide.YP) {
+            if (typeof(nodedef.node_box.fixed[0][0]) == "number") {
+                // list of nodeboxes
                 nodedef.node_box.fixed.forEach(box => {
-                    const size_x = box[3] - box[0]
-                    const size_y = box[5] - box[2]
-
-                    const m = new Matrix4()
-                    m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
-                    m.multiply(side.rotationmatrix)
-                    m.multiply(new Matrix4().makeTranslation(box[0] + (size_x / 2), box[3] - (size_y / 2), box[4]))
-
-                    gh.addPlane(m, c, size_x, size_y)
+                    this.processNodebox(gh, box, pos, c, side, nodedef, node)
                 })
+            } else {
+                // single nodeboxe
+                this.processNodebox(gh, nodedef.node_box.fixed, pos, c, side, nodedef, node)
             }
-
         }
     }
 }
