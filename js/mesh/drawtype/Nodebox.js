@@ -21,6 +21,13 @@ export default class extends Base {
             center_x = (box[0] + box[3]) / 2
             center_y = (box[2] + box[5]) / 2
             offset_y = box[1]
+        } else if (side == NodeSide.ZN) {
+            // wip
+            size_x = box[3] - box[0]
+            size_y = box[4] - box[1]
+            center_x = (box[0] + box[3]) / 2
+            center_y = (box[1] + box[4]) / 2
+            offset_y = box[2]
         } else {
             return
         }
