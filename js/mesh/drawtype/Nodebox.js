@@ -1,4 +1,4 @@
-import { Color, FrontSide } from "three";
+import { Color, FrontSide, Matrix4 } from "three";
 import Base from "./Base.js";
 import NodeSide from "../../util/NodeSide.js";
 
@@ -9,7 +9,7 @@ export default class extends Base {
     
 
     async render(ctx, pos, node, nodedef) {
-        if (nodedef.node_box.type != "fixed") {
+        if (nodedef.node_box.type != "fixed" || !nodedef.node_box.fixed) {
             return
         }
 
@@ -20,14 +20,6 @@ export default class extends Base {
             const side = NodeSide[sidename]
             const neighbor_pos = pos.add(side.dir)
 
-            const neighbor_node = this.worldmap.getNode(neighbor_pos)
-            const neighbor_nodedef = this.worldmap.getNodeDef(neighbor_node.name)
-
-            if (this.isDrawtypeOccluding(neighbor_nodedef.drawtype)) {
-                // side not visible
-                continue
-            }
-
             const texture_def = this.getTextureDef(nodedef, side)
             const material = await this.matmgr.createMaterial(texture_def, true, FrontSide, true)
             const light = (this.worldmap.getParam1(pos.add(side.dir)) & 0x0F) / 15
@@ -35,8 +27,19 @@ export default class extends Base {
             const gh = ctx.getBufferGeometryHelper(material)
             const c = new Color(light, light, light)
 
-            // TODO: parse nodebox and calculate offset/uv
-            gh.addCubeSide(pos, side, c)
+            if (side == NodeSide.YP) {
+                nodedef.node_box.fixed.forEach(box => {
+                    const m = new Matrix4()
+                    m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
+                    m.multiply(side.rotationmatrix)
+                    m.multiply(new Matrix4().makeTranslation(0, 0, box[4]))
+
+                    const size_x = box[3] - box[0]
+                    const size_y = box[5] - box[2]
+                    gh.addPlane(m, c, size_x, size_y)
+                })
+            }
+
         }
     }
 }

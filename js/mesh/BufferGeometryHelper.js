@@ -19,12 +19,13 @@ export default class {
     colors = []
     max_index = 0
 
-    addPlane(matrix, color) {
-        const half = 0.5
-        const p1 = new Vector3(-half, half, 0)
-        const p2 = new Vector3(half, half, 0)
-        const p3 = new Vector3(-half, -half, 0)
-        const p4 = new Vector3(half, -half, 0)
+    addPlane(matrix, color, size_x, size_y) {
+        const half_x = size_x / 2
+        const half_y = size_y / 2
+        const p1 = new Vector3(-half_x, half_y, 0)
+        const p2 = new Vector3(half_x, half_y, 0)
+        const p3 = new Vector3(-half_x, -half_y, 0)
+        const p4 = new Vector3(half_x, -half_y, 0)
 
         p1.applyMatrix4(matrix)
         p2.applyMatrix4(matrix)
@@ -53,7 +54,7 @@ export default class {
         m.multiply(new Matrix4().makeTranslation(pos.x * -1, pos.y, pos.z))
         m.multiply(side.rotationmatrix)
         m.multiply(new Matrix4().makeTranslation(0, 0, 0.5))
-        return this.addPlane(m, color)
+        return this.addPlane(m, color, 1, 1)
     }
 
     createMesh() {
