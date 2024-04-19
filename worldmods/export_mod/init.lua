@@ -4,6 +4,7 @@ mtwebview = {
 
 local MP = minetest.get_modpath("mtwebview")
 dofile(MP .. "/common.lua")
+dofile(MP .. "/encoding.lua")
 dofile(MP .. "/nodedefs.lua")
 dofile(MP .. "/textures.lua")
 dofile(MP .. "/export.lua")
