@@ -1,4 +1,5 @@
-local function export_mapblock(mb_pos, manifest)
+local function export_mapblock(mb_pos, mb_manifest)
+    minetest.log("action", "[export_mod] exporting mapblock " .. minetest.pos_to_string(mb_pos))
     local pos1 = vector.multiply(mb_pos, 16)
     local pos2 = vector.add(pos1, 15)
 
@@ -30,7 +31,7 @@ local function export_mapblock(mb_pos, manifest)
         return 0
     else
         local pos_str = minetest.pos_to_string(mb_pos)
-        manifest[pos_str] = true
+        mb_manifest[pos_str] = true
         return mtwebview.export_json(
             mtwebview.basepath .. "/mapblocks/" .. pos_str .. ".json",
             data
@@ -40,7 +41,11 @@ end
 
 function mtwebview.export_map(mb_pos1, mb_pos2)
     local size, count = 0, 0
-    local manifest = {}
+    local manifest = {
+        mapblocks = {},
+        min = vector.multiply(mb_pos1, 16),
+        max = vector.multiply(mb_pos2, 16)
+    }
 
     minetest.mkdir(mtwebview.basepath .. "/mapblocks")
 
@@ -48,7 +53,7 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
         for y=mb_pos1.y,mb_pos2.y do
             for z=mb_pos1.z,mb_pos2.z do
                 local pos = {x=x, y=y, z=z}
-                local mbsize = export_mapblock(pos, manifest)
+                local mbsize = export_mapblock(pos, manifest.mapblocks)
                 size = size + mbsize
                 if mbsize > 0 then
                     count = count + 1

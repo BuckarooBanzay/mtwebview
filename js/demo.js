@@ -10,7 +10,7 @@ const wv = new WebView({
     source: {
         mapblock: pos => new Promise(resolve => {
             const pos_str = `(${pos.x},${pos.y},${pos.z})`;
-            if (manifest[pos_str]) {
+            if (manifest.mapblocks[pos_str]) {
                 fetch(`export/mapblocks/${pos_str}.json`)
                 .then(r => r.json())
                 .then(mb => resolve(mb));
@@ -23,8 +23,8 @@ const wv = new WebView({
     }
 });
 
-const pos1 = new Pos(-30, -30, -30)
-const pos2 = new Pos(30, 30, 30)
+const pos1 = new Pos(manifest.min.x, manifest.min.y, manifest.min.z)
+const pos2 = new Pos(manifest.max.x, manifest.max.y, manifest.max.x, )
 
 const t1 = Date.now()
 await wv.render(pos1, pos2)

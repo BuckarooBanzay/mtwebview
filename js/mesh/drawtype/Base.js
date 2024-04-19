@@ -57,7 +57,7 @@ export default class {
             const neighbor_node = this.worldmap.getNode(neighbor_pos)
             const neighbor_nodedef = this.worldmap.getNodeDef(neighbor_node.name)
 
-            if (this.isDrawtypeOccluding(neighbor_nodedef.drawtype)) {
+            if (!neighbor_nodedef || this.isDrawtypeOccluding(neighbor_nodedef.drawtype)) {
                 // side not visible
                 continue
             }
