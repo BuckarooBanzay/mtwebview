@@ -1,11 +1,10 @@
-
 function mtwebview.export_nodedefs()
     local count = 0
     local nodedefs = {}
 
     for name, def in pairs(minetest.registered_nodes) do
         count = count + 1
-        nodedefs[name] = {
+        local exported_def = {
             name = name,
             drawtype = def.drawtype,
             paramtype = def.paramtype,
@@ -17,6 +16,12 @@ function mtwebview.export_nodedefs()
             connects_to = def.connects_to,
             groups = def.groups
         }
+
+        if def.drawtype == "liquid" or def.drawtype == "flowingliquid" then
+            exported_def.post_effect_color = def.post_effect_color
+        end
+
+        nodedefs[name] = exported_def
     end
 
     local size = mtwebview.export_json(mtwebview.basepath .. "/nodedefs.json", nodedefs, true)
