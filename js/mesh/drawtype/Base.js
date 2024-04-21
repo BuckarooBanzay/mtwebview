@@ -66,10 +66,17 @@ export default class {
             const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, true)
 
             const light = (neighbor_node.param1 & 0x0F) / 15
+            let c = new Color(light, light, light)
+
+            if (neighbor_nodedef.post_effect_color) {
+                c = new Color(
+                    neighbor_nodedef.post_effect_color.r / 256,
+                    neighbor_nodedef.post_effect_color.g / 256,
+                    neighbor_nodedef.post_effect_color.b / 256
+                )
+            }
 
             const gh = ctx.getBufferGeometryHelper(material)
-            const c = new Color(light, light, light)
-
             gh.addCubeSide(pos, side, c)
         }
     }
