@@ -2,13 +2,14 @@ version: "3.6"
 
 services:
  export_mod:
-  image: registry.gitlab.com/minetest/minetest/server:5.7.0
-  entrypoint: ["minetestserver", "--config", "/minetest.conf"]
+  image: ghcr.io/luanti-org/luanti:5.11.0
+  entrypoint: ["luantiserver", "--config", "/minetest.conf"]
   user: root
   ports:
     - 30000:30000/udp
   volumes:
     - "./worldmods:/root/.minetest/worlds/world/worldmods/"
+    - "./minetest_game:/root/.minetest/games/minetest_game"
     - "./export:/root/.minetest/worlds/world/mtwebview/"
     - "world_data:/root/.minetest/worlds/world"
     - "./worldmods/export_mod/test/world.mt:/root/.minetest/worlds/world/world.mt"

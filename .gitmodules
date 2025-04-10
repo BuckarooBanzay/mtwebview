@@ -4,3 +4,6 @@
 [submodule "mods/moreblocks"]
 	path = worldmods/moreblocks
 	url = https://github.com/minetest-mods/moreblocks
+[submodule "minetest_game"]
+	path = minetest_game
+	url = https://github.com/luanti-org/minetest_game
