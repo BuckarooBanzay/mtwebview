@@ -15,9 +15,14 @@ export default class WebView {
         this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
     }
 
-    async render(pos1, pos2) {
-        await this.worldmap.loadArea(pos1, pos2)
-        const mesh = await this.meshgen.createMesh(pos1, pos2)
+    async render(pos1, pos2, progress_callback) {
+        progress_callback = progress_callback || function() {}
+        await this.worldmap.loadArea(pos1, pos2, (progress, msg) => {
+            progress_callback(progress * 0.5, `Loading mapblock: ${msg}`)
+        })
+        const mesh = await this.meshgen.createMesh(pos1, pos2, (progress, msg) => {
+            progress_callback((progress * 0.5) + 0.5, `Rendering node ${msg}`)
+        })
         this.scene.addMesh(mesh)
     }
 

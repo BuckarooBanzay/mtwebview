@@ -30,9 +30,14 @@ export default class MeshGenerator {
         })
     }
 
-    async createMesh(pos1, pos2) {
+    async createMesh(pos1, pos2, progress_callback) {
         const ctx = new RenderContext()
+        const total_nodes =
+            (pos2.x - pos1.x + 1) *
+            (pos2.y - pos1.y + 1) *
+            (pos2.z - pos1.z + 1)
         
+        let i = 0
         for (let z=pos1.z; z<pos2.z; z++) {
             for (let y=pos1.y; y<pos2.y; y++) {
                 for (let x=pos1.x; x<pos2.x; x++) {
@@ -50,6 +55,12 @@ export default class MeshGenerator {
                     const dt = this.drawTypes[ndef.drawtype]
                     if (!dt) {
                         continue
+                    }
+
+                    i++
+                    if (i % 16000 == 0) {
+                        const progress = i / total_nodes
+                        progress_callback(progress, `${x},${y},${z}`)
                     }
 
                     await dt.render(ctx, pos, node, ndef)

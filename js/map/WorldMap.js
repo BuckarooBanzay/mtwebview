@@ -46,21 +46,27 @@ export default class {
         return mb
     }
 
-    async loadArea(pos1, pos2) {
-        const promises = []
+    async loadArea(pos1, pos2, progress_callback) {
         const mb_pos1 = pos1.toMapblockPos()
         const mb_pos2 = pos2.toMapblockPos()
 
+        const total_mapblocks =
+            (mb_pos2.x - mb_pos1.x + 1) *
+            (mb_pos2.y - mb_pos1.y + 1) *
+            (mb_pos2.z - mb_pos1.z + 1)
+
+        let i = 0
         for (let x=mb_pos1.x; x<mb_pos2.x; x++) {
             for (let y=mb_pos1.y; y<mb_pos2.y; y++) {
                 for (let z=mb_pos1.z; z<mb_pos2.z; z++) {
                     const mb_pos = new Pos(x,y,z)
-                    promises.push(this.loadMapblock(mb_pos))
+                    i++
+                    const progress = i / total_mapblocks
+                    progress_callback(progress, `${x},${y},${z}`)
+                    await this.loadMapblock(mb_pos)
                 }
             }
         }
-
-        await Promise.all(promises)
     }
 
     formatPos(pos) {

@@ -45,6 +45,6 @@ const pos1 = new Pos(manifest.min.x, manifest.min.y, manifest.min.z)
 const pos2 = new Pos(manifest.max.x, manifest.max.y, manifest.max.z)
 
 const t1 = Date.now()
-await wv.render(pos1, pos2)
+await wv.render(pos1, pos2, (progress, message) => console.log(`Progress: ${Math.floor(progress*100)}%: ${message}`))
 const diff = Date.now() - t1
 console.log("Initial render/generate time: " + diff + " ms")
