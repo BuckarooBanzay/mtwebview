@@ -1,5 +1,6 @@
 import WorldMap from './map/WorldMap.js';
 import MeshGenerator from './mesh/MeshGenerator.js';
+import PlainMeshGenerator from './mesh/PlainMeshGenerator.js';
 import Scene from './scene/Scene.js';
 import MaterialManager from './texture/MaterialManager.js';
 import TextureGenerator from './texture/TextureGenerator.js';
@@ -10,9 +11,20 @@ export default class WebView {
         this.scene = new Scene(cfg.target);
         this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
 
-        const textureGen = new TextureGenerator(cfg.source.media)
-        const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
-        this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
+        if (cfg.source.media && cfg.source.nodedef) {
+            // "fancy" rendering with textures
+            const textureGen = new TextureGenerator(cfg.source.media)
+            const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
+            this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
+
+        } else if (cfg.source.colormapping) {
+            // plain boxes
+            this.meshgen = new PlainMeshGenerator(this.worldmap, cfg.source.colormapping)
+
+        } else {
+            throw new Error("no source.media/source.nodedef or source.colormapping provided")
+        }
+
     }
 
     async render(pos1, pos2, progress_callback) {

@@ -1,5 +1,5 @@
 
-# Minetest web view
+# Luanti web view
 
 State: **WIP**
 

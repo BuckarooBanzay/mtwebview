@@ -1,7 +1,7 @@
 {
   "name": "mtwebview",
   "version": "1.0.0",
-  "description": "minetest web view",
+  "description": "luanti web view",
   "main": "js/index.js",
   "type": "module",
   "scripts": {

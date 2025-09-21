@@ -2,7 +2,7 @@ import WebView from './WebView.js';
 import decompress_base64 from './decompress_base64.js';
 import Pos from './util/Pos.js';
 
-const nodedefs = await fetch("export/nodedefs.json").then(r => r.json());
+const colormapping = await fetch("colormapping.json").then(r => r.json());
 const manifest = await fetch("export/mapblocks/manifest.json").then(r => r.json());
 
 const wv = new WebView({
@@ -24,8 +24,7 @@ const wv = new WebView({
                 resolve(null);
             }
         }),
-        nodedef: nodename => Promise.resolve(nodedefs[nodename]),
-        media: filename => Promise.resolve(`export/media/${filename}`)
+        colormapping: colormapping
     }
 });
 

@@ -30,19 +30,23 @@ export default class {
         const mb = new Mapblock(mapblock_def)
         this.map[key] = mb
 
-        const promises = []
-        mb.getNodeNames().forEach(nodename => {
-            if (this.nodedefs[nodename]) {
-                // already have it
-                return
-            }
+        if (this.nodedefloader) {
+            // load node definitions
 
-            const promise = this.nodedefloader(nodename)
-                .then(node_def => this.nodedefs[nodename] = node_def)
-            promises.push(promise)
-        })
+            const promises = []
+            mb.getNodeNames().forEach(nodename => {
+                if (this.nodedefs[nodename]) {
+                    // already have it
+                    return
+                }
 
-        await Promise.all(promises)
+                const promise = this.nodedefloader(nodename)
+                    .then(node_def => this.nodedefs[nodename] = node_def)
+                promises.push(promise)
+            })
+
+            await Promise.all(promises)
+        }
         return mb
     }
 
