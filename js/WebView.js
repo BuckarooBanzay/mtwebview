@@ -5,8 +5,10 @@ import Scene from './scene/Scene.js';
 import MaterialManager from './texture/MaterialManager.js';
 import TextureGenerator from './texture/TextureGenerator.js';
 
+/**
+ * main webview entry-point, provides convienience functions to render the view
+ */
 export default class WebView {
-
     constructor(cfg) {
         this.scene = new Scene(cfg.target);
         this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
@@ -27,6 +29,9 @@ export default class WebView {
 
     }
 
+    /**
+     * Load and render the area between given positions
+     */
     async render(pos1, pos2, progress_callback) {
         progress_callback = progress_callback || function() {}
         await this.worldmap.loadArea(pos1, pos2, (progress, msg) => {
@@ -38,7 +43,10 @@ export default class WebView {
         this.scene.addMesh(mesh)
     }
 
+    /**
+     * removes the webview and cleans up all ressources
+     */
     remove() {
-
+        this.scene.remove();
     }
 }

@@ -1,16 +1,13 @@
-import { Color, PerspectiveCamera, Scene, WebGLRenderer, AxesHelper, AmbientLight } from "three";
+import { Color, PerspectiveCamera, Scene, WebGLRenderer, AmbientLight } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 export default class {
 
     scene = new Scene()
     camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-
-    stats = new Stats()
+    active = true;
 
     constructor(el) {
-        el.parentElement.appendChild(this.stats.dom)
         this.scene.background = new Color(1,1,1)
 
         this.renderer = new WebGLRenderer({ canvas: el })
@@ -25,9 +22,6 @@ export default class {
         this.controls.target.y = -30
         this.controls.target.z = -30
 
-        const axesHelper = new AxesHelper( 5 );
-        this.scene.add( axesHelper );
-
         this.scene.add(new AmbientLight(0xffffff));
 
         this.controls.addEventListener( 'change', () => this.render() );
@@ -41,15 +35,21 @@ export default class {
     }
 
     render() {
-        this.stats.begin()
+        if (!this.active) {
+            return
+        }
         this.renderer.render(this.scene, this.camera)
-        this.stats.end()
         console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
     }
 
     addMesh(m) {
         this.scene.add(m)
         this.render()
+    }
+
+    remove() {
+        this.active = false
+        this.renderer.dispose()
     }
 
 }
