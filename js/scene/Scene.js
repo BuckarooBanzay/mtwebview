@@ -25,7 +25,8 @@ export default class {
         this.moveBackward = false;
         this.moveLeft = false;
         this.moveRight = false;
-        this.canJump = false;
+        this.moveUp = false;
+        this.moveDown = false;
 
         this.velocity = new Vector3();
         this.direction = new Vector3();
@@ -51,8 +52,12 @@ export default class {
                 case 'KeyD':
                     this.moveRight = true;
                     break;
+                case 'ShiftLeft':
+                case 'ShiftRight':
+                    this.moveDown = true;
+                    break;
                 case 'Space':
-                    this.velocity.y += 350;
+                    this.moveUp = true;
                     break;
             }
         };
@@ -75,6 +80,13 @@ export default class {
                 case 'KeyD':
                     this.moveRight = false;
                     break;
+                case 'ShiftLeft':
+                case 'ShiftRight':
+                    this.moveDown = false;
+                    break;
+                case 'Space':
+                    this.moveUp = false;
+                    break;
             }
         };
 
@@ -96,16 +108,19 @@ export default class {
             const delta = this.clock.getDelta();
 
             this.velocity.x -= this.velocity.x * 10.0 * delta;
+            this.velocity.y -= this.velocity.y * 10.0 * delta;
             this.velocity.z -= this.velocity.z * 10.0 * delta;
 
-            this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
-
             this.direction.z = Number( this.moveForward ) - Number( this.moveBackward );
+            this.direction.y = Number( this.moveUp ) - Number( this.moveDown );
             this.direction.x = Number( this.moveRight ) - Number( this.moveLeft );
             this.direction.normalize(); // this ensures consistent movements in all directions
 
             if ( this.moveForward || this.moveBackward ) {
                 this.velocity.z -= this.direction.z * 400.0 * delta;
+            }
+            if (this.moveUp || this.moveDown) {
+                this.velocity.y -= this.direction.y * 400.0 * delta;
             }
             if ( this.moveLeft || this.moveRight ) {
                 this.velocity.x -= this.direction.x * 400.0 * delta;
@@ -113,14 +128,7 @@ export default class {
 
             this.controls.moveRight( - this.velocity.x * delta );
             this.controls.moveForward( - this.velocity.z * delta );
-
-            this.controls.object.position.y += ( this.velocity.y * delta ); // new behavior
-
-            if ( this.controls.object.position.y < 10 ) {
-
-                this.velocity.y = 0;
-                this.controls.object.position.y = 10;
-            }
+            this.controls.object.position.y -= ( this.velocity.y * delta );
 
         }
 
