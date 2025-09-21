@@ -19,11 +19,11 @@
   },
   "homepage": "https://github.com/BuckarooBanzay/mtwebview#readme",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^8.57.0",
-    "rollup": "^4.13.0",
-    "three": "^0.162.0",
-    "fflate": "^0.8.2"
+    "eslint": "^9.36.0",
+    "fflate": "^0.8.2",
+    "rollup": "^4.52.0",
+    "three": "^0.180.0"
   }
 }

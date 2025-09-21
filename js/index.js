@@ -1,10 +1,12 @@
 import WebView from './WebView.js';
 import Pos from './util/Pos.js';
 import decompress_base64_gz from './decompress_base64_gz.js';
+import { REVISION } from 'three';
 
 // library export
 window.ltwv = {
     WebView,
     Pos,
-    decompress_base64_gz
+    decompress_base64_gz,
+    ThreeJSVersion: REVISION
 };
