@@ -31,7 +31,10 @@ export default class {
         this.velocity = new Vector3();
         this.direction = new Vector3();
 
-        el.addEventListener('click',  () => this.controls.lock());
+        el.addEventListener('click',  () => {
+            this.controls.lock()
+            this.clock.getDelta()
+        });
         this.scene.add( this.controls.object );
 
         const onKeyDown = event => {
@@ -90,19 +93,20 @@ export default class {
             }
         };
 
-        document.addEventListener( 'keydown', onKeyDown );
-        document.addEventListener( 'keyup', onKeyUp );
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
 
         this.scene.add(new AmbientLight(0xffffff));
-
-        this.controls.addEventListener('change', () => console.log("change") );
 
         this.animate()
     }
 
     animate() {
-        if (this.controls.isLocked) {
+        if (!this.active) {
+            return
+        }
 
+        if (this.controls.isLocked) {
             console.log( this.controls.object.position );
 
             const delta = this.clock.getDelta();
@@ -130,18 +134,15 @@ export default class {
             this.controls.moveForward( - this.velocity.z * delta );
             this.controls.object.position.y -= ( this.velocity.y * delta );
 
+            this.render()
         }
 
-        //this.controls.update(this.clock.getDelta())
-        this.renderer.render(this.scene, this.camera)
-        console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
         window.requestAnimationFrame(() => this.animate())
     }
 
     render() {
-        if (!this.active) {
-            return
-        }
+        this.renderer.render(this.scene, this.camera)
+        console.log(`Calls: ${this.renderer.info.render.calls}, Triangles: ${this.renderer.info.render.triangles}`)
     }
 
     addMesh(m) {
