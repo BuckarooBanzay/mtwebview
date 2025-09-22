@@ -27,6 +27,10 @@ export default class WebView {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")
         }
 
+        console.log(this.scene.getPosition())
+        //TODO: load and render area around player/camera in batches
+        //TODO: unload far away area
+        //TODO: unload old mapblocks
     }
 
     /**

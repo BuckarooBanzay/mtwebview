@@ -14,10 +14,10 @@ export default class {
         this.renderer = new WebGLRenderer({ canvas: el })
         this.renderer.setSize(window.innerWidth, window.innerHeight)
 
-        this.camera.position.x = 30
-        this.camera.position.y = -30
-        this.camera.position.z = -30
-        this.camera.lookAt(new Vector3(0, 0, 0));
+        this.camera.position.x = 0
+        this.camera.position.y = 0
+        this.camera.position.z = 0
+        this.camera.lookAt(new Vector3(1, 0, 0));
 
         this.controls = new PointerLockControls(this.camera, el)
 
@@ -61,6 +61,9 @@ export default class {
                     break;
                 case 'Space':
                     this.moveUp = true;
+                    break;
+                case 'KeyT':
+                    this.controls.unlock();
                     break;
             }
         };
@@ -107,9 +110,7 @@ export default class {
         }
 
         if (this.controls.isLocked) {
-            console.log( this.controls.object.position );
-
-            const delta = this.clock.getDelta();
+            const delta = this.clock.getDelta()
 
             this.velocity.x -= this.velocity.x * 10.0 * delta;
             this.velocity.y -= this.velocity.y * 10.0 * delta;
@@ -118,26 +119,32 @@ export default class {
             this.direction.z = Number( this.moveForward ) - Number( this.moveBackward );
             this.direction.y = Number( this.moveUp ) - Number( this.moveDown );
             this.direction.x = Number( this.moveRight ) - Number( this.moveLeft );
-            this.direction.normalize(); // this ensures consistent movements in all directions
+            this.direction.normalize();
 
-            if ( this.moveForward || this.moveBackward ) {
+            if (this.moveForward || this.moveBackward) {
                 this.velocity.z -= this.direction.z * 400.0 * delta;
             }
             if (this.moveUp || this.moveDown) {
                 this.velocity.y -= this.direction.y * 400.0 * delta;
             }
-            if ( this.moveLeft || this.moveRight ) {
+            if (this.moveLeft || this.moveRight) {
                 this.velocity.x -= this.direction.x * 400.0 * delta;
             }
 
-            this.controls.moveRight( - this.velocity.x * delta );
-            this.controls.moveForward( - this.velocity.z * delta );
-            this.controls.object.position.y -= ( this.velocity.y * delta );
+            if (this.velocity.length() > 0.01) {
+                this.controls.moveForward( - this.velocity.z * delta );
+                this.controls.moveRight( - this.velocity.x * delta );
+                this.controls.object.position.y -= ( this.velocity.y * delta );
+            }
 
             this.render()
         }
 
         window.requestAnimationFrame(() => this.animate())
+    }
+
+    getPosition() {
+        return this.camera.position
     }
 
     render() {
