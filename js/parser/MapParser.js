@@ -3,8 +3,17 @@ import { decompress } from "fzstd"
 
 const textDecoder = new TextDecoder()
 
-function parseGzMapblock(buf) {
-    //TODO: parse.go in mapparser project
+function parseGzMapblock(buf, version) {
+
+    let offset = 6
+    if (version < 27) {
+        //u16 lighting_complete not present
+        offset = 4
+    }
+
+
+    // TODO: search for end of gzipped data somehow (decompressSync does not expose that)
+    // TODO: parse.go in mapparser project
     // const a = new Uint8Array(buffer)
 }
 
@@ -45,7 +54,7 @@ export function parseRawMapblock(buffer) {
     const version = dv.getUint8(0)
 
     if (version > 25 && version  < 29) {
-        return parseGzMapblock(buffer)
+        return parseGzMapblock(buffer, version)
     } else if(version == 29) {
         return parseZstdMapblock(buffer)
     } else {
