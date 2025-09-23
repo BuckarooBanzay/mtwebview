@@ -22,23 +22,19 @@
                 target: document.getElementById("scene"),
                 wireframe: false,
                 source: {
-                    mapblock: pos => new Promise(resolve => {
+                    mapblock: async pos => {
                         const pos_str = `(${pos.x},${pos.y},${pos.z})`;
                         if (manifest.mapblocks[pos_str]) {
-                            fetch(`export/mapblocks/${pos_str}.json`)
-                            .then(r => r.json())
-                            .then(mb => {
-                                resolve({
-                                    node_mapping: mb.node_mapping,
-                                    buffer: ltwv.decompress_base64_gz(mb.mapdata)
-                                })
-                            });
-                        } else {
-                            resolve(null);
+                            const req = await fetch(`export/mapblocks/${pos_str}.json`)
+                            const mb = await req.json()
+                            return {
+                                node_mapping: mb.node_mapping,
+                                buffer: ltwv.decompress_base64_gz(mb.mapdata)
+                            }
                         }
-                    }),
-                    nodedef: nodename => Promise.resolve(nodedefs[nodename]),
-                    media: filename => Promise.resolve(`export/media/${filename}`)
+                    },
+                    nodedef: async nodename => nodedefs[nodename],
+                    media: async filename => `export/media/${filename}`
                 }
             });
         </script>

@@ -54,6 +54,8 @@ export default class PlainMeshGenerator {
     }
 
     async createMesh(pos1, pos2, progress_callback) {
+        progress_callback = progress_callback || function() {}
+
         const ctx = new RenderContext()
         const total_nodes =
             (pos2.x - pos1.x + 1) *
