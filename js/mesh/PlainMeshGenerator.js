@@ -1,7 +1,9 @@
+import { MeshBasicMaterial, Color, FrontSide } from "three";
+
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
-import { MeshBasicMaterial, Color, FrontSide } from "three";
 import NodeSide from "../util/NodeSide.js"
+import { InteractionDelay } from "../util/Sleep.js";
 
 const sidelist = Object.keys(NodeSide)
 
@@ -53,17 +55,12 @@ export default class PlainMeshGenerator {
         }
     }
 
-    async createMesh(pos1, pos2, progress_callback) {
-        progress_callback = progress_callback || function() {}
-
+    async createMesh(pos1, pos2) {
         const ctx = new RenderContext()
-        const total_nodes =
-            (pos2.x - pos1.x + 1) *
-            (pos2.y - pos1.y + 1) *
-            (pos2.z - pos1.z + 1)
-        
-        let i = 0
+        const intDelay = new InteractionDelay()
+
         for (let z=pos1.z; z<pos2.z; z++) {
+            await intDelay.check()
             for (let y=pos1.y; y<pos2.y; y++) {
                 for (let x=pos1.x; x<pos2.x; x++) {
                     const pos = new Pos(x,y,z)
@@ -78,13 +75,6 @@ export default class PlainMeshGenerator {
                     }
 
                     const material = this.getMaterial(color)
-
-                    i++
-                    if (i % 16000 == 0) {
-                        const progress = i / total_nodes
-                        progress_callback(progress, `${x},${y},${z}`)
-                    }
-
                     this.render(ctx, pos, material)
                 }
             }

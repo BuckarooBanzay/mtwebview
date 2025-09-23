@@ -20,30 +20,26 @@ export default class WebView {
             const textureGen = new TextureGenerator(cfg.source.media)
             const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
             this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
+            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 3)
 
         } else if (cfg.source.colormapping) {
             // plain boxes
             this.meshgen = new PlainMeshGenerator(this.worldmap, cfg.source.colormapping)
+            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 3)
 
         } else {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")
         }
 
-        this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen)
         this.mapworker.start()
     }
 
     /**
      * Load and render the area between given positions
      */
-    async render(pos1, pos2, progress_callback) {
-        progress_callback = progress_callback || function() {}
-        await this.worldmap.loadArea(pos1, pos2, (progress, msg) => {
-            progress_callback(progress * 0.5, `Loading mapblock: ${msg}`)
-        })
-        const mesh = await this.meshgen.createMesh(pos1, pos2, (progress, msg) => {
-            progress_callback((progress * 0.5) + 0.5, `Rendering node ${msg}`)
-        })
+    async render(pos1, pos2) {
+        await this.worldmap.loadArea(pos1, pos2)
+        const mesh = await this.meshgen.createMesh(pos1, pos2)
         this.scene.addMesh(mesh)
     }
 
