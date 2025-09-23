@@ -4,7 +4,7 @@ import decompress_base64_gz from './decompress_base64_gz.js';
 import { REVISION } from 'three';
 
 // library export
-window.ltwv = {
+window.ltview = {
     WebView,
     Pos,
     decompress_base64_gz,
