@@ -16,3 +16,5 @@ export default function(str) {
     const decompressed = decompressSync(new Uint8Array(buf))
     return decompressed.buffer
 }
+
+// TODO: blockparser util (https://github.com/BuckarooBanzay/meseweb/blob/master/webapp/src/block/blockparser.ts)
