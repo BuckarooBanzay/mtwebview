@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
  export_mod:
-  image: ghcr.io/luanti-org/luanti:5.11.0
+  image: ghcr.io/luanti-org/luanti:5.13.0
   entrypoint: ["luantiserver", "--config", "/minetest.conf"]
   user: root
   ports:
