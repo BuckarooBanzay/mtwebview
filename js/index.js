@@ -1,12 +1,16 @@
 import WebView from './WebView.js';
 import Pos from './util/Pos.js';
-import decompress_base64_gz from './decompress_base64_gz.js';
+import { parseBase64GzMapblock, parseRawMapblock } from './parser/MapParser.js';
 import { REVISION } from 'three';
 
 // library export
 window.ltview = {
+    // main api
     WebView,
     Pos,
-    decompress_base64_gz,
+    // mapblock parsing helper
+    parseBase64GzMapblock,
+    parseRawMapblock,
+    // version
     ThreeJSVersion: REVISION
 };

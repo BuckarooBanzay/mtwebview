@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+    <body>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "/node_modules/three/build/three.module.js",
+                    "fflate": "/node_modules/fflate/esm/browser.js",
+                    "fzstd": "/node_modules/fzstd/esm/index.mjs",
+                    "three/examples/": "/node_modules/three/examples/"
+                }
+            }
+        </script>
+        <script type="module">
+            import { parseRawMapblock } from "../js/parser/MapParser.js"
+            console.log("v28", parseRawMapblock(await fetch("mapblock_v28_gzip.bin").then(r => r.arrayBuffer())))
+            console.log("v29", parseRawMapblock(await fetch("mapblock_v29_zstd.bin").then(r => r.arrayBuffer())))
+        </script>
+    </body>
+</html>

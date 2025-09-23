@@ -24,6 +24,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^9.36.0",
     "fflate": "^0.8.2",
+    "fzstd": "^0.1.1",
     "globals": "^16.4.0",
     "rollup": "^4.52.0",
     "three": "^0.180.0"

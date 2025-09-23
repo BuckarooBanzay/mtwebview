@@ -9,9 +9,9 @@ export default class {
             this.id_name_mapping[id] = name
         })
 
-        this.node_ids = new Int16Array(mapblock_def.buffer, 0, 4096)
-        this.param1 = new Uint8Array(mapblock_def.buffer, 4096*2, 4096)
-        this.param2 = new Uint8Array(mapblock_def.buffer, 4096*3, 4096)
+        this.node_ids = new Int16Array(mapblock_def.mapdata, 0, 4096)
+        this.param1 = new Uint8Array(mapblock_def.mapdata, 4096*2, 4096)
+        this.param2 = new Uint8Array(mapblock_def.mapdata, 4096*3, 4096)
     }
 
     getNodeNames() {

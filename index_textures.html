@@ -29,7 +29,7 @@
                             const mb = await req.json()
                             return {
                                 node_mapping: mb.node_mapping,
-                                buffer: ltview.decompress_base64_gz(mb.mapdata)
+                                mapdata: ltview.parseBase64GzMapblock(mb.mapdata)
                             }
                         }
                     },
