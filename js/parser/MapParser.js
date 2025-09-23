@@ -4,6 +4,9 @@ import { decompress } from "fzstd"
 const textDecoder = new TextDecoder()
 
 function parseGzMapblock(buf, version) {
+    const mapblock = {
+        node_mapping: {}
+    }
 
     let offset = 6
     if (version < 27) {
@@ -11,10 +14,15 @@ function parseGzMapblock(buf, version) {
         offset = 4
     }
 
+    const compressedData = new Uint8Array(buf.slice(offset))
+    mapblock.mapdata = decompressSync(compressedData)
 
     // TODO: search for end of gzipped data somehow (decompressSync does not expose that)
     // TODO: parse.go in mapparser project
-    // const a = new Uint8Array(buffer)
+    const a = new Uint8Array(buf)
+    console.log(a)
+
+    return mapblock
 }
 
 function parseZstdMapblock(buf) {
