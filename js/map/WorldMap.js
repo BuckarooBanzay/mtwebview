@@ -58,9 +58,8 @@ export default class {
         return mb
     }
 
-    async loadArea(pos1, pos2, progress_callback) {
-        const mb_pos1 = pos1.toMapblockPos()
-        const mb_pos2 = pos2.toMapblockPos()
+    async loadMapblockArea(mb_pos1, mb_pos2, progress_callback) {
+        progress_callback = progress_callback || function() {}
 
         const total_mapblocks =
             (mb_pos2.x - mb_pos1.x + 1) *
@@ -79,6 +78,12 @@ export default class {
                 }
             }
         }
+    }
+
+    async loadArea(pos1, pos2, progress_callback) {
+        const mb_pos1 = pos1.toMapblockPos()
+        const mb_pos2 = pos2.toMapblockPos()
+        return await this.loadMapblockArea(mb_pos1, mb_pos2, progress_callback)
     }
 
     formatPos(pos) {

@@ -58,6 +58,10 @@ export default class {
     }
 
     createMesh() {
+        if (this.positions.length == 0) {
+            // nothing to show
+            return
+        }
         const geo = new BufferGeometry()
         geo.setIndex(this.indices)
         geo.setAttribute('position', new BufferAttribute(new Float32Array(this.positions), 3));

@@ -6,8 +6,19 @@ export default class Pos {
         this.z = z
     }
 
+    // pos -> mb_pos
     toMapblockPos() {
         return new Pos(Math.floor(this.x / 16), Math.floor(this.y / 16), Math.floor(this.z / 16))
+    }
+
+    // mb_pos -> pos
+    getMinMapblockPos() {
+        return new Pos(this.x * 16, this.y * 16, this.z * 16)
+    }
+
+    // mb_pos -> pos
+    getMaxMapblockPos() {
+        return new Pos((this.x * 16) + 15, (this.y * 16) + 15, (this.z * 16) + 15)
     }
 
     add(pos) {

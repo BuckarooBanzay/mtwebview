@@ -1,5 +1,6 @@
 import { Color, PerspectiveCamera, Scene, WebGLRenderer, AmbientLight, Vector3, Clock } from "three";
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
+import Pos from "../util/Pos.js";
 
 export default class {
 
@@ -144,7 +145,7 @@ export default class {
     }
 
     getPosition() {
-        return this.camera.position
+        return new Pos(this.camera.position.x, this.camera.position.y, this.camera.position.z)
     }
 
     render() {
@@ -154,6 +155,11 @@ export default class {
 
     addMesh(m) {
         this.scene.add(m)
+        this.render()
+    }
+
+    removeMesh(m) {
+        this.scene.remove(m)
         this.render()
     }
 

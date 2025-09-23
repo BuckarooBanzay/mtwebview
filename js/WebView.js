@@ -1,4 +1,5 @@
 import WorldMap from './map/WorldMap.js';
+import MapLoaderWorker from './MapLoaderWorker.js';
 import MeshGenerator from './mesh/MeshGenerator.js';
 import PlainMeshGenerator from './mesh/PlainMeshGenerator.js';
 import Scene from './scene/Scene.js';
@@ -10,6 +11,7 @@ import TextureGenerator from './texture/TextureGenerator.js';
  */
 export default class WebView {
     constructor(cfg) {
+        this.active = true;
         this.scene = new Scene(cfg.target);
         this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
 
@@ -27,10 +29,8 @@ export default class WebView {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")
         }
 
-        console.log(this.scene.getPosition())
-        //TODO: load and render area around player/camera in batches
-        //TODO: unload far away area
-        //TODO: unload old mapblocks
+        this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen)
+        this.mapworker.start()
     }
 
     /**
@@ -51,6 +51,7 @@ export default class WebView {
      * removes the webview and cleans up all ressources
      */
     remove() {
+        this.mapworker.stop()
         this.scene.remove();
     }
 }
