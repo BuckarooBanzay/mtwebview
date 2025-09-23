@@ -1,4 +1,4 @@
-import Pos from "./util/Pos.js"
+import Pos from "../util/Pos.js"
 
 export default class {
     constructor(scene, worldmap, meshgen) {
@@ -39,10 +39,21 @@ export default class {
         const group_area = this.getMapblockGroupArea(pos)
         if (!this.loaded_areas[group_area.key]) {
             console.log("Rendering map area", group_area)
+
+            let start = Date.now()
             await this.worldmap.loadMapblockArea(group_area.mb_pos1, group_area.mb_pos2)
+            console.log(`+ loading finished in ${Date.now() - start} ms`)
+
+            start = Date.now()
             const mesh = await this.meshgen.createMesh(group_area.mb_pos1.getMinMapblockPos(), group_area.mb_pos2.getMaxMapblockPos())
             this.loaded_areas[group_area.key] = mesh
+            console.log(`+ generating finished in ${Date.now() - start} ms`)
+
+            start = Date.now()
             this.scene.addMesh(mesh)
+            console.log(`+ adding mesh finished in ${Date.now() - start} ms`)
+
+            this.scene.resetMovement()
         }
 
         setTimeout(() => this.worker(), 200)

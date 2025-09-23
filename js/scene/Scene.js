@@ -144,6 +144,10 @@ export default class {
         window.requestAnimationFrame(() => this.animate())
     }
 
+    resetMovement() {
+        this.clock.getDelta()
+    }
+
     getPosition() {
         return new Pos(this.camera.position.x, this.camera.position.y, this.camera.position.z)
     }

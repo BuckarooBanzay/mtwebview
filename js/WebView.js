@@ -1,5 +1,5 @@
 import WorldMap from './map/WorldMap.js';
-import MapLoaderWorker from './MapLoaderWorker.js';
+import MapLoaderWorker from './map/MapLoaderWorker.js';
 import MeshGenerator from './mesh/MeshGenerator.js';
 import PlainMeshGenerator from './mesh/PlainMeshGenerator.js';
 import Scene from './scene/Scene.js';
