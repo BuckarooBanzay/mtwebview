@@ -6,16 +6,10 @@ export default class {
         this.mediasource = mediasource;
     }
 
-    getImageObject(image) {
-        return new Promise((resolve, reject) => {
-            this.mediasource(image)
-            .then(url => {
-                const el = document.createElement("img");
-                el.onload = () => resolve(el)
-                el.onerror = () => reject("image error: '" + url + "'")
-                el.src = url
-            })
-        })
+    async getImageObject(image) {
+        const url = await this.mediasource(image)
+        const blob = await fetch(url).then(r => r.blob())
+        return createImageBitmap(blob)
     }
 
     // returns: Promise<Data-URL>
