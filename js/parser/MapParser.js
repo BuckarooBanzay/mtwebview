@@ -4,6 +4,9 @@ import { decompress } from "fzstd"
 const textDecoder = new TextDecoder()
 
 function parseGzMapblock(buf, version) {
+    if (!(buf instanceof ArrayBuffer)) {
+        throw new Error("not an ArrayBuffer")
+    }
     const mapblock = {
         node_mapping: {}
     }
@@ -17,10 +20,34 @@ function parseGzMapblock(buf, version) {
     const compressedData = new Uint8Array(buf.slice(offset))
     mapblock.mapdata = decompressSync(compressedData)
 
-    // TODO: search for end of gzipped data somehow (decompressSync does not expose that)
-    // TODO: parse.go in mapparser project
-    const a = new Uint8Array(buf)
-    console.log(a)
+    const dv = new DataView(buf)
+
+    // search from the end for nodename-id mapping
+
+    // end of nodename-id mapping
+    let end_offset = buf.byteLength - 3
+    let search_length = 4
+    while (true) {
+        search_length++
+        const start_offset = end_offset - search_length
+        const nodeid = dv.getUint16(start_offset)
+        const name_length = dv.getUint16(start_offset+2)
+
+        if (name_length == (search_length - 4)) {
+            // match found
+            const name = textDecoder.decode(buf.slice(start_offset+4, end_offset))
+            mapblock.node_mapping[name] = nodeid
+            // next mapping
+            end_offset = start_offset
+            search_length = 4
+            continue
+        }
+        const last_byte = dv.getUint8(end_offset-search_length+4)
+        if (last_byte == 0) {
+            // supposed-to-be nodename contains null, nodemapping is finished
+            break
+        }
+    }
 
     return mapblock
 }
@@ -32,7 +59,6 @@ function parseZstdMapblock(buf) {
 
     const compressedData = new Uint8Array(buf.slice(1))
     const uncompressedData = decompress(compressedData)
-    console.log(uncompressedData)
 
     const dv = new DataView(uncompressedData.buffer)
     let offset = 8
