@@ -23,17 +23,16 @@ export default class {
 
         const promises = parts.map(p => this.getImageObject(p.image))
         return await Promise.all(promises).then(images => {
-            const canvas = document.createElement("canvas")
-            canvas.height = images[0].height;
-            canvas.width = images[0].width;
+            const canvas = new OffscreenCanvas(images[0].width, images[0].height)
             const ctx = canvas.getContext("2d")
 
             images.forEach(img => {
                 ctx.drawImage(img, 0, 0)
             })
 
-            return canvas.toDataURL()
+            return canvas.convertToBlob()
         })
+        .then(blob => URL.createObjectURL(blob))
         .catch(e => {
             // fallback
             console.warn("createTexture: ", e)

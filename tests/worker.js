@@ -1,2 +1,2 @@
 
-console.log(createImageBitmap)
+console.log(URL.createObjectURL)
