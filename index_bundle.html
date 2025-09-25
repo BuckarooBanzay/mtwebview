@@ -2,33 +2,30 @@
 <html style="height: 100%;">
     <body>
         <canvas id="scene" style="height: 100%;"></canvas>
-        <script type="module" src="js/bundle.js"></script>
-        <script>
-            async function start() {
-                const nodedefs = await fetch("export/nodedefs.json").then(r => r.json());
-                const manifest = await fetch("export/mapblocks/manifest.json").then(r => r.json());
+        <script src="js/bundle.js"></script>
+        <script type="module">
+            const nodedefs = await fetch("export/nodedefs.json").then(r => r.json());
+            const manifest = await fetch("export/mapblocks/manifest.json").then(r => r.json());
 
-                const wv = new ltview.WebView({
-                    target: document.getElementById("scene"),
-                    wireframe: false,
-                    source: {
-                        mapblock: async pos => {
-                            const pos_str = `(${pos.x},${pos.y},${pos.z})`;
-                            if (manifest.mapblocks[pos_str]) {
-                                const req = await fetch(`export/mapblocks/${pos_str}.json`)
-                                const mb = await req.json()
-                                return {
-                                    node_mapping: mb.node_mapping,
-                                    mapdata: ltview.parseBase64GzMapblock(mb.mapdata)
-                                }
+            const wv = new ltview.WebView({
+                target: document.getElementById("scene"),
+                wireframe: false,
+                source: {
+                    mapblock: async pos => {
+                        const pos_str = `(${pos.x},${pos.y},${pos.z})`;
+                        if (manifest.mapblocks[pos_str]) {
+                            const req = await fetch(`export/mapblocks/${pos_str}.json`)
+                            const mb = await req.json()
+                            return {
+                                node_mapping: mb.node_mapping,
+                                mapdata: ltview.parseBase64GzMapblock(mb.mapdata)
                             }
-                        },
-                        nodedef: async nodename => nodedefs[nodename],
-                        media: async filename => `export/media/${filename}`
-                    }
-                });
-            }
-            start();
+                        }
+                    },
+                    nodedef: async nodename => nodedefs[nodename],
+                    media: async filename => `export/media/${filename}`
+                }
+            });
         </script>
     </body>
 </html>
