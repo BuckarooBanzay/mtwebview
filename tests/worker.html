@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html style="height: 100%;">
     <body>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "/node_modules/three/build/three.module.js",
+                    "fflate": "/node_modules/fflate/esm/browser.js",
+                    "fzstd": "/node_modules/fzstd/esm/index.mjs",
+                    "three/examples/": "/node_modules/three/examples/"
+                }
+            }
+        </script>
         <script type="module">
-            const w = new Worker("worker.js");
+            const w = new Worker("./worker.js", { type: "module" });
+            w.onerror = e => console.error(e)
             console.log(w)
         </script>
     </body>
