@@ -45,6 +45,8 @@ export default class {
             console.log("Rendering map area", group_area)
             await this.worldmap.loadMapblockArea(group_area.mb_pos1, group_area.mb_pos2)
             const mesh = await this.meshgen.createMesh(group_area.mb_pos1.getMinMapblockPos(), group_area.mb_pos2.getMaxMapblockPos())
+            //console.log(mesh.toJSON())
+            
             this.scene.addMesh(mesh)
             this.loaded_areas[group_area.key] = mesh
         }
