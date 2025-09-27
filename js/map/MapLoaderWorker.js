@@ -1,4 +1,5 @@
 import Pos from "../util/Pos.js"
+import { ObjectLoader } from "three"
 
 export default class {
     constructor(scene, worldmap, meshgen, range) {
@@ -6,6 +7,16 @@ export default class {
         this.worldmap = worldmap
         this.meshgen = meshgen
         this.range = range || 2
+        this.loader = new ObjectLoader();
+
+        this.worker = new Worker("./js/bundle.js") //TODO: hardcoded
+        this.worker.onmessage = e => this.onWorkerMessage(e)
+        this.worker.postMessage({
+            type: "init",
+            config: {
+                TODO: true
+            }
+        })
     }
 
     // group_area_key -> mesh
@@ -16,7 +27,7 @@ export default class {
             return
         }
         this.active = true
-        this.worker()
+        this.check_area()
     }
 
     getMapblockGroupArea(pos) {
@@ -28,14 +39,26 @@ export default class {
         return {mb_pos1, mb_pos2, key}
     }
 
-    async worker() {
+    onWorkerMessage(e) {
+        console.log("got message from worker", e.data)
+        switch (e.data.type) {
+            case "mesh":
+                var obj = this.loader.parse(e.data.mesh)
+                console.log("parsed object", obj)
+                this.scene.addMesh(obj)
+                this.loaded_areas[e.data.key] = obj
+
+        }
+    }
+
+    async check_area() {
         if (!this.active) {
             return
         }
 
         //TODO: unload far away area
         //TODO: unload old mapblocks
-        setTimeout(() => this.worker(), 100)
+        setTimeout(() => this.check_area(), 100)
 
         const pos = this.scene.getPosition()
         const group_area = this.getMapblockGroupArea(pos)
@@ -43,16 +66,17 @@ export default class {
             this.loaded_areas[group_area.key] = true // generating marker
 
             console.log("Rendering map area", group_area)
-            await this.worldmap.loadMapblockArea(group_area.mb_pos1, group_area.mb_pos2)
-            const mesh = await this.meshgen.createMesh(group_area.mb_pos1.getMinMapblockPos(), group_area.mb_pos2.getMaxMapblockPos())
-            //console.log(mesh.toJSON())
-            
-            this.scene.addMesh(mesh)
-            this.loaded_areas[group_area.key] = mesh
+            this.worker.postMessage({
+                type: "render",
+                mb_pos1: group_area.mb_pos1,
+                mb_pos2: group_area.mb_pos2,
+                key: group_area.key
+            })            
         }
     }
 
     stop() {
         this.active = false
+        this.worker.terminate()
     }
 }

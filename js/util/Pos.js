@@ -1,4 +1,8 @@
 
+export const parsePos = obj => {
+    return new Pos(obj.x, obj.y, obj.z)
+}
+
 export default class Pos {
     constructor(x,y,z) {
         this.x = x

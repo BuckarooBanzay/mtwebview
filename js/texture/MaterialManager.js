@@ -1,7 +1,7 @@
-import { MeshBasicMaterial, NearestFilter, RepeatWrapping, TextureLoader } from "three";
+import { MeshBasicMaterial, NearestFilter, RepeatWrapping, ImageBitmapLoader, CanvasTexture } from "three";
 
 export default class {
-    loader = new TextureLoader()
+    loader = new ImageBitmapLoader()
     cache = {}
 
     constructor(textureGen, wireframe) {
@@ -16,20 +16,25 @@ export default class {
         }
 
         const dataurl = await this.textureGen.createTexture(tiledef)
-        const texture = this.loader.load(dataurl)
-        texture.magFilter = NearestFilter
-        texture.wrapS = RepeatWrapping
-        texture.wrapT = RepeatWrapping
-        
-        const material = new MeshBasicMaterial({
-            map: texture,
-            vertexColors: vertexColors,
-            wireframe: this.wireframe,
-            side: drawside,
-            transparent: transparent,
-        })
 
-        this.cache[key] = material
-        return material
+        return new Promise(resolve => {
+            this.loader.load(dataurl, imageBitmap => {
+                const texture = new CanvasTexture(imageBitmap);
+                texture.magFilter = NearestFilter
+                texture.wrapS = RepeatWrapping
+                texture.wrapT = RepeatWrapping
+
+                const material = new MeshBasicMaterial({
+                    map: texture,
+                    vertexColors: vertexColors,
+                    wireframe: this.wireframe,
+                    side: drawside,
+                    transparent: transparent,
+                })
+
+                this.cache[key] = material
+                resolve(material)
+            })
+        })
     }
 }
