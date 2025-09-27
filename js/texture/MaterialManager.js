@@ -18,6 +18,7 @@ export default class {
         const dataurl = await this.textureGen.createTexture(tiledef)
 
         return new Promise(resolve => {
+            console.log("loading texture", { dataurl, tiledef })
             this.loader.load(dataurl, imageBitmap => {
                 const texture = new CanvasTexture(imageBitmap);
                 texture.magFilter = NearestFilter

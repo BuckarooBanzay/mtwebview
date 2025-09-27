@@ -1,6 +1,14 @@
 import TileDefinitionParser from "./TileDefinitionParser.js";
 import UnknownNodePNG from "./UnknownNodePNG.js";
 
+async function blobToDataURL(blob) {
+    return new Promise(resolve => {
+        var a = new FileReader();
+        a.onload = function(e) {resolve(e.target.result);}
+        a.readAsDataURL(blob);
+    })
+}
+
 export default class {
     constructor(mediasource) {
         this.mediasource = mediasource;
@@ -32,7 +40,7 @@ export default class {
 
             return canvas.convertToBlob()
         })
-        .then(blob => URL.createObjectURL(blob))
+        .then(blob => blobToDataURL(blob))
         .catch(e => {
             // fallback
             console.warn("createTexture: ", e)
