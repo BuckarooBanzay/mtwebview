@@ -24,6 +24,16 @@ export default class {
                 texture.magFilter = NearestFilter
                 texture.wrapS = RepeatWrapping
                 texture.wrapT = RepeatWrapping
+                // shim: https://github.com/mrdoob/three.js/blob/master/src/textures/Source.js#L130
+                // https://github.com/mrdoob/three.js/blob/master/src/textures/Texture.js#L567
+                texture.source.toJSON = meta => {
+                    const output = {
+                        uuid: texture.source.uuid,
+                        url: dataurl
+                    }
+                    meta.images[output.uuid] = output
+                    return output
+                }
 
                 const material = new MeshBasicMaterial({
                     map: texture,

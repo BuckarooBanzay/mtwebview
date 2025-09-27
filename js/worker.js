@@ -41,10 +41,13 @@ async function render(data) {
     const mb_pos2 = parsePos(data.mb_pos2)
     await worldmap.loadMapblockArea(mb_pos1, mb_pos2)
     const mesh = await meshgen.createMesh(mb_pos1.getMinMapblockPos(), mb_pos2.getMaxMapblockPos())
+    const json = mesh.toJSON()
+
+    console.log("mesh images", json.images)
 
     postMessage({
         type: "mesh",
-        mesh: mesh.toJSON(),
+        mesh: json,
         key: data.key
     })
 }
