@@ -20,12 +20,12 @@ export default class WebView {
             const textureGen = new TextureGenerator(cfg.source.media)
             const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
             this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
-            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 3)
+            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 1)
 
         } else if (cfg.source.colormapping) {
             // plain boxes
             this.meshgen = new PlainMeshGenerator(this.worldmap, cfg.source.colormapping)
-            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 3)
+            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 1)
 
         } else {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")

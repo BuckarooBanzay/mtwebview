@@ -34,6 +34,19 @@ async function init() {
     console.log("worker initialized")
 }
 
+const queue = []
+
+function dequeue_job() {
+    const data = queue.shift()
+    if (!data) {
+        setTimeout(dequeue_job, 100)
+        return
+    }
+
+    console.log("dequeue_job", { data, queue_len: queue.length })
+    render(data).then(dequeue_job)
+}
+
 async function render(data) {
     await init_done
 
@@ -54,6 +67,7 @@ async function render(data) {
 
 export const init_worker = () => {
     console.log("worker init!")
+    dequeue_job()
 
     onmessage = e => {
         console.log("worker: got message", e.data)
@@ -63,7 +77,7 @@ export const init_worker = () => {
                 init_done = init()
                 break
             case "render":
-                render(e.data)
+                queue.push(e.data)
                 break
 
         }
