@@ -1,51 +1,33 @@
-import { MeshBasicMaterial, NearestFilter, RepeatWrapping, ImageBitmapLoader, CanvasTexture } from "three";
+import { MeshBasicMaterial, NearestFilter, RepeatWrapping, TextureLoader } from "three";
 
 export default class {
-    loader = new ImageBitmapLoader()
+    loader = new TextureLoader()
     cache = {}
 
-    constructor(textureGen, wireframe) {
+    constructor(textureGen) {
         this.textureGen = textureGen
-        this.wireframe = wireframe || false
     }
 
-    async createMaterial(tiledef, transparent, drawside, vertexColors) {
-        const key = `${JSON.stringify(tiledef)}/${transparent}/${drawside}/${vertexColors}`
+    async createMaterial(material_def) {
+        const key = `${JSON.stringify(material_def.texture)}/${material_def.transparent}/${material_def.renderside}`
         if (this.cache[key]) {
             return this.cache[key]
         }
 
-        const dataurl = await this.textureGen.createTexture(tiledef)
+        const dataurl = await this.textureGen.createTexture(material_def.texture)
 
-        return new Promise(resolve => {
-            console.log("loading texture", { dataurl, tiledef })
-            this.loader.load(dataurl, imageBitmap => {
-                const texture = new CanvasTexture(imageBitmap);
-                texture.magFilter = NearestFilter
-                texture.wrapS = RepeatWrapping
-                texture.wrapT = RepeatWrapping
-                // shim: https://github.com/mrdoob/three.js/blob/master/src/textures/Source.js#L130
-                // https://github.com/mrdoob/three.js/blob/master/src/textures/Texture.js#L567
-                texture.source.toJSON = meta => {
-                    const output = {
-                        uuid: texture.source.uuid,
-                        url: dataurl
-                    }
-                    meta.images[output.uuid] = output
-                    return output
-                }
+        const texture = this.loader.load(dataurl)
+        texture.magFilter = NearestFilter
+        texture.wrapS = RepeatWrapping
+        texture.wrapT = RepeatWrapping
 
-                const material = new MeshBasicMaterial({
-                    map: texture,
-                    vertexColors: vertexColors,
-                    wireframe: this.wireframe,
-                    side: drawside,
-                    transparent: transparent,
-                })
-
-                this.cache[key] = material
-                resolve(material)
-            })
+        const material = new MeshBasicMaterial({
+            map: texture,
+            vertexColors: true,
+            side: material_def.renderside,
+            transparent: material_def.transparent
         })
+        this.cache[key] = material
+        return material
     }
 }

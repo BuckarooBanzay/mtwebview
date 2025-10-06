@@ -40,18 +40,11 @@ export default class {
     }
 
     onWorkerMessage(e) {
-        console.log("got message from worker", e.data)
         switch (e.data.type) {
             case "bundle":
                 var meshgroup = new Mesh()
                 var promises = e.data.bundle.map(async entry => {
-                    const material_def = entry.material_def
-                    const material = await this.materialmgr.createMaterial(
-                        material_def.texture,
-                        material_def.transparent,
-                        material_def.renderside,
-                        true
-                    )
+                    const material = await this.materialmgr.createMaterial(entry.material_def)
 
                     const geo = new BufferGeometry()
                     geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
@@ -60,13 +53,11 @@ export default class {
                     geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
                     geo.computeBoundingBox()
 
-                    console.log("bundle", { geo, material })
                     const mesh = new Mesh(geo, material)                    
                     meshgroup.add(mesh)
                 })
 
                 Promise.all(promises).then(() => {
-                    console.log("bundle done", { meshgroup })
                     this.scene.addMesh(meshgroup)
                     this.loaded_areas[e.data.key] = meshgroup
                 })

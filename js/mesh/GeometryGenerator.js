@@ -3,17 +3,14 @@ import Glasslike from "./drawtype/Glasslike.js"
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
 import Allfaces from "./drawtype/Allfaces.js"
-import { InteractionDelay } from "../util/Sleep.js"
 
 export default class MeshGenerator {
 
     // name -> instance
     drawTypes = {}
 
-    constructor(worldmap, materialmgr, mediasource) {
+    constructor(worldmap) {
         this.worldmap = worldmap
-        this.materialmgr = materialmgr
-        this.mediasource = mediasource
 
         this.drawTypes["normal"] = new Normal()
         this.drawTypes["glasslike"] = new Glasslike();
@@ -23,16 +20,14 @@ export default class MeshGenerator {
         this.drawTypes["allfaces_optional"] = new Allfaces();
 
         Object.keys(this.drawTypes).forEach(dt => {
-            this.drawTypes[dt].init(worldmap, materialmgr, mediasource)
+            this.drawTypes[dt].init(worldmap)
         })
     }
 
     async createGeometryBundle(pos1, pos2) {
         const ctx = new RenderContext()
-        const intDelay = new InteractionDelay()
 
         for (let z=pos1.z; z<pos2.z; z++) {
-            await intDelay.check()
             for (let y=pos1.y; y<pos2.y; y++) {
                 for (let x=pos1.x; x<pos2.x; x++) {
                     const pos = new Pos(x,y,z)

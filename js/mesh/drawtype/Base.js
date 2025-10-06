@@ -76,7 +76,8 @@ export default class {
             const material_def = {
                 texture: texture_def,
                 transparent: transparent,
-                renderside: renderside
+                renderside: renderside,
+                nodename: node.name
             }
             const gh = ctx.getBufferGeometryHelper(material_def)
             gh.addCubeSide(pos, side, c)

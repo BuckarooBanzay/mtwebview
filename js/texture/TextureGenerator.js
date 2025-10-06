@@ -1,23 +1,21 @@
 import TileDefinitionParser from "./TileDefinitionParser.js";
 import UnknownNodePNG from "./UnknownNodePNG.js";
 
-async function blobToDataURL(blob) {
-    return new Promise(resolve => {
-        var a = new FileReader();
-        a.onload = function(e) {resolve(e.target.result);}
-        a.readAsDataURL(blob);
-    })
-}
-
 export default class {
     constructor(mediasource) {
         this.mediasource = mediasource;
     }
 
     async getImageObject(image) {
-        const url = await this.mediasource(image)
-        const blob = await fetch(url).then(r => r.blob())
-        return createImageBitmap(blob)
+        return new Promise((resolve, reject) => {
+             this.mediasource(image)
+                .then(url => {
+                    const el = document.createElement("img");
+                    el.onload = () => resolve(el)
+                    el.onerror = () => reject("image error: '" + url + "'")
+                    el.src = url
+                })
+            })
     }
 
     // returns: Promise<Data-URL>
@@ -31,16 +29,18 @@ export default class {
 
         const promises = parts.map(p => this.getImageObject(p.image))
         return await Promise.all(promises).then(images => {
-            const canvas = new OffscreenCanvas(images[0].width, images[0].height)
+            const canvas = document.createElement("canvas")
+            canvas.height = images[0].height;
+            canvas.width = images[0].width;
+
             const ctx = canvas.getContext("2d")
 
             images.forEach(img => {
                 ctx.drawImage(img, 0, 0)
             })
 
-            return canvas.convertToBlob()
+            return canvas.toDataURL()
         })
-        .then(blob => blobToDataURL(blob))
         .catch(e => {
             // fallback
             console.warn("createTexture: ", e)

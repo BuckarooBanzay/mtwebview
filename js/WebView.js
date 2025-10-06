@@ -1,7 +1,7 @@
 import WorldMap from './map/WorldMap.js';
 import MapLoaderWorker from './map/MapLoaderWorker.js';
-import MeshGenerator from './mesh/MeshGenerator.js';
-import PlainMeshGenerator from './mesh/PlainMeshGenerator.js';
+import GeometryGenerator from './mesh/GeometryGenerator.js';
+import PlainMaterialManager from './texture/PlainMaterialManager.js';
 import Scene from './scene/Scene.js';
 import MaterialManager from './texture/MaterialManager.js';
 import TextureGenerator from './texture/TextureGenerator.js';
@@ -15,21 +15,23 @@ export default class WebView {
         this.scene = new Scene(cfg.target);
         this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
 
+        let materialmgr
         if (cfg.source.media && cfg.source.nodedef) {
             // "fancy" rendering with textures
             const textureGen = new TextureGenerator(cfg.source.media)
-            const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
-            this.meshgen = new MeshGenerator(this.worldmap,)
-            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, materialmgr, 1)
+            materialmgr = new MaterialManager(textureGen)
 
         } else if (cfg.source.colormapping) {
             // plain boxes
-            this.meshgen = new PlainMeshGenerator(this.worldmap, cfg.source.colormapping)
-            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 1)
+            materialmgr = new PlainMaterialManager(cfg.source.colormapping)
 
         } else {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")
         }
+
+        this.meshgen = new GeometryGenerator(this.worldmap)
+        this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, materialmgr, 3)
+
 
         this.mapworker.start()
     }

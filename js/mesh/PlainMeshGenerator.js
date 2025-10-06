@@ -3,7 +3,6 @@ import { MeshBasicMaterial, Color, FrontSide } from "three";
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
 import NodeSide from "../util/NodeSide.js"
-import { InteractionDelay } from "../util/Sleep.js";
 
 const sidelist = Object.keys(NodeSide)
 
@@ -17,13 +16,14 @@ export default class PlainMeshGenerator {
     materials = {}
 
     getMaterial(color) {
-        const key = `${color.R}/${color.G}/${color.B}/${color.RA}`
+        const key = `${color.R}/${color.G}/${color.B}/${color.A}`
         if (!this.materials[key]) {
             const c = new Color().setRGB( color.R/255, color.G/255, color.B/255 );
             this.materials[key] = new MeshBasicMaterial({
                 color: c,
                 side: FrontSide,
-            }) 
+                vertexColors: true,
+            })
         }
 
         return this.materials[key]
@@ -57,10 +57,8 @@ export default class PlainMeshGenerator {
 
     async createMesh(pos1, pos2) {
         const ctx = new RenderContext()
-        const intDelay = new InteractionDelay()
 
         for (let z=pos1.z; z<pos2.z; z++) {
-            await intDelay.check()
             for (let y=pos1.y; y<pos2.y; y++) {
                 for (let x=pos1.x; x<pos2.x; x++) {
                     const pos = new Pos(x,y,z)

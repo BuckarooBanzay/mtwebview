@@ -29,7 +29,6 @@ export default class {
         Object.keys(this.bufferHelperMap).forEach(key => {
             const helper = this.bufferHelperMap[key]
             const geo = helper.createGeometry()
-            console.log("getGeometryBundle", { geo })
 
             const entry = {
                 material_def: this.materialDefMap[key],
