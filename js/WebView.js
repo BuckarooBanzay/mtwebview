@@ -30,7 +30,7 @@ export default class WebView {
         }
 
         this.meshgen = new GeometryGenerator(this.worldmap)
-        this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, materialmgr, 3)
+        this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, materialmgr, 2)
 
 
         this.mapworker.start()

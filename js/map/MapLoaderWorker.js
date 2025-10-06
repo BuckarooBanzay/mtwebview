@@ -59,9 +59,13 @@ export default class {
     getMapblockGroupArea(pos) {
         const range = this.range
         const mb_pos = pos.toMapblockPos()
+        const chunk_origin_x = Math.floor(mb_pos.x / range)
+        const chunk_origin_y = Math.floor(mb_pos.y / range)
+        const chunk_origin_z = Math.floor(mb_pos.z / range)
+
         const mb_pos1 = mb_pos.add(new Pos(-range,-range,-range))
         const mb_pos2 = mb_pos.add(new Pos(range,range,range))
-        const key = `${mb_pos1.x}/${mb_pos1.y}/${mb_pos1.z}/${mb_pos2.x}/${mb_pos2.y}/${mb_pos2.z}`
+        const key = `${chunk_origin_x}/${chunk_origin_y}/${chunk_origin_z}`
         return {mb_pos1, mb_pos2, key}
     }
 
