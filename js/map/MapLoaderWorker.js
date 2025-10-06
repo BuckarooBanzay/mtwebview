@@ -1,13 +1,13 @@
 import Pos from "../util/Pos.js"
-import { ObjectLoader } from "three"
+import { BufferGeometry, BufferAttribute, Uint32BufferAttribute, Mesh } from 'three'
 
 export default class {
-    constructor(scene, worldmap, meshgen, range) {
+    constructor(scene, worldmap, meshgen, materialmgr, range) {
         this.scene = scene
         this.worldmap = worldmap
         this.meshgen = meshgen
+        this.materialmgr = materialmgr
         this.range = range || 2
-        this.loader = new ObjectLoader();
 
         this.worker = new Worker("./js/bundle.js") //TODO: hardcoded
         this.worker.onmessage = e => this.onWorkerMessage(e)
@@ -42,11 +42,34 @@ export default class {
     onWorkerMessage(e) {
         console.log("got message from worker", e.data)
         switch (e.data.type) {
-            case "mesh":
-                var obj = this.loader.parse(e.data.mesh)
-                console.log("parsed object", obj)
-                this.scene.addMesh(obj)
-                this.loaded_areas[e.data.key] = obj
+            case "bundle":
+                var meshgroup = new Mesh()
+                var promises = e.data.bundle.map(async entry => {
+                    const material_def = entry.material_def
+                    const material = await this.materialmgr.createMaterial(
+                        material_def.texture,
+                        material_def.transparent,
+                        material_def.renderside,
+                        true
+                    )
+
+                    const geo = new BufferGeometry()
+                    geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
+                    geo.setAttribute('position', new BufferAttribute(new Float32Array(entry.geometry.position), 3));
+                    geo.setAttribute('uv', new BufferAttribute(new Float32Array(entry.geometry.uv), 2));
+                    geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
+                    geo.computeBoundingBox()
+
+                    console.log("bundle", { geo, material })
+                    const mesh = new Mesh(geo, material)                    
+                    meshgroup.add(mesh)
+                })
+
+                Promise.all(promises).then(() => {
+                    console.log("bundle done", { meshgroup })
+                    this.scene.addMesh(meshgroup)
+                    this.loaded_areas[e.data.key] = meshgroup
+                })
 
         }
     }

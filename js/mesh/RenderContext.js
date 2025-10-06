@@ -3,17 +3,48 @@ import BufferGeometryHelper from './BufferGeometryHelper.js';
 
 export default class {
 
-    // material.uuid -> Helper
+    // material_def-key -> Helper
     bufferHelperMap = {}
 
-    meshes = []
+    // material_def-key -> material_def
+    materialDefMap = {}
 
-    getBufferGeometryHelper(material) {
-        const key = material.uuid
+    getMaterialDefKey(material_def) {
+        return `${material_def.texture}/${material_def.transparent}/${material_def.renderside}`
+    }
+
+    getBufferGeometryHelper(material_def) {
+        const key = this.getMaterialDefKey(material_def)
+
         if (!this.bufferHelperMap[key]) {
-            this.bufferHelperMap[key] = new BufferGeometryHelper(material)
+            this.bufferHelperMap[key] = new BufferGeometryHelper()
+            this.materialDefMap[key] = material_def
         }
         return this.bufferHelperMap[key]
+    }
+
+    getGeometryBundle() {
+        const bundle = []
+
+        Object.keys(this.bufferHelperMap).forEach(key => {
+            const helper = this.bufferHelperMap[key]
+            const geo = helper.createGeometry()
+            console.log("getGeometryBundle", { geo })
+
+            const entry = {
+                material_def: this.materialDefMap[key],
+                geometry: {
+                    index: geo.getIndex().array,
+                    position: geo.getAttribute("position").array,
+                    uv: geo.getAttribute("uv").array,
+                    color: geo.getAttribute("color").array
+                }
+            }
+
+            bundle.push(entry)
+        })
+
+        return bundle
     }
 
     addMesh(m) {

@@ -5,10 +5,8 @@ const sidelist = Object.keys(NodeSide)
 
 export default class {
 
-    init(worldmap, matmgr, mediasource) {
+    init(worldmap) {
         this.worldmap = worldmap
-        this.matmgr = matmgr
-        this.mediasource = mediasource
     }
 
     isDrawtypeOccluding(drawtype) {
@@ -63,7 +61,6 @@ export default class {
             }
 
             const texture_def = this.getTextureDef(nodedef, side)
-            const material = await this.matmgr.createMaterial(texture_def, transparent, renderside, true)
 
             const light = (neighbor_node.param1 & 0x0F) / 15
             let c = new Color(light, light, light)
@@ -76,7 +73,12 @@ export default class {
                 )
             }
 
-            const gh = ctx.getBufferGeometryHelper(material)
+            const material_def = {
+                texture: texture_def,
+                transparent: transparent,
+                renderside: renderside
+            }
+            const gh = ctx.getBufferGeometryHelper(material_def)
             gh.addCubeSide(pos, side, c)
         }
     }

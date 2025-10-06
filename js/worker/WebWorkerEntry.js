@@ -53,21 +53,17 @@ async function render(data) {
     const mb_pos1 = parsePos(data.mb_pos1)
     const mb_pos2 = parsePos(data.mb_pos2)
     await worldmap.loadMapblockArea(mb_pos1, mb_pos2)
-    const mesh = await meshgen.createMesh(mb_pos1.getMinMapblockPos(), mb_pos2.getMaxMapblockPos())
-    const json = mesh.toJSON()
+    const bundle = await meshgen.createGeometryBundle(mb_pos1.getMinMapblockPos(), mb_pos2.getMaxMapblockPos())
 
-    console.log("mesh images", json.images)
+    console.log("worker-bundle", bundle)
 
     postMessage({
-        type: "mesh",
-        mesh: json,
+        type: "bundle",
+        bundle: bundle,
         key: data.key
     })
 }
 
-async function create_geometries() {
-
-}
 
 export const init_worker = () => {
     console.log("worker init!")
@@ -83,10 +79,6 @@ export const init_worker = () => {
             case "render":
                 queue.push(e.data)
                 break
-            case "create_geometries":
-                create_geometries()
-                break
-
         }
     }
 }

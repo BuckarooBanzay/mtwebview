@@ -19,8 +19,8 @@ export default class WebView {
             // "fancy" rendering with textures
             const textureGen = new TextureGenerator(cfg.source.media)
             const materialmgr = new MaterialManager(textureGen, cfg.wireframe)
-            this.meshgen = new MeshGenerator(this.worldmap, materialmgr, cfg.source.media)
-            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, 1)
+            this.meshgen = new MeshGenerator(this.worldmap,)
+            this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, materialmgr, 1)
 
         } else if (cfg.source.colormapping) {
             // plain boxes

@@ -27,7 +27,7 @@ export default class MeshGenerator {
         })
     }
 
-    async createMesh(pos1, pos2) {
+    async createGeometryBundle(pos1, pos2) {
         const ctx = new RenderContext()
         const intDelay = new InteractionDelay()
 
@@ -56,6 +56,6 @@ export default class MeshGenerator {
             }
         }
 
-        return ctx.toMesh()
+        return ctx.getGeometryBundle()
     }
 }
