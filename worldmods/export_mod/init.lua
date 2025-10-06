@@ -10,8 +10,9 @@ dofile(MP .. "/textures.lua")
 dofile(MP .. "/export.lua")
 dofile(MP .. "/map.lua")
 
-local mb_pos1 = vector.new(-3, -2, -3)
-local mb_pos2 = vector.new(3, 3, 3)
+local range = 6
+local mb_pos1 = vector.new(-range, -2, -range)
+local mb_pos2 = vector.new(range, 3, range)
 
 if minetest.settings:get_bool("export_mod_autoexport") then
     minetest.register_on_mods_loaded(function()

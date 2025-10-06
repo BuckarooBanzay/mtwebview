@@ -16,6 +16,8 @@ export default class {
     // group_area_key -> mesh
     loaded_areas = {}
 
+    queue = []
+
     async start() {
         if (this.active) {
             return
@@ -23,6 +25,35 @@ export default class {
         this.active = true
         await this.worker.init()
         this.check_area()
+        this.checkQueue()
+    }
+
+    async checkQueue() {
+        const group_area = this.queue.shift()
+        if (group_area) {
+            console.log("Rendering map area", group_area)
+            const bundle = await this.worker.render_geometries(group_area.mb_pos1, group_area.mb_pos2)
+
+            const meshgroup = new Mesh()
+            const promises = bundle.map(async entry => {
+                const material = await this.materialmgr.createMaterial(entry.material_def)
+
+                const geo = new BufferGeometry()
+                geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
+                geo.setAttribute('position', new BufferAttribute(new Float32Array(entry.geometry.position), 3));
+                geo.setAttribute('uv', new BufferAttribute(new Float32Array(entry.geometry.uv), 2));
+                geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
+                geo.computeBoundingBox()
+
+                const mesh = new Mesh(geo, material)
+                meshgroup.add(mesh)
+            })
+
+            await Promise.all(promises)
+            this.scene.addMesh(meshgroup)
+            this.loaded_areas[group_area.key] = meshgroup
+        }
+        setTimeout(() => this.checkQueue(), 50)
     }
 
     getMapblockGroupArea(pos) {
@@ -44,30 +75,10 @@ export default class {
 
         const pos = this.scene.getPosition()
         const group_area = this.getMapblockGroupArea(pos)
+        
         if (!this.loaded_areas[group_area.key]) {
             this.loaded_areas[group_area.key] = true // generating marker
-
-            console.log("Rendering map area", group_area)
-            const bundle = await this.worker.render_geometries(group_area.mb_pos1, group_area.mb_pos2)
-
-            const meshgroup = new Mesh()
-            const promises = bundle.map(async entry => {
-                const material = await this.materialmgr.createMaterial(entry.material_def)
-
-                const geo = new BufferGeometry()
-                geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
-                geo.setAttribute('position', new BufferAttribute(new Float32Array(entry.geometry.position), 3));
-                geo.setAttribute('uv', new BufferAttribute(new Float32Array(entry.geometry.uv), 2));
-                geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
-                geo.computeBoundingBox()
-
-                const mesh = new Mesh(geo, material)                    
-                meshgroup.add(mesh)
-            })
-
-            await Promise.all(promises)
-            this.scene.addMesh(meshgroup)
-            this.loaded_areas[group_area.key] = meshgroup
+            this.queue.push(group_area)
         }
 
         setTimeout(() => this.check_area(), 100)
