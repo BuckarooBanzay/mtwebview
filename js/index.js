@@ -2,7 +2,7 @@ import WebView from './WebView.js';
 import Pos from './util/Pos.js';
 import { parseBase64GzMapblock, parseRawMapblock } from './parser/MapParser.js';
 import { REVISION } from 'three';
-import { is_worker, init_worker } from './worker.js';
+import { is_worker, init_worker } from './worker/WebWorkerEntry.js';
 
 if (is_worker()) {
     // worker mode, start worker

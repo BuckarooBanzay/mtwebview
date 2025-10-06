@@ -1,9 +1,9 @@
-import WorldMap from './map/WorldMap.js';
-import MeshGenerator from './mesh/MeshGenerator.js';
-import MaterialManager from './texture/MaterialManager.js';
-import TextureGenerator from './texture/TextureGenerator.js';
-import { parseBase64GzMapblock } from './parser/MapParser.js';
-import { parsePos } from './util/Pos.js';
+import WorldMap from '../map/WorldMap.js';
+import MeshGenerator from '../mesh/MeshGenerator.js';
+import MaterialManager from '../texture/MaterialManager.js';
+import TextureGenerator from '../texture/TextureGenerator.js';
+import { parseBase64GzMapblock } from '../parser/MapParser.js';
+import { parsePos } from '../util/Pos.js';
 
 export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
 
@@ -65,11 +65,15 @@ async function render(data) {
     })
 }
 
+async function create_geometries() {
+
+}
+
 export const init_worker = () => {
     console.log("worker init!")
     dequeue_job()
 
-    onmessage = e => {
+    onmessage = async e => {
         console.log("worker: got message", e.data)
 
         switch (e.data.type) {
@@ -78,6 +82,9 @@ export const init_worker = () => {
                 break
             case "render":
                 queue.push(e.data)
+                break
+            case "create_geometries":
+                create_geometries()
                 break
 
         }

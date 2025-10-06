@@ -3,8 +3,6 @@ import Glasslike from "./drawtype/Glasslike.js"
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
 import Allfaces from "./drawtype/Allfaces.js"
-import Mesh from "./drawtype/Mesh.js"
-import Nodebox from "./drawtype/Nodebox.js"
 import { InteractionDelay } from "../util/Sleep.js"
 
 export default class MeshGenerator {
@@ -23,8 +21,6 @@ export default class MeshGenerator {
         this.drawTypes["glasslike_framed_optional"] = new Glasslike();
         this.drawTypes["allfaces"] = new Allfaces();
         this.drawTypes["allfaces_optional"] = new Allfaces();
-        this.drawTypes["mesh"] = new Mesh();
-        this.drawTypes["nodebox"] = new Nodebox();
 
         Object.keys(this.drawTypes).forEach(dt => {
             this.drawTypes[dt].init(worldmap, materialmgr, mediasource)

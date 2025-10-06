@@ -62,13 +62,17 @@ export default class {
             // nothing to show
             return
         }
+        
+        return new Mesh(this.createGeometry(), this.material)
+    }
+
+    createGeometry() {
         const geo = new BufferGeometry()
         geo.setIndex(this.indices)
         geo.setAttribute('position', new BufferAttribute(new Float32Array(this.positions), 3));
         geo.setAttribute('uv', new BufferAttribute(new Float32Array(this.uvs), 2));
         geo.setAttribute('color', new BufferAttribute(new Float32Array(this.colors), 3));
         geo.computeBoundingBox()
-
-        return new Mesh(geo, this.material)
+        return geo
     }
 }

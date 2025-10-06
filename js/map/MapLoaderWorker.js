@@ -71,7 +71,7 @@ export default class {
                 mb_pos1: group_area.mb_pos1,
                 mb_pos2: group_area.mb_pos2,
                 key: group_area.key
-            })            
+            })
         }
     }
 
