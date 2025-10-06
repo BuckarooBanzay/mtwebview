@@ -5,7 +5,7 @@ import { parsePos } from '../util/Pos.js';
 
 export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
 
-let worldmap, geogen, init_done;
+let worldmap, geogen;
 
 async function init() {
     const nodedefs = await fetch("/export/nodedefs.json").then(r => r.json());
@@ -27,48 +27,28 @@ async function init() {
     geogen = new GeometryGenerator(worldmap)
 }
 
-const queue = []
-
-function dequeue_job() {
-    const data = queue.shift()
-    if (!data) {
-        setTimeout(dequeue_job, 100)
-        return
-    }
-
-    render(data).then(dequeue_job)
-}
-
-async function render(data) {
-    await init_done
+async function render(mb_pos1, mb_pos2) {
     const start = Date.now()
 
-    const mb_pos1 = parsePos(data.mb_pos1)
-    const mb_pos2 = parsePos(data.mb_pos2)
     await worldmap.loadMapblockArea(mb_pos1, mb_pos2)
     const bundle = await geogen.createGeometryBundle(mb_pos1.getMinMapblockPos(), mb_pos2.getMaxMapblockPos())
 
     const diff = Date.now() - start
     console.log(`rendering done in ${diff} ms`)
 
-    postMessage({
-        type: "bundle",
-        bundle: bundle,
-        key: data.key
-    })
+    return bundle
 }
 
-
 export const init_worker = () => {
-    dequeue_job()
-
     onmessage = async e => {
         switch (e.data.type) {
             case "init":
-                init_done = init()
+                await init()
+                postMessage({ id: e.data.id })
                 break
             case "render":
-                queue.push(e.data)
+                var bundle = await render(parsePos(e.data.mb_pos1), parsePos(e.data.mb_pos2))
+                postMessage({ bundle, id: e.data.id })
                 break
         }
     }

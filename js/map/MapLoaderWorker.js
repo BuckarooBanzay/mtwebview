@@ -1,5 +1,6 @@
 import Pos from "../util/Pos.js"
 import { BufferGeometry, BufferAttribute, Uint32BufferAttribute, Mesh } from 'three'
+import { WebWorker } from "../worker/WebWorker.js"
 
 export default class {
     constructor(scene, worldmap, meshgen, materialmgr, range) {
@@ -9,24 +10,18 @@ export default class {
         this.materialmgr = materialmgr
         this.range = range || 2
 
-        this.worker = new Worker("./js/bundle.js") //TODO: hardcoded
-        this.worker.onmessage = e => this.onWorkerMessage(e)
-        this.worker.postMessage({
-            type: "init",
-            config: {
-                TODO: true
-            }
-        })
+        this.worker = new WebWorker() //TODO: hardcoded
     }
 
     // group_area_key -> mesh
     loaded_areas = {}
 
-    start() {
+    async start() {
         if (this.active) {
             return
         }
         this.active = true
+        await this.worker.init()
         this.check_area()
     }
 
@@ -39,32 +34,6 @@ export default class {
         return {mb_pos1, mb_pos2, key}
     }
 
-    onWorkerMessage(e) {
-        switch (e.data.type) {
-            case "bundle":
-                var meshgroup = new Mesh()
-                var promises = e.data.bundle.map(async entry => {
-                    const material = await this.materialmgr.createMaterial(entry.material_def)
-
-                    const geo = new BufferGeometry()
-                    geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
-                    geo.setAttribute('position', new BufferAttribute(new Float32Array(entry.geometry.position), 3));
-                    geo.setAttribute('uv', new BufferAttribute(new Float32Array(entry.geometry.uv), 2));
-                    geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
-                    geo.computeBoundingBox()
-
-                    const mesh = new Mesh(geo, material)                    
-                    meshgroup.add(mesh)
-                })
-
-                Promise.all(promises).then(() => {
-                    this.scene.addMesh(meshgroup)
-                    this.loaded_areas[e.data.key] = meshgroup
-                })
-
-        }
-    }
-
     async check_area() {
         if (!this.active) {
             return
@@ -72,7 +41,6 @@ export default class {
 
         //TODO: unload far away area
         //TODO: unload old mapblocks
-        setTimeout(() => this.check_area(), 100)
 
         const pos = this.scene.getPosition()
         const group_area = this.getMapblockGroupArea(pos)
@@ -80,13 +48,29 @@ export default class {
             this.loaded_areas[group_area.key] = true // generating marker
 
             console.log("Rendering map area", group_area)
-            this.worker.postMessage({
-                type: "render",
-                mb_pos1: group_area.mb_pos1,
-                mb_pos2: group_area.mb_pos2,
-                key: group_area.key
+            const bundle = await this.worker.render_geometries(group_area.mb_pos1, group_area.mb_pos2)
+
+            const meshgroup = new Mesh()
+            const promises = bundle.map(async entry => {
+                const material = await this.materialmgr.createMaterial(entry.material_def)
+
+                const geo = new BufferGeometry()
+                geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
+                geo.setAttribute('position', new BufferAttribute(new Float32Array(entry.geometry.position), 3));
+                geo.setAttribute('uv', new BufferAttribute(new Float32Array(entry.geometry.uv), 2));
+                geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
+                geo.computeBoundingBox()
+
+                const mesh = new Mesh(geo, material)                    
+                meshgroup.add(mesh)
             })
+
+            await Promise.all(promises)
+            this.scene.addMesh(meshgroup)
+            this.loaded_areas[group_area.key] = meshgroup
         }
+
+        setTimeout(() => this.check_area(), 100)
     }
 
     stop() {
