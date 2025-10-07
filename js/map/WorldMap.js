@@ -1,6 +1,7 @@
 import Pos from "../util/Pos.js"
 import Mapblock from "./Mapblock.js"
 import { IgnoreNode } from "../util/Node.js"
+import { parseBase64GzMapblock } from "../parser/MapParser.js"
 
 const AirOnlyMapblock = {}
 
@@ -14,9 +15,9 @@ export default class {
     // name -> node-def
     nodedefs = {}
 
-    constructor(mapblockloader, nodedefloader) {
-        this.mapblockloader = mapblockloader
-        this.nodedefloader = nodedefloader
+    constructor(mapblocks_url, nodedefs) {
+        this.mapblocks_url = mapblocks_url
+        this.nodedefs = nodedefs
     }
 
     async loadMapblock(mbpos) {
@@ -27,34 +28,26 @@ export default class {
             return this.map[key]
         }
         // load from provider
-        const mapblock_def = await this.mapblockloader(mbpos)
-        if (!mapblock_def) {
-            this.map_last_access[key] = Date.now()
-            this.map[key] = AirOnlyMapblock
-            return
+        const mapblock_url = this.mapblocks_url
+            .replaceAll("{x}", mbpos.x)
+            .replaceAll("{y}", mbpos.y)
+            .replaceAll("{z}", mbpos.z)
+        const mapblock = await fetch(mapblock_url).then(r => r.json())
+        //TODO: configure format:
+        // - json-base64-gz: json-object with base64 encoded mapblock data
+        // - db: raw database binary data
+        // - json-bx: json-encoded, blockexchange format
+        // - network: network mapblock format (node-id-mapping?)
+        //TODO: 404
+        const mapblock_def = {
+            node_mapping: mapblock.node_mapping,
+            mapdata: parseBase64GzMapblock(mapblock.mapdata)
         }
 
         const mb = new Mapblock(mapblock_def)
         this.map_last_access[key] = Date.now()
         this.map[key] = mb
 
-        if (this.nodedefloader) {
-            // load node definitions
-
-            const promises = []
-            mb.getNodeNames().forEach(nodename => {
-                if (this.nodedefs[nodename]) {
-                    // already have it
-                    return
-                }
-
-                const promise = this.nodedefloader(nodename)
-                    .then(node_def => this.nodedefs[nodename] = node_def)
-                promises.push(promise)
-            })
-
-            await Promise.all(promises)
-        }
         return mb
     }
 

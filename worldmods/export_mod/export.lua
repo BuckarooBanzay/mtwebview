@@ -1,4 +1,4 @@
-local function export_mapblock(mb_pos, mb_manifest)
+local function export_mapblock(mb_pos)
     minetest.log("action", "[export_mod] exporting mapblock " .. minetest.pos_to_string(mb_pos))
     local pos1 = vector.multiply(mb_pos, 16)
     local pos2 = vector.add(pos1, 15)
@@ -15,7 +15,6 @@ local function export_mapblock(mb_pos, mb_manifest)
 
     local node_mapping = {} -- name -> id
 
-    local air_only = true
     local processed_nodeids = {} -- id -> bool
 
     -- process node-ids
@@ -24,14 +23,7 @@ local function export_mapblock(mb_pos, mb_manifest)
             local name = minetest.get_name_from_content_id(nodeid)
             node_mapping[name] = nodeid
             processed_nodeids[nodeid] = true
-            if name ~= "air" then
-                air_only = false
-            end
         end
-    end
-
-    if air_only then
-        return 0
     end
 
     local mapdata = {}
@@ -49,7 +41,6 @@ local function export_mapblock(mb_pos, mb_manifest)
     local mapdata_compressed = minetest.compress(mapdata_raw, "deflate")
 
     local pos_str = minetest.pos_to_string(mb_pos)
-    mb_manifest[pos_str] = true
     return mtwebview.export_json(
         mtwebview.basepath .. "/mapblocks/" .. pos_str .. ".json", {
             node_mapping = node_mapping,
@@ -61,9 +52,8 @@ end
 function mtwebview.export_map(mb_pos1, mb_pos2)
     local size, count = 0, 0
     local manifest = {
-        mapblocks = {},
-        min = vector.multiply(mb_pos1, 16),
-        max = vector.multiply(mb_pos2, 16)
+        min = mb_pos1,
+        max = mb_pos2
     }
 
     minetest.mkdir(mtwebview.basepath .. "/mapblocks")
@@ -72,7 +62,7 @@ function mtwebview.export_map(mb_pos1, mb_pos2)
         for y=mb_pos1.y,mb_pos2.y do
             for z=mb_pos1.z,mb_pos2.z do
                 local pos = {x=x, y=y, z=z}
-                local mbsize = export_mapblock(pos, manifest.mapblocks)
+                local mbsize = export_mapblock(pos)
                 size = size + mbsize
                 if mbsize > 0 then
                     count = count + 1

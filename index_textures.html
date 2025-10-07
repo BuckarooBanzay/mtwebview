@@ -9,20 +9,13 @@
 
             const wv = new ltview.WebView({
                 target: document.getElementById("scene"),
-                source: {
-                    mapblock: async pos => {
-                        const pos_str = `(${pos.x},${pos.y},${pos.z})`;
-                        if (manifest.mapblocks[pos_str]) {
-                            const req = await fetch(`export/mapblocks/${pos_str}.json`)
-                            const mb = await req.json()
-                            return {
-                                node_mapping: mb.node_mapping,
-                                mapdata: ltview.parseBase64GzMapblock(mb.mapdata)
-                            }
-                        }
-                    },
-                    nodedef: async nodename => nodedefs[nodename],
-                    media: async filename => `export/media/${filename}`
+                map: {
+                    min: manifest.min,
+                    max: manifest.max,
+                    mapblocks_url: "export/mapblocks/({x},{y},{z}).json",
+                    mapblock_format: "json-base64-gz",
+                    nodedefs: nodedefs,
+                    media_url: "export/media/{filename}"
                 }
             });
         </script>

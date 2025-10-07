@@ -2,19 +2,17 @@ import TileDefinitionParser from "./TileDefinitionParser.js";
 import UnknownNodePNG from "./UnknownNodePNG.js";
 
 export default class {
-    constructor(mediasource) {
-        this.mediasource = mediasource;
+    constructor(media_url) {
+        this.media_url = media_url;
     }
 
     async getImageObject(image) {
         return new Promise((resolve, reject) => {
-            this.mediasource(image)
-            .then(url => {
-                const el = document.createElement("img");
-                el.onload = () => resolve(el)
-                el.onerror = () => reject("image error: '" + url + "'")
-                el.src = url
-            })
+            const url = this.media_url.replaceAll("filename", image)
+            const el = document.createElement("img");
+            el.onload = () => resolve(el)
+            el.onerror = () => reject("image error: '" + url + "'")
+            el.src = url
         })
     }
 

@@ -1,6 +1,5 @@
 import WorldMap from '../map/WorldMap.js';
 import GeometryGenerator from '../mesh/GeometryGenerator.js';
-import { parseBase64GzMapblock } from '../parser/MapParser.js';
 import { parsePos } from '../util/Pos.js';
 
 export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
@@ -9,21 +8,8 @@ let worldmap, geogen;
 
 async function init(config) {
     const nodedefs = await fetch(config.nodedefs_url).then(r => r.json());
-    const manifest = await fetch("/export/mapblocks/manifest.json").then(r => r.json()); //TODO
 
-    worldmap = new WorldMap(
-        async pos => {
-            const pos_str = `(${pos.x},${pos.y},${pos.z})`;
-            if (manifest.mapblocks[pos_str]) {
-                const mb = await fetch(`/export/mapblocks/${pos_str}.json`).then(r => r.json()) //TODO
-                return {
-                    node_mapping: mb.node_mapping,
-                    mapdata: parseBase64GzMapblock(mb.mapdata)
-                }
-            }
-        },
-        async nodename => nodedefs[nodename]
-    )
+    worldmap = new WorldMap(config.mapblocks_url, nodedefs)
     geogen = new GeometryGenerator(worldmap)
 }
 

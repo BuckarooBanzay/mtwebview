@@ -14,17 +14,17 @@ export default class WebView {
     constructor(cfg) {
         this.active = true;
         this.scene = new Scene(cfg.target);
-        this.worldmap = new WorldMap(cfg.source.mapblock, cfg.source.nodedef)
+        this.worldmap = new WorldMap(cfg.map.mapblocks_url, cfg.map.nodedefs)
 
         let materialmgr
-        if (cfg.source.media && cfg.source.nodedef) {
+        if (cfg.map.media_url && cfg.map.nodedefs) {
             // "fancy" rendering with textures
-            const textureGen = new TextureGenerator(cfg.source.media)
+            const textureGen = new TextureGenerator(cfg.map.media_url)
             materialmgr = new MaterialManager(textureGen)
 
-        } else if (cfg.source.colormapping) {
+        } else if (cfg.map.colormapping) {
             // plain boxes
-            materialmgr = new PlainMaterialManager(cfg.source.colormapping)
+            materialmgr = new PlainMaterialManager(cfg.map.colormapping)
 
         } else {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")
@@ -35,12 +35,7 @@ export default class WebView {
         const worker = new WebWorker("js/bundle.js") // TODO: config
         this.maploader = new MapLoader(this.scene, this.worldmap, this.meshgen, materialmgr, worker, 2)
 
-        // TODO: config
-        const config = {
-            nodedefs_url: "/export/nodedefs.json"
-        }
-
-        worker.init(config).then(() => {
+        worker.init(cfg.map).then(() => {
             this.maploader.start()
         })
     }
