@@ -1,5 +1,6 @@
 import Pos from "../util/Pos.js"
-import { BufferGeometry, BufferAttribute, Uint32BufferAttribute, Mesh } from 'three'
+import { Mesh } from 'three'
+import { deserializeBufferGeometry } from "../util/Serialize.js"
 
 export default class {
     constructor(scene, worldmap, meshgen, materialmgr, worker, range) {
@@ -34,13 +35,7 @@ export default class {
             const meshgroup = new Mesh()
             const promises = bundle.map(async entry => {
                 const material = await this.materialmgr.createMaterial(entry.material_def)
-
-                const geo = new BufferGeometry()
-                geo.setIndex(new Uint32BufferAttribute(entry.geometry.index, 1))
-                geo.setAttribute('position', new BufferAttribute(new Float32Array(entry.geometry.position), 3));
-                geo.setAttribute('uv', new BufferAttribute(new Float32Array(entry.geometry.uv), 2));
-                geo.setAttribute('color', new BufferAttribute(new Float32Array(entry.geometry.color), 3));
-                geo.computeBoundingBox()
+                const geo = deserializeBufferGeometry(entry.geometry)
 
                 const mesh = new Mesh(geo, material)
                 meshgroup.add(mesh)

@@ -1,4 +1,5 @@
 import BufferGeometryHelper from './BufferGeometryHelper.js';
+import { serializeBufferGeometry } from '../util/Serialize.js'
 
 export default class {
 
@@ -31,12 +32,7 @@ export default class {
 
             const entry = {
                 material_def: this.materialDefMap[key],
-                geometry: {
-                    index: geo.getIndex().array,
-                    position: geo.getAttribute("position").array,
-                    uv: geo.getAttribute("uv").array,
-                    color: geo.getAttribute("color").array
-                }
+                geometry: serializeBufferGeometry(geo)
             }
 
             bundle.push(entry)
