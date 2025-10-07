@@ -37,15 +37,6 @@ export default class WebView {
     }
 
     /**
-     * Load and render the area between given positions
-     */
-    async render(pos1, pos2) {
-        await this.worldmap.loadArea(pos1, pos2)
-        const mesh = await this.meshgen.createMesh(pos1, pos2)
-        this.scene.addMesh(mesh)
-    }
-
-    /**
      * removes the webview and cleans up all ressources
      */
     remove() {

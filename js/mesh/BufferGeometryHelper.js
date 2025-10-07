@@ -1,4 +1,4 @@
-import { BufferAttribute, BufferGeometry, Matrix4, Mesh, Vector3 } from "three"
+import { BufferAttribute, BufferGeometry, Matrix4, Vector3 } from "three"
 
 function vector3_push(a, v) {
     a.push(v.x, v.y, v.z)
@@ -55,15 +55,6 @@ export default class {
         m.multiply(side.rotationmatrix)
         m.multiply(new Matrix4().makeTranslation(0, 0, 0.5))
         return this.addPlane(m, color, 1, 1)
-    }
-
-    createMesh() {
-        if (this.positions.length == 0) {
-            // nothing to show
-            return
-        }
-        
-        return new Mesh(this.createGeometry(), this.material)
     }
 
     createGeometry() {

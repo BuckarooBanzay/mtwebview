@@ -1,4 +1,3 @@
-import { Mesh } from 'three';
 import BufferGeometryHelper from './BufferGeometryHelper.js';
 
 export default class {
@@ -44,23 +43,5 @@ export default class {
         })
 
         return bundle
-    }
-
-    addMesh(m) {
-        this.meshes.push(m)
-    }
-
-    toMesh() {
-        const meshgroup = new Mesh()
-        // raw buffer
-        Object.values(this.bufferHelperMap).forEach(h => {
-            const mesh = h.createMesh()
-            if (mesh) {
-                meshgroup.add(mesh)
-            }
-        })
-        // custom meshes
-        this.meshes.forEach(mesh => meshgroup.add(mesh))
-        return meshgroup
     }
 }

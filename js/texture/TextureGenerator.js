@@ -8,14 +8,14 @@ export default class {
 
     async getImageObject(image) {
         return new Promise((resolve, reject) => {
-             this.mediasource(image)
-                .then(url => {
-                    const el = document.createElement("img");
-                    el.onload = () => resolve(el)
-                    el.onerror = () => reject("image error: '" + url + "'")
-                    el.src = url
-                })
+            this.mediasource(image)
+            .then(url => {
+                const el = document.createElement("img");
+                el.onload = () => resolve(el)
+                el.onerror = () => reject("image error: '" + url + "'")
+                el.src = url
             })
+        })
     }
 
     // returns: Promise<Data-URL>
