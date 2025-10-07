@@ -1,27 +1,14 @@
-import Normal from "./drawtype/Normal.js"
-import Glasslike from "./drawtype/Glasslike.js"
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
-import Allfaces from "./drawtype/Allfaces.js"
+import NodeSide from "../util/NodeSide.js"
+
+const sidelist = Object.keys(NodeSide)
 
 export default class {
 
-    // name -> instance
-    drawTypes = {}
-
-    constructor(worldmap) {
+    constructor(worldmap, colormapping) {
         this.worldmap = worldmap
-
-        this.drawTypes["normal"] = new Normal()
-        this.drawTypes["glasslike"] = new Glasslike();
-        this.drawTypes["glasslike_framed"] = new Glasslike();
-        this.drawTypes["glasslike_framed_optional"] = new Glasslike();
-        this.drawTypes["allfaces"] = new Allfaces();
-        this.drawTypes["allfaces_optional"] = new Allfaces();
-
-        Object.keys(this.drawTypes).forEach(dt => {
-            this.drawTypes[dt].init(worldmap)
-        })
+        this.colormapping = colormapping
     }
 
     async createGeometryBundle(pos1, pos2) {
@@ -50,7 +37,7 @@ export default class {
                     if (!dt) {
                         continue
                     }
-
+                    // TODO
                     await dt.render(ctx, pos, node, ndef)
                 }
             }

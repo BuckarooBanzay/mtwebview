@@ -1,5 +1,6 @@
 import WorldMap from '../map/WorldMap.js';
 import GeometryGenerator from '../mesh/GeometryGenerator.js';
+import SimpleGeometryGenerator from '../mesh/SimpleGeometryGenerator.js';
 import { parsePos } from '../util/Pos.js';
 
 export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
@@ -7,10 +8,16 @@ export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self
 let worldmap, geogen;
 
 async function init(config) {
-    const nodedefs = await fetch(config.nodedefs_url).then(r => r.json());
-
-    worldmap = new WorldMap(config.mapblocks_url, nodedefs)
-    geogen = new GeometryGenerator(worldmap)
+    if (config.nodedefs_url && config.media_url) {
+        // render with textures
+        const nodedefs = await fetch(config.nodedefs_url).then(r => r.json());
+        worldmap = new WorldMap(config.mapblocks_url, nodedefs)
+        geogen = new GeometryGenerator(worldmap)
+    } else {
+        // render with plain boxes
+        worldmap = new WorldMap(config.mapblocks_url, nodedefs)
+        geogen = new SimpleGeometryGenerator(worldmap, config.colormapping)
+    }
 }
 
 async function render(mb_pos1, mb_pos2) {

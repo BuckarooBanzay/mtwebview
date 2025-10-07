@@ -1,6 +1,5 @@
 import WorldMap from './map/WorldMap.js';
 import MapLoader from './map/MapLoader.js';
-import GeometryGenerator from './mesh/GeometryGenerator.js';
 import PlainMaterialManager from './texture/PlainMaterialManager.js';
 import Scene from './scene/Scene.js';
 import MaterialManager from './texture/MaterialManager.js';
@@ -30,10 +29,8 @@ export default class WebView {
             throw new Error("no source.media/source.nodedef or source.colormapping provided")
         }
 
-        this.meshgen = new GeometryGenerator(this.worldmap)
-
         const worker = new WebWorker("js/bundle.js") // TODO: config
-        this.maploader = new MapLoader(this.scene, this.worldmap, this.meshgen, materialmgr, worker, 2)
+        this.maploader = new MapLoader(this.scene, this.worldmap, materialmgr, worker, 2)
 
         worker.init(cfg.map).then(() => {
             this.maploader.start()

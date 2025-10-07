@@ -3,10 +3,9 @@ import { Mesh } from 'three'
 import { deserializeBufferGeometry } from "../util/Serialize.js"
 
 export default class {
-    constructor(scene, worldmap, meshgen, materialmgr, worker, range) {
+    constructor(scene, worldmap, materialmgr, worker, range) {
         this.scene = scene
         this.worldmap = worldmap
-        this.meshgen = meshgen
         this.materialmgr = materialmgr
         this.worker = worker
         this.range = range || 2
