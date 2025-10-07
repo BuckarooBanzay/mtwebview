@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "eslint": "eslint js/",
-    "bundle": "rollup -c rollup.config.js",
+    "bundle": "rollup -c rollup.config.js --environment BUILD:production",
     "watch": "rollup -c rollup.config.js -w"
   },
   "repository": {
