@@ -1,16 +1,14 @@
 import Pos from "../util/Pos.js"
 import { BufferGeometry, BufferAttribute, Uint32BufferAttribute, Mesh } from 'three'
-import { WebWorker } from "../worker/WebWorker.js"
 
 export default class {
-    constructor(scene, worldmap, meshgen, materialmgr, range) {
+    constructor(scene, worldmap, meshgen, materialmgr, worker, range) {
         this.scene = scene
         this.worldmap = worldmap
         this.meshgen = meshgen
         this.materialmgr = materialmgr
+        this.worker = worker
         this.range = range || 2
-
-        this.worker = new WebWorker() //TODO: hardcoded
     }
 
     // group_area_key -> mesh
@@ -23,7 +21,6 @@ export default class {
             return
         }
         this.active = true
-        await this.worker.init()
         this.check_area()
         this.checkQueue()
     }

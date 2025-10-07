@@ -4,8 +4,8 @@ export class WebWorker {
     // id -> fn()
     resolvers = {}
 
-    constructor() {
-        this.worker = new Worker("js/bundle.js")
+    constructor(script_url) {
+        this.worker = new Worker(script_url)
         this.worker.onmessage = e => this.onMessage(e)
     }
 
@@ -32,8 +32,11 @@ export class WebWorker {
         this.worker.terminate()
     }
 
-    async init() {
-        await this.postData({ type: "init" })
+    async init(config) {
+        await this.postData({
+            type: "init",
+            config
+        })
     }
 
     async render_geometries(mb_pos1, mb_pos2) {

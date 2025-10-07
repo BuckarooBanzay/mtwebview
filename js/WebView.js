@@ -1,10 +1,11 @@
 import WorldMap from './map/WorldMap.js';
-import MapLoaderWorker from './map/MapLoaderWorker.js';
+import MapLoader from './map/MapLoader.js';
 import GeometryGenerator from './mesh/GeometryGenerator.js';
 import PlainMaterialManager from './texture/PlainMaterialManager.js';
 import Scene from './scene/Scene.js';
 import MaterialManager from './texture/MaterialManager.js';
 import TextureGenerator from './texture/TextureGenerator.js';
+import WebWorker from './worker/WebWorker.js';
 
 /**
  * main webview entry-point, provides convienience functions to render the view
@@ -30,17 +31,25 @@ export default class WebView {
         }
 
         this.meshgen = new GeometryGenerator(this.worldmap)
-        this.mapworker = new MapLoaderWorker(this.scene, this.worldmap, this.meshgen, materialmgr, 2)
 
+        const worker = new WebWorker("js/bundle.js") // TODO: config
+        this.maploader = new MapLoader(this.scene, this.worldmap, this.meshgen, materialmgr, worker, 2)
 
-        this.mapworker.start()
+        // TODO: config
+        const config = {
+            nodedefs_url: "/export/nodedefs.json"
+        }
+
+        worker.init(config).then(() => {
+            this.maploader.start()
+        })
     }
 
     /**
      * removes the webview and cleans up all ressources
      */
     remove() {
-        this.mapworker.stop()
+        this.maploader.stop()
         this.scene.remove();
     }
 }

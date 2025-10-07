@@ -7,15 +7,15 @@ export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self
 
 let worldmap, geogen;
 
-async function init() {
-    const nodedefs = await fetch("/export/nodedefs.json").then(r => r.json());
-    const manifest = await fetch("/export/mapblocks/manifest.json").then(r => r.json());
+async function init(config) {
+    const nodedefs = await fetch(config.nodedefs_url).then(r => r.json());
+    const manifest = await fetch("/export/mapblocks/manifest.json").then(r => r.json()); //TODO
 
     worldmap = new WorldMap(
         async pos => {
             const pos_str = `(${pos.x},${pos.y},${pos.z})`;
             if (manifest.mapblocks[pos_str]) {
-                const mb = await fetch(`/export/mapblocks/${pos_str}.json`).then(r => r.json())
+                const mb = await fetch(`/export/mapblocks/${pos_str}.json`).then(r => r.json()) //TODO
                 return {
                     node_mapping: mb.node_mapping,
                     mapdata: parseBase64GzMapblock(mb.mapdata)
