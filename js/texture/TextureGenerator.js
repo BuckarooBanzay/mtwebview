@@ -8,7 +8,7 @@ export default class {
 
     async getImageObject(image) {
         return new Promise((resolve, reject) => {
-            const url = this.media_url.replaceAll("filename", image)
+            const url = this.media_url.replaceAll("{filename}", image)
             const el = document.createElement("img");
             el.onload = () => resolve(el)
             el.onerror = () => reject("image error: '" + url + "'")

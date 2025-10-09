@@ -12,15 +12,19 @@ export default class {
     // pos_string -> Date.now()
     map_last_access = {}
 
-    // name -> node-def
-    nodedefs = {}
-
-    constructor(mapblocks_url, nodedefs) {
+    constructor(mapblocks_url, nodedefs, min, max) {
         this.mapblocks_url = mapblocks_url
-        this.nodedefs = nodedefs
+        this.nodedefs = nodedefs || {}
+        this.min = min
+        this.max = max
     }
 
     async loadMapblock(mbpos) {
+        if (!mbpos.isWithinArea(this.min, this.max)) {
+            // mapblock not within map area
+            return
+        }
+
         const key = this.formatPos(mbpos)
         if (this.map[key]) {
             // already loaded
@@ -71,6 +75,8 @@ export default class {
                 }
             }
         }
+
+        return i
     }
 
     async loadArea(pos1, pos2, progress_callback) {

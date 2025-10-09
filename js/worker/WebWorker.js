@@ -1,5 +1,5 @@
 
-export class WebWorker {
+export default class {
 
     // id -> fn()
     resolvers = {}

@@ -1,6 +1,7 @@
 import RenderContext from "./RenderContext.js"
 import Pos from "../util/Pos.js"
 import NodeSide from "../util/NodeSide.js"
+import { Color, FrontSide } from "three"
 
 const sidelist = Object.keys(NodeSide)
 
@@ -27,18 +28,31 @@ export default class {
                         // fast continue-check
                         continue
                     }
-                    
-                    const ndef = this.worldmap.getNodeDef(node.name)
-                    if (!ndef) {
-                        continue
-                    }
 
-                    const dt = this.drawTypes[ndef.drawtype]
-                    if (!dt) {
-                        continue
+                    for (let i=0; i<sidelist.length; i++) {
+                        const sidename = sidelist[i]
+                        const side = NodeSide[sidename]
+                        const neighbor_pos = pos.add(side.dir)
+            
+                        const neighbor_node = this.worldmap.getNode(neighbor_pos)
+                        const neighbor_color = this.colormapping[neighbor_node.name]
+
+                        if (neighbor_color) {
+                            // side not visible
+                            continue
+                        }            
+            
+                        const light = (neighbor_node.param1 & 0x0F) / 15
+                        let c = new Color(light, light, light)
+                        
+                        const material_def = {
+                            transparent: false,
+                            renderside: FrontSide,
+                            nodename: node.name
+                        }
+                        const gh = ctx.getBufferGeometryHelper(material_def)
+                        gh.addCubeSide(pos, side, c)
                     }
-                    // TODO
-                    await dt.render(ctx, pos, node, ndef)
                 }
             }
         }

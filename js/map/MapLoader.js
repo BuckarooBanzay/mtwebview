@@ -3,9 +3,8 @@ import { Mesh } from 'three'
 import { deserializeBufferGeometry } from "../util/Serialize.js"
 
 export default class {
-    constructor(scene, worldmap, materialmgr, worker, range) {
+    constructor(scene, materialmgr, worker, range) {
         this.scene = scene
-        this.worldmap = worldmap
         this.materialmgr = materialmgr
         this.worker = worker
         this.range = range || 2
@@ -30,6 +29,11 @@ export default class {
         if (group_area) {
             console.log("Rendering map area", group_area)
             const bundle = await this.worker.render_geometries(group_area.mb_pos1, group_area.mb_pos2)
+
+            if (bundle.length == 0) {
+                // nothing to render here
+                return
+            }
 
             const meshgroup = new Mesh()
             const promises = bundle.map(async entry => {

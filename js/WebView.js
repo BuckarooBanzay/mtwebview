@@ -1,4 +1,3 @@
-import WorldMap from './map/WorldMap.js';
 import MapLoader from './map/MapLoader.js';
 import PlainMaterialManager from './texture/PlainMaterialManager.js';
 import Scene from './scene/Scene.js';
@@ -13,7 +12,6 @@ export default class WebView {
     constructor(cfg) {
         this.active = true;
         this.scene = new Scene(cfg.target);
-        this.worldmap = new WorldMap(cfg.map.mapblocks_url, cfg.map.nodedefs)
 
         let materialmgr
         if (cfg.map.media_url && cfg.map.nodedefs) {
@@ -30,7 +28,7 @@ export default class WebView {
         }
 
         const worker = new WebWorker("js/bundle.js") // TODO: config
-        this.maploader = new MapLoader(this.scene, this.worldmap, materialmgr, worker, 2)
+        this.maploader = new MapLoader(this.scene, materialmgr, worker, 2)
 
         worker.init(cfg.map).then(() => {
             this.maploader.start()

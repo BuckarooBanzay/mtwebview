@@ -25,6 +25,13 @@ export default class Pos {
         return new Pos((this.x * 16) + 15, (this.y * 16) + 15, (this.z * 16) + 15)
     }
 
+    isWithinArea(min, max) {
+        return (
+            this.x >= min.x && this.y >= min.y && this.z >= min.z &&
+            this.x <= max.x && this.y <= max.y && this.z <= max.z
+        )
+    }
+
     add(pos) {
         return new Pos(this.x + pos.x, this.y + pos.y, this.z + pos.z)
     }
