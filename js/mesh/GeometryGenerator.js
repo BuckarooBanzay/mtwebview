@@ -1,7 +1,6 @@
 import Normal from "./drawtype/Normal.js"
 import Glasslike from "./drawtype/Glasslike.js"
 import RenderContext from "./RenderContext.js"
-import Pos from "../util/Pos.js"
 import Allfaces from "./drawtype/Allfaces.js"
 
 export default class {
@@ -24,9 +23,9 @@ export default class {
         })
     }
 
-    async createGeometryBundle(pos1, pos2) {
+    async createGeometryBundle(mb_pos1, mb_pos2) {
         const ctx = new RenderContext()
-        const iter = this.worldmap.getIterator(pos1, pos2)
+        const iter = this.worldmap.getIterator(mb_pos1, mb_pos2)
 
         while (true) {
             const pos = iter()

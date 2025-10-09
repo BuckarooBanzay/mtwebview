@@ -1,5 +1,4 @@
 import RenderContext from "./RenderContext.js"
-import Pos from "../util/Pos.js"
 import NodeSide from "../util/NodeSide.js"
 import { Color, FrontSide } from "three"
 
@@ -12,9 +11,9 @@ export default class {
         this.colormapping = colormapping
     }
 
-    async createGeometryBundle(pos1, pos2) {
+    async createGeometryBundle(mb_pos1, mb_pos2) {
         const ctx = new RenderContext()
-        const iter = this.worldmap.getIterator(pos1, pos2)
+        const iter = this.worldmap.getIterator(mb_pos1, mb_pos2)
 
         while (true) {
             const pos = iter()

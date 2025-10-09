@@ -25,7 +25,7 @@ async function render(mb_pos1, mb_pos2) {
     const start = Date.now()
 
     const mapblock_count = await worldmap.loadMapblockArea(mb_pos1, mb_pos2)
-    const bundle = await geogen.createGeometryBundle(mb_pos1.getMinMapblockPos(), mb_pos2.getMaxMapblockPos())
+    const bundle = await geogen.createGeometryBundle(mb_pos1, mb_pos2)
 
     const diff = Date.now() - start
     console.log(`rendering done in ${diff} ms (${mapblock_count} mapblocks, ${bundle.length} entries)`)

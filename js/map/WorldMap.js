@@ -94,7 +94,9 @@ export default class {
         return this.map[key]
     }
 
-    getIterator(min, max) {
+    getIterator(mb_min, mb_max) {
+        const min = mb_min.getMinMapblockPos()
+        const max = mb_max.getMinMapblockPos()
         let pos
 
         //TODO: optimize with mapblock-check
