@@ -96,7 +96,7 @@ export default class {
 
     getIterator(mb_min, mb_max) {
         const min = mb_min.getMinMapblockPos()
-        const max = mb_max.getMinMapblockPos()
+        const max = mb_max.getMaxMapblockPos()
         let pos
 
         //TODO: optimize with mapblock-check

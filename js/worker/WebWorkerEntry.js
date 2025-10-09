@@ -1,7 +1,7 @@
 import WorldMap from '../map/WorldMap.js';
 import GeometryGenerator from '../mesh/GeometryGenerator.js';
 import SimpleGeometryGenerator from '../mesh/SimpleGeometryGenerator.js';
-import { parsePos } from '../util/Pos.js';
+import Pos, { parsePos } from '../util/Pos.js';
 
 export const is_worker = () => (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)
 
@@ -20,11 +20,14 @@ async function init(config) {
     }
 }
 
+const pos_minus_one = new Pos(-1, -1, -1)
+const pos_plus_one = new Pos(1, 1, 1)
+
 async function render(mb_pos1, mb_pos2) {
     console.log("WebWorkerEntry", { mb_pos1, mb_pos2 })
     const start = Date.now()
 
-    const mapblock_count = await worldmap.loadMapblockArea(mb_pos1, mb_pos2)
+    const mapblock_count = await worldmap.loadMapblockArea(mb_pos1.add(pos_minus_one), mb_pos2.add(pos_plus_one))
     const bundle = await geogen.createGeometryBundle(mb_pos1, mb_pos2)
 
     const diff = Date.now() - start

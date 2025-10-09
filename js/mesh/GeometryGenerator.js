@@ -35,22 +35,22 @@ export default class {
 
             const node = this.worldmap.getNode(pos)
             if (!node) {
-            continue
+                continue
             }
 
             if (node.name == "air" || node.name == "ignore") {
-            // fast continue-check
-            continue
+                // fast continue-check
+                continue
             }
 
             const ndef = this.worldmap.getNodeDef(node.name)
             if (!ndef) {
-            continue
+                continue
             }
 
             const dt = this.drawTypes[ndef.drawtype]
             if (!dt) {
-            continue
+                continue
             }
 
             await dt.render(ctx, pos, node, ndef)
