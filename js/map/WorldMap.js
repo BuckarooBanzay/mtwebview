@@ -94,6 +94,39 @@ export default class {
         return this.map[key]
     }
 
+    getIterator(min, max) {
+        let pos
+
+        //TODO: optimize with mapblock-check
+        return () => {
+            if (!pos) {
+                // init
+                pos = new Pos(min.x, min.y, min.z)
+
+            } else {
+                // increment
+                pos.x++
+            }
+
+            if (pos.x > max.x) {
+                // shift x
+                pos.x = min.x
+                pos.y++
+            }
+            if (pos.y > max.y) {
+                // shift y
+                pos.y = min.y
+                pos.z++
+            }
+            if (pos.z > max.z) {
+                // done
+                return
+            }
+
+            return pos
+        }
+    }
+
     getNodeDef(nodename) {
         return this.nodedefs[nodename]
     }

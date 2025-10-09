@@ -26,34 +26,35 @@ export default class {
 
     async createGeometryBundle(pos1, pos2) {
         const ctx = new RenderContext()
+        const iter = this.worldmap.getIterator(pos1, pos2)
 
-        for (let z=pos1.z; z<pos2.z; z++) {
-            for (let y=pos1.y; y<pos2.y; y++) {
-                for (let x=pos1.x; x<pos2.x; x++) {
-                    const pos = new Pos(x,y,z)
-                    const node = this.worldmap.getNode(pos)
-                    if (!node) {
-                        continue
-                    }
-
-                    if (node.name == "air" || node.name == "ignore") {
-                        // fast continue-check
-                        continue
-                    }
-                    
-                    const ndef = this.worldmap.getNodeDef(node.name)
-                    if (!ndef) {
-                        continue
-                    }
-
-                    const dt = this.drawTypes[ndef.drawtype]
-                    if (!dt) {
-                        continue
-                    }
-
-                    await dt.render(ctx, pos, node, ndef)
-                }
+        while (true) {
+            const pos = iter()
+            if (!pos) {
+                break
             }
+
+            const node = this.worldmap.getNode(pos)
+            if (!node) {
+            continue
+            }
+
+            if (node.name == "air" || node.name == "ignore") {
+            // fast continue-check
+            continue
+            }
+
+            const ndef = this.worldmap.getNodeDef(node.name)
+            if (!ndef) {
+            continue
+            }
+
+            const dt = this.drawTypes[ndef.drawtype]
+            if (!dt) {
+            continue
+            }
+
+            await dt.render(ctx, pos, node, ndef)
         }
 
         return ctx.getGeometryBundle()
