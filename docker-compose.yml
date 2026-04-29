@@ -3,6 +3,7 @@ version: "3.6"
 services:
  luanti:
   image: ghcr.io/luanti-org/luanti:5.14.0
+  profiles: [init]
   entrypoint: ["luantiserver", "--config", "/minetest.conf"]
   user: root
   ports:
@@ -20,6 +21,7 @@ services:
   image: node:24.9.0
   volumes:
    - "./:/app"
+  profiles: [init]
   working_dir: /app
   command: ["sh", "-c", "npm ci"]
 

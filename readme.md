@@ -58,6 +58,17 @@ https://github.com/minetest/minetest/blob/master/doc/lua_api.md#node-boxes
 * [ ] connected
 * [ ] fixed
 
+# dev
+
+```sh
+# first time
+docker compose --profile init up
+
+# afterwards
+docker compose up
+```
+
+* http://localhost:8080/
 
 ## Debug
 
